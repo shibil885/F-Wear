@@ -1,0 +1,161 @@
+<%- include('../user/userLayout/userHeader') %>
+<style>
+    body {
+        background: radial-gradient(circle, rgb(136, 203, 192), #3c5d50);
+    }
+    .badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+</style>
+<nav class="custom-navbar navbar navbar-expand-md navbar-dark pb-3" aria-label="Furni navigation bar" style="height:71px;">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsFurni"
+            aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+            <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/shop">Shop</a>
+                </li>
+                <li><a class="nav-link" href="about.html">About us</a></li>
+                <li><a class="nav-link" href="services.html">Services</a></li>
+                <li><a class="nav-link" href="blog.html">Blog</a></li>
+                <li><a class="nav-link" href="contact.html">Contact us</a></li>
+            </ul>
+            <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                <li>
+                    <a class="nav-link" href="/cartPage" style="position: relative;">
+                        <img src="/assets/images/cart.svg">
+                        <% if (cartLength !== null || undefined) { %>
+                            <span class="badge"><%= cartLength %></span>
+                         <% } else { %>
+                            <span class="badge">0</span>
+                        <% } %>
+                        
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<aside class="navbar-aside col-md-3" id="offcanvas_asid">
+    <div class="aside-top" style="background-color: #3c5d50;">
+        <a href="/" class="brand-wrap text-decoration-none d-flex">
+            <h3 class="text-warning fw-bold">.f</h3><h3 class="fw-bold text-light">-Wear</h3>
+        </a>
+    </div>
+    <ul class="menu-aside">
+        <li class="menu-item active">
+            <a class="menu-link" href="/userAccount"> <i class="icon material-icons md-person"></i>
+                <span class="text">Info</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a class="menu-link" href="/orders"> <i class="icon material-icons md-shopping_cart"></i>
+                <span class="text">Orders</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a class="menu-link" href="/address"> <i class="icon material-icons md-contact_mail"></i>
+                <span class="text">Address</span>
+            </a>
+            <div class="submenu">
+            </div>
+        </li>
+        <li class="menu-item ">
+            <a class="menu-link" href="/wallet"> <i class="icon material-icons md-account_balance_wallet"></i>
+                <span class="text">Wallet</span>
+            </a>
+        </li>
+        <li class="menu-item ">
+            <a class="menu-link" href="/changePasswordPage"> <i class="icon material-icons md-vpn_key"></i>
+                <span class="text">Change password</span>
+            </a>
+        </li>
+        <li class="menu-item ">
+            <a class="nav-link d-flex text-danger ms-2" href="/userLogout">
+                <span class="material-symbols-outlined">
+                    logout
+                </span>
+                Logout
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <br>
+</aside>
+<section class="col-md-6 container mt-2">
+    <div class="div-center">
+        <div class="active border" aria-labelledby="dashboard-tab">
+            <div class="text-center">
+                <span class="material-symbols-outlined " style="font-size: 210px;">
+                    account_circle
+                </span>
+            </div>
+            <form id="profileForm" action="/editProfile" method="post">
+                <h3 class="text-center"><strong>Hi, <%= userData.username %></strong></h3>
+                <div class="col-lg-8 text-center">
+                    <div class="card mb-4 mt-5 ms-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3 mt-2">
+                                    <label for="Name">Name</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" value="<%= userData.username %>" class="form-control" id="username" name="username">
+                                    <small id="nameError" class="text-danger"></small>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3 mt-2">
+                                    <label for="Phone">Phone</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" value="<%= userData.phone %>" class="form-control" id="phone" name="phone">
+                                    <small id="phoneError" class="text-danger"></small>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary mt-3" type="button" onclick="validateForm()">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<script>
+    function validateForm() {
+        var username = document.getElementById("username").value.trim();
+        var phone = document.getElementById("phone").value.trim();
+        var nameError = document.getElementById("nameError");
+        var phoneError = document.getElementById("phoneError");
+        var namePattern = /^[a-zA-Z\s]+$/;
+        var phonePattern = /^\d{10}$/; // 
+        nameError.textContent = "";
+        phoneError.textContent = "";
+        if (!namePattern.test(username)) {
+            nameError.textContent = "Name must contain only letters and spaces";
+            return false;
+        }
+        if (!phonePattern.test(phone)) {
+            phoneError.textContent = "Phone must be 10 digits";
+            return false;
+        }
+        document.getElementById("profileForm").submit();
+    }
+</script>
+<%- include('../user/userLayout/userFooter') %>

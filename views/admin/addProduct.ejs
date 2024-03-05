@@ -1,0 +1,382 @@
+<%-include('../admin/adminLayout/adminHeader') %>
+  <div class="screen-overlay"></div>
+  <aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+      <a href="/adminPanel" class="brand-wrap">
+        <h3>.F-Wear</h3>
+      </a>
+    </div>
+    <nav>
+      <ul class="menu-aside">
+        <li class="menu-item">
+          <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+            <span class="text">Adminpanel</span>
+          </a>
+        </li>
+        <li class="menu-item active">
+          <a class="menu-link" href="/productList"> <i class="icon material-icons md-shopping_bag"></i>
+            <span class="text">Products</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/orderlist"> <i class="icon material-icons md-shopping_cart"></i>
+            <span class="text">Orders</span>
+          </a>
+          <div class="submenu">
+          </div>
+        </li>
+        <li class="menu-item ">
+          <a class="menu-link" href="/users"> <i class="icon material-icons md-person"></i>
+            <span class="text">Users</span>
+          </a>
+        </li>
+        <li class="menu-item ">
+          <a class="menu-link" href="/Categories"> <i class="icon material-icons md-store"></i>
+            <span class="text">Categories</span>
+          </a>
+        </li>
+        <li class="menu-item ">
+          <a class="menu-link" href="/couponList"> <i class="icon material-icons md-local_offer"></i>
+            <span class="text">Coupon</span>
+          </a>
+        </li>
+      </ul>
+      <hr>
+      <br>
+      <br>
+    </nav>
+  </aside>
+  <main class="main-wrap">
+    <header class="main-header navbar">
+      <div class="col-search">
+        <form class="searchform">
+          <div class="input-group">
+            <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+            <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+          </div>
+          <datalist id="search_terms">
+            <option value="Products">
+            <option value="New orders">
+            <option value="Apple iphone">
+            <option value="Ahmed Hassan">
+          </datalist>
+        </form>
+      </div>
+      <div>
+        <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+      </div>
+    </header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Add Products</h2>
+          <p>Add a Product</p>
+          <% if (locals.alert) { %>
+            <div class="alert alert-danger text-center m-3" id="error">
+              <%= locals.alert %>
+            </div>
+            <% } %>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="row" style="justify-content: center">
+            <div class="col-md-4">
+
+              <form action="/addproducts" method="post" enctype="multipart/form-data">
+                <div class="mb-4">
+                  <label for="product_name" class="form-label">Product title</label>
+                  <input type="text" placeholder="Type here" name="product_title" class="form-control" id="product_name"
+                    onkeyup="validateName()" />
+                  <span id="name-error" style="font-size: 14px; margin-top: -20px"></span>
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label">Description</label>
+                  <textarea placeholder="Type here" name="description" class="form-control" id="product_description"
+                    rows="4" onkeyup="validateDescription()"></textarea>
+                  <span id="description-error" style="font-size: 14px; margin-top: -20px"></span>
+                </div>
+                <div class="mb-4">
+                  <label class="form-label">Cost in Rs</label>
+                  <input placeholder="0" name="price" class="form-control" id="product_price" onkeyup="validatePrice()">
+                  <span id="price-error" style="font-size: 14px; margin-top: -20px"></span>
+                </div>
+                <div class="mb-4">
+                  <label for="product_stock" class="form-label">Stock</label>
+                  <input type="text" placeholder="0" name="stock" class="form-control" id="product_stock" min="0"
+                    onkeyup="validateStock()" />
+                  <span id="stock-error" style="font-size: 14px; margin-top: -20px"></span>
+                </div>
+
+                <div class="mb-4">
+                  <label for="product_category" class="form-label">Category</label>
+                  <select name="category" class="form-control" id="product_category">
+                    <% category .forEach(category=> { %>
+                      <option value="<%= category._id %>">
+                        <%= category.category %>
+                      </option>
+                      <% }); %>
+                  </select>
+                </div>
+                <div class="mb-4">
+                  <label for="product_brand" class="form-label">Brand</label>
+                  <select name="brand" class="form-control" id="product_brand">
+                    <% brand .forEach(brand=> { %>
+                      <option value="<%= brand._id %>">
+                        <%= brand.name %>
+                      </option>
+                      <% }); %>
+                  </select>
+                </div>
+                <div class="mb-4">
+                  <label class="form-label">Images</label>
+                  <input class="form-control" name="images" id="product_image" type="file" multiple
+                    accept="image/png, image/jpeg" onchange="previewImages(event)" />
+                  <span id="image-error" style="font-size: 14px; margin-top: -20px"></span>
+                  <button class="btn btn-secondary mt-2" id="crop-button" style="display: none;"
+                    onclick="cropImage()">Crop</button>
+                </div>
+                <div id="image-preview" class="mb-4"></div>
+
+                <div class="d-grid">
+                  <button class="btn btn-primary" onclick="return validateForm()">
+                    Add Product
+                  </button>
+                  <span id="submit-error" style="font-size: 14px"></span>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+  <script>
+    const croppers = [];
+    const files = [];
+  let currentIndex = 0;
+
+  function previewImages(event) {
+  const previewContainer = document.getElementById("image-preview");
+  previewContainer.innerHTML = "";
+  const files = event.target.files;
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      img.classList.add("img-preview");
+
+          const deleteIcon = document.createElement("i");
+          deleteIcon.className = "fa-solid fa-trash text-danger";
+          deleteIcon.onclick = function () {
+            this.parentNode.remove();
+            updateSelectedFiles();
+          };
+
+          const replaceIcon = document.createElement("i");
+          replaceIcon.className = "fa-solid fa-repeat text-success ms-2";
+          replaceIcon.onclick = function () {
+            const index = Array.from(this.parentNode.parentNode.children).indexOf(this.parentNode);
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.onchange = function (event) {
+              const file = event.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                  img.src = e.target.result;
+                  updateFileInput(file, index);
+                };
+                reader.readAsDataURL(file);
+              }
+            };
+            fileInput.click();
+          };
+
+          const cropIcon = document.createElement("i");
+      cropIcon.className = "fa-solid fa-crop text-info ms-2";
+      cropIcon.onclick = function () {
+        cropImage(img, i);
+      };
+
+          const div = document.createElement("div");
+          div.appendChild(img);
+          div.appendChild(deleteIcon);
+          div.appendChild(replaceIcon);
+          div.appendChild(cropIcon);
+          previewContainer.appendChild(div);
+        };
+
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function cropImage(image, index) {
+  const cropper = new Cropper(image, {
+    aspectRatio: 1,
+    viewMode: 1,
+    crop: function (event) {
+      const canvas = cropper.getCroppedCanvas();
+      canvas.toBlob(function (blob) {
+        const croppedFile = new File([blob], 'cropped_image.png', { type: 'image/png' });
+        updateFileInput(croppedFile, index); 
+      });
+    },
+  });
+  return cropper; 
+}
+
+
+    function updateSelectedFiles() {
+      const filesInput = document.getElementById("product_image");
+      const previewImages = document.querySelectorAll('.img-preview');
+      const fileList = new DataTransfer();
+
+      previewImages.forEach((img) => {
+        const src = img.getAttribute('src');
+        const file = dataURLtoFile(src, `image_${Date.now()}.png`);
+        fileList.items.add(file);
+      });
+
+      filesInput.files = fileList.files;
+    }
+
+    function dataURLtoFile(dataurl, filename) {
+      const arr = dataurl.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename, { type: mime });
+    }
+
+    function updateFileInput(file, index) {
+  const fileInput = document.getElementById('product_image');
+  const fileList = new DataTransfer();
+
+  const files = fileInput.files;
+  for (let i = 0; i < files.length; i++) {
+    if (i === index) {
+      // Replace the file at the specified index with the cropped image file
+      fileList.items.add(file);
+    } else {
+      fileList.items.add(files[i]);
+    }
+  }
+
+  fileInput.files = fileList.files;
+}
+
+    var nameError = document.getElementById("name-error");
+    var descriptionError = document.getElementById("description-error");
+    var priceError = document.getElementById("price-error");
+    var imageError = document.getElementById("image-error");
+    var stockError = document.getElementById("stock-error");
+    var submitError = document.getElementById("submit-error");
+
+    function validateName() {
+      var name = document.getElementById("product_name").value.trim();
+      if (name.length === 0) {
+        nameError.innerHTML = "Product name is required";
+        nameError.style.color = "red";
+        return false;
+      }
+      nameError.innerHTML = "Valid";
+      nameError.style.color = "green";
+      return true;
+    }
+
+    function validateDescription() {
+      var desc = document.getElementById("product_description").value.trim();
+      if (desc.length === 0) {
+        descriptionError.innerHTML = "Description is required";
+        descriptionError.style.color = "red";
+        return false;
+      }
+      descriptionError.innerHTML = "Valid";
+      descriptionError.style.color = "green";
+      return true;
+    }
+
+    function validatePrice() {
+    var price = document.getElementById("product_price").value.trim();
+  
+
+    if (price.length === 0 || isNaN(price) || parseFloat(price) <= 0) {
+        priceError.innerHTML = "Price is required and must be a positive number";
+        priceError.style.color = "red";
+        return false;
+    }
+
+    priceError.innerHTML = "Valid";
+    priceError.style.color = "green";
+    return true;
+}
+
+function validateImage() {
+    var imageInput = document.getElementById("product_image");
+ 
+    var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.webp)$/i;
+
+    if (imageInput.files.length === 0) {
+      imageError.innerHTML = "Image is required";
+      imageError.style.color = "red";
+      return false;
+    }
+
+    var file = imageInput.files[0];
+    if (!allowedExtensions.exec(file.name)) {
+      imageError.innerHTML = "Only JPG, JPEG, PNG, or GIF files are allowed";
+      imageError.style.color = "red";
+      return false;
+    }
+
+    imageError.innerHTML = "Valid";
+    imageError.style.color = "green";
+    return true;
+  }
+   
+
+function validateStock() {
+  var stock = document.getElementById("product_stock").value.trim();
+  if (stock.length === 0 || isNaN(stock) || parseInt(stock) < 0) {
+    stockError.innerHTML = "Stock is required and must be a non-negative number";
+    stockError.style.color = "red";
+    return false;
+  }
+  stockError.innerHTML = "Valid";
+  stockError.style.color = "green";
+  return true;
+}
+
+
+    function validateForm() {
+      if (
+        !validateName() ||
+        !validateDescription() ||
+        !validatePrice() ||
+        !validateImage() ||
+        !validateStock()
+      ) {
+        submitError.style.display = "block";
+        submitError.innerHTML = "Please enter all the fields to submit ";
+        submitError.style.color = "red";
+        setTimeout(function () {
+          submitError.style.display = "none";
+        }, 3000);
+        return false;
+      }
+      return true;
+    }
+  </script>
+  <%-include('../admin/adminLayout/adminFooter') %>

@@ -1,0 +1,501 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>.F-Wear</title>
+  <!-- Template CSS -->
+  <link href="assets/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <div class="screen-overlay"></div>
+  <aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+      <a href="/adminPanel" class="brand-wrap">
+        <h3>.F-Wear</h3>
+      </a>
+    </div>
+    <nav>
+      <ul class="menu-aside">
+        <li class="menu-item active">
+          <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+            <span class="text">Adminpanel</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/productList"> <i class="icon material-icons md-shopping_bag"></i>
+            <span class="text">Products</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a class="menu-link" href="/orderlist"> <i class="icon material-icons md-shopping_cart"></i>
+            <span class="text">Orders</span>
+          </a>
+          <div class="submenu">
+          </div>
+        </li>
+        <li class="menu-item ">
+          <a class="menu-link" href="/users"> <i class="icon material-icons md-person"></i>
+            <span class="text">Users</span>
+          </a>
+        </li>
+        <li class="menu-item ">
+          <a class="menu-link" href="/Categories"> <i class="icon material-icons md-store"></i>
+            <span class="text">Categories</span>
+          </a>
+        </li>
+        <li class="menu-item ">
+          <a class="menu-link" href="/couponList"> <i class="icon material-icons md-local_offer"></i>
+            <span class="text">Coupon</span>
+          </a>
+        </li>
+        <li class="menu-item ">
+          <a class="menu-link" href="/brand"> <i class="icon material-icons md-verified"></i>
+            <span class="text">Brand</span>
+          </a>
+        </li>
+        <li class="menu-item has-submenu">
+          <a class="menu-link" href="page-form-product-1.html"> <i class="icon material-icons md-star"></i>
+            <span class="text">Best Sales</span>
+          </a>
+          <div class="submenu">
+            <a href="/bestProducts">Best Products</a>
+            <a href="/bestCategories">Best Category</a>
+            <a href="/bestBrands">Best Brand</a>
+          </div>
+        </li>
+      </ul>
+      <hr>
+      <br>
+      <br>
+    </nav>
+  </aside>
+  <main class="main-wrap">
+    <header class="main-header navbar">
+      <div class="col-search">
+        <form class="searchform">
+          <div class="input-group">
+            <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+            <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+          </div>
+          <datalist id="search_terms">
+            <option value="Products">
+            <option value="New orders">
+            <option value="Apple iphone">
+            <option value="Ahmed Hassan">
+          </datalist>
+        </form>
+      </div>
+      <div>
+        <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+      </div>
+    </header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Dashboard </h2>
+          <p>Whole data about your business here</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="card card-body mb-4">
+            <article class="icontext">
+              <span class="icon icon-sm rounded-circle bg-primary-light"><i
+                  class="text-primary material-icons md-person"></i></span>
+              <div class="text">
+                <h6 class="mb-1 card-title">Customers</h6>
+                <% if(users.length===0){ %>
+                  <span class="text-secondery" style="font-size: 12px;">No customers</span>
+                  <% } else { %>
+                    <span>
+                      <%= users.length %>
+                    </span>
+                    <% } %>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="card card-body mb-4">
+            <article class="icontext">
+              <span class="icon icon-sm rounded-circle bg-success-light"><i
+                  class="text-success material-icons md-local_shipping"></i></span>
+              <div class="text">
+                <h6 class="mb-1 card-title">Orders</h6>
+                <% if(orders.length===0){ %>
+                  <span class="text-secondery" style="font-size: 12px;">No orders</span>
+                  <% } else { %>
+                    <span>
+                      <%= orders.length %>
+                    </span>
+                    <% } %>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="card card-body mb-4">
+            <article class="icontext">
+              <span class="icon icon-sm rounded-circle bg-warning-light"><i
+                  class="text-warning material-icons md-qr_code"></i></span>
+              <div class="text">
+                <h6 class="mb-1 card-title">Products</h6>
+                <% if(products.length===0){ %>
+                  <span class="text-secondery" style="font-size: 12px;">No products</span>
+                  <% } else { %>
+                    <span>
+                      <%= products.length %>
+                    </span>
+                    <span></span>
+
+                    <% if(categories.length===0){ %>
+                      <small class="text-secondery sm" style="font-size: 12px;">No Categories</small>
+                      <% } else { %>
+                        <small class="text-secondery sm">in <%= categories.length %> categories</small>
+                        <% } %>
+                          <% } %>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="card card-body mb-4">
+            <article class="icontext">
+              <span class="icon icon-sm rounded-circle bg-info-light"><i
+                  class="text-info material-icons md-curency_rupee">&#8377;</i>
+              </span>
+              <div class="text">
+                <h6 class="mb-1 card-title">Revenue</h6>
+                <% if (totalOrderPrice===0) { %>
+                  <span class="text-secondary">RS:0</span>
+                  <% } else { %>
+                    <span>&#8377; <%=totalOrderPrice %></span>
+                    <% } %>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-8 col-lg-12">
+          <div class="card mb-4">
+            <article class="card-body">
+              <h5 class="card-title">Sale statistics</h5>
+              <div>
+                <a href="#" class="mx-2" id="monthGraphBtn">
+                  <i class="text-muted material-icons md-show_chart"></i>Month Graph
+                </a>
+                <a href="#" class="" id="yearGraphBtn">
+                  <i class="text-muted material-icons md-show_chart"></i>Year Graph
+                </a>
+              </div>
+              <canvas id="lineChart" height="120px"></canvas>
+            </article>
+          </div>
+        </div>
+        <div class="col-xl-4 col-lg-12">
+          <div class="card mb-4">
+            <article class="card-body">
+              <h5 class="card-title">Order Statistics</h5>
+              <canvas id="orderChart" height="217"></canvas>
+            </article>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-5">
+          <div>
+            <div class="d-flex align-items-center">
+              <label for="startDate" class="me-2">Start Date:</label>
+              <input type="date" id="startDate" class="form-control me-2">
+              <label for="endDate" class="me-2">End Date:</label>
+              <input type="date" id="endDate" class="form-control me-2">
+            </div>
+            <a href="#" class="btn btn-primary" id="createReportButton">
+              <i class="text-muted material-icons md-post_add"></i>Create report
+            </a>
+          </div>
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <div id="reportContainer" class="mt-4">
+            <iframe id="reportPreview" width="100%" height="500px" frameborder="0"></iframe>
+            <button id="downloadButton" class="btn btn-primary mt-2" style="display: none;">
+              <i class="text-muted material-icons md-file_download"></i>Download Report
+            </button>
+          </div>
+        </div>
+      </div>
+    </section> <!-- content-main end// -->
+    <footer class="main-footer font-xs">
+      <div class="row pb-30 pt-15">
+        <div class="col-sm-6">
+          <script>
+            document.write(new Date().getFullYear())
+          </script> ©, Evara - HTML Ecommerce Template .
+        </div>
+        <div class="col-sm-6">
+          <div class="text-sm-end">
+            All rights reserved
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#createReportButton').click(function () {
+        $.ajax({
+          url: '/generate-report',
+          type: 'POST',
+          data: {
+            startDate: $('#startDate').val(),
+            endDate: $('#endDate').val()
+          },
+          success: function (response) {
+            console.log(response);
+            $('#reportPreview').attr('src', response.reportUrl);
+
+            $('#downloadButton').show();
+          },
+          error: function (xhr, status, error) {
+            // Handle error
+            console.error(error);
+          }
+        });
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const initialData = {
+        cod: 0,
+        razorPay: 0,
+        wallet: 0
+      };
+      const orderCtx = document.getElementById('orderChart').getContext('2d');
+      const orderChart = new Chart(orderCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Cod', 'RazorPay', 'Wallet'],
+          datasets: [{
+            data: Object.values(initialData),
+            backgroundColor: [
+              'rgba(75, 30, 132, 0.7)',
+              'rgba(255, 205, 25, 0.7)',
+              'rgba(54, 162, 15, 0.7)'
+            ],
+          }],
+        },
+        options: {
+          title: {
+            display: true,
+            text: 'Order Statistics by Status',
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: 'orange',
+              },
+            },
+          },
+        },
+      });
+
+      function updateChartData(data) {
+        orderChart.data.datasets[0].data = Object.values(data);
+        orderChart.update();
+      }
+
+      function fetchDataAndUpdateChart() {
+        fetch('/fetchdashboard')
+          .then(response => response.json())
+          .then(data => {
+            console.log(data.ordersPie);
+            updateChartData(data.ordersPie);
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
+      }
+
+      fetchDataAndUpdateChart();
+
+
+
+
+      function updateGraphWithMonthlyData() {
+        const existingChart = Chart.getChart('lineChart');
+        if (existingChart) {
+          existingChart.destroy();
+        }
+        const months = '<%- JSON.stringify(ordersGraph.labels) %>';
+        const counts = '<%- JSON.stringify(ordersGraph.count) %>';
+
+
+        const parsedMonths = JSON.parse(months);
+        const parsedCounts = JSON.parse(counts);
+
+
+        const countsWithNull = new Array(parsedMonths.length).fill(null);
+
+
+        parsedMonths.forEach((month, index) => {
+          const monthIndex = parsedMonths.indexOf(month);
+          if (monthIndex !== -1) {
+            countsWithNull[monthIndex] = parsedCounts[index];
+          }
+        });
+
+        const lineCtx = document.getElementById('lineChart').getContext('2d');
+        const lineChart = new Chart(lineCtx, {
+          type: 'line',
+          data: {
+            labels: parsedMonths,
+            datasets: [{
+              label: 'Orders by Month',
+              data: countsWithNull,
+              borderColor: 'rgba(54, 162, 235, 1)',
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              fill: true,
+            }],
+          },
+          options: {
+            title: {
+              display: true,
+              text: 'Orders by Month',
+            },
+            scales: {
+              x: {
+                type: 'category',
+                position: 'bottom',
+              },
+              y: {
+                type: 'linear',
+                ticks: {
+                  stepSize: 1,
+                  beginAtZero: true,
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: 'orange',
+                },
+              },
+            },
+          },
+        });
+      }
+      function updateYearGraph() {
+        const existingChart = Chart.getChart('lineChart');
+        if (existingChart) {
+          existingChart.destroy();
+        }
+        const years = '<%- JSON.stringify(ordersYearGraph.labels) %>';
+        const counts = '<%- JSON.stringify(ordersYearGraph.count) %>';
+
+
+        const parsedYears = JSON.parse(years);
+        const parsedCounts = JSON.parse(counts);
+        const minYear = Math.min(...parsedYears);
+        const maxYear = Math.max(...parsedYears);
+
+        const yearsToShow = [];
+        for (let i = minYear - 3; i <= maxYear + 3; i++) {
+          yearsToShow.push(i);
+        }
+        console.log('yearsToShow:', yearsToShow);
+        const countsWithNull = new Array(yearsToShow.length).fill(null);
+
+
+        parsedYears.forEach((year, index) => {
+          const yearIndex = yearsToShow.indexOf(parseInt(year));
+          if (yearIndex !== -1) {
+            countsWithNull[yearIndex] = parsedCounts[index];
+          }
+        });
+        console.log('countsWithNull:', countsWithNull);
+
+        const lineCtx = document.getElementById('lineChart').getContext('2d');
+        const lineChart = new Chart(lineCtx, {
+          type: 'line',
+          data: {
+            labels: yearsToShow,
+            datasets: [{
+              label: 'Orders by Years',
+              data: countsWithNull,
+              borderColor: 'rgba(54, 162, 235, 1)',
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              fill: true,
+            }],
+          },
+          options: {
+            title: {
+              display: true,
+              text: 'Orders by Years',
+            },
+            scales: {
+              x: {
+                type: 'category',
+                position: 'bottom',
+              },
+              y: {
+                type: 'linear',
+                beginAtZero: true, 
+                ticks: {
+                  stepSize: 1,
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                labels: {
+                  color: 'orange',
+                },
+              },
+            },
+          },
+        });
+      }
+      
+      const monthGraphBtn = document.getElementById('monthGraphBtn');
+      console.log('monthGraphBtn:', monthGraphBtn);
+      const yearGraphBtn = document.getElementById('yearGraphBtn');
+      console.log('yearGraphBtn:', yearGraphBtn);
+      monthGraphBtn.addEventListener('click', function () {
+        updateGraphWithMonthlyData();
+        monthGraphBtn.classList.add('active');
+        yearGraphBtn.classList.remove('active');
+      });
+
+      yearGraphBtn.addEventListener('click', function () {
+
+        updateYearGraph();
+
+
+        yearGraphBtn.classList.add('active');
+        monthGraphBtn.classList.remove('active');
+      });
+
+      updateGraphWithMonthlyData();
+    })   
+  </script>
+  <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+  <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+  <script src="/assets/js/vendors/select2.min.js"></script>
+  <script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+  <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+  <script src="/assets/js/vendors/chart.js"></script>
+  <!-- Main Script -->
+  <script src="/assets/js/main.js" type="text/javascript"></script>
+  <script src="/assets/js/custom-chart.js" type="text/javascript"></script>
+</body>
+
+</html>

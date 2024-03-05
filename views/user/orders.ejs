@@ -1,0 +1,189 @@
+<%- include('../user/userLayout/userHeader') %>
+    <style>
+        	.badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+    </style>
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark pb-3" aria-label="Furni navigation bar"
+        style="height:71px;">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsFurni"
+                aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsFurni">
+                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/shop">Shop</a>
+                    </li>
+                    <li><a class="nav-link" href="about.html">About us</a></li>
+                    <li><a class="nav-link" href="services.html">Services</a></li>
+                    <li><a class="nav-link" href="blog.html">Blog</a></li>
+                    <li><a class="nav-link" href="contact.html">Contact us</a></li>
+                </ul>
+                <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                    <li>
+                        <a class="nav-link" href="/cartPage" style="position: relative;">
+                            <img src="/assets/images/cart.svg">
+                            <% if (cartLength !== null || undefined) { %>
+                                <span class="badge"><%= cartLength %></span>
+                             <% } else { %>
+                                <span class="badge">0</span>
+                            <% } %>
+                            
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <aside class="navbar-aside col-md-3" id="offcanvas_asid">
+        <div class="aside-top" style="background-color: #3c5d50;">
+            <a href="/" class="brand-wrap text-decoration-none d-flex">
+                <h3 class="text-warning fw-bold">.f</h3><h3 class="fw-bold text-light">-Wear</h3>
+            </a>
+        </div>
+        <ul class="menu-aside">
+            <li class="menu-item">
+                <a class="menu-link" href="/userAccount"> <i class="icon material-icons md-person"></i>
+                    <span class="text">Info</span>
+                </a>
+            </li>
+            <li class="menu-item active">
+                <a class="menu-link" href="/orders"> <i class="icon material-icons md-shopping_cart"></i>
+                    <span class="text">Orders</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" href="/address"> <i class="icon material-icons md-contact_mail"></i>
+                    <span class="text">Address</span>
+                </a>
+                <div class="submenu">
+                </div>
+            </li>
+            <li class="menu-item ">
+                <a class="menu-link" href="/wallet"> <i class="icon material-icons md-account_balance_wallet"></i>
+                    <span class="text">Wallet</span>
+                </a>
+            </li>
+            <li class="menu-item ">
+                <a class="menu-link" href="/changePasswordPage"> <i class="icon material-icons md-vpn_key"></i>
+                    <span class="text">Change password</span>
+                </a>
+            </li>
+            <li class="menu-item ">
+                <a class="nav-link d-flex text-danger ms-2" href="/userLogout">
+                    <span class="material-symbols-outlined">
+                        logout
+                    </span>
+                    Logout
+                </a>
+            </li>
+        </ul>
+        <hr>
+        <br>
+    </aside>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Order List </h2>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <% if (!orders.length==0) { %>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#ID</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Payment Status</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col" class="text-end"> Action </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <% orders.reverse().forEach((item,index)=> { %>
+                                        <tr>
+                                            <td>#<%= item._id %> %></td>
+                                            <td><b>
+                                                    <%= item.firstName %>
+                                                        <%= item.lastName %>
+                                                </b></td>
+                                            <td>
+                                                <%= item.totalPrice %>
+                                            </td>
+                                            <td class="text-dark">
+                                                <%= item.paymentStatus %>
+                                            </td>
+                                            <td>
+                                                <%= item.date.toLocaleDateString() %>
+                                            </td>
+                                            <% if (item.paymentMethod ==='razorPay' && item.paymentStatus ==='failed' ) { %>
+                                                <td class="text-end">
+                                                    <a href="/payFailedAmount/<%= item._id %>"
+                                                        class="btn btn-md rounded font-sm">Pay</a>
+                                                </td>
+                                             <% } else { %>
+                                                <td class="text-end">
+                                                    <a href="/orderDetails/<%= item._id %>"
+                                                        class="btn btn-md rounded font-sm">Detail</a>
+                                                </td>
+                                            <% } %>
+                                        </tr>
+                                        <% }) %>
+
+                            </tbody>
+                        </table>
+                        <% } else { %>
+                            <h3 class="text-secondery text-center">0 orders</h3>
+                            <% } %>
+                    </div> <!-- table-responsive //end -->
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+            <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i
+                                    class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row">
+                <div class="col-sm-6">
+                    <script>
+                        document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <%- include('../user/userLayout/userFooter') %>

@@ -1,0 +1,335 @@
+<%- include('../user/userLayout/userHeader') %>
+<style>
+    .badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+    .remove-btn,
+    .move-to-cart-btn {
+        cursor: pointer;
+    }
+    .remove-btn:hover{
+        color: red;
+    }
+    .move-to-cart-btn:hover{
+        color: green;
+    }
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .card-subtitle {
+        color: #777;
+    }
+
+    .card-text {
+        color: #555;
+    }
+
+    .btn-danger,
+    .btn-success {
+        border-radius: 20px;
+        padding: 8px 20px;
+        margin-top: 10px;
+    }
+</style>
+<!-- Start Header/Navigation -->
+<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+    <div class="container">
+        <a class="navbar-brand" href="/">.<span class="text-warning">f</span>-Wear</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+            <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/shop">Shop</a>
+                </li>
+                <li><a class="nav-link" href="about.html">About us</a></li>
+                <li><a class="nav-link" href="services.html">Services</a></li>
+                <li><a class="nav-link" href="blog.html">Blog</a></li>
+                <li><a class="nav-link" href="contact.html">Contact us</a></li>
+            </ul>
+            
+
+            <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                <li>
+                    <a class="nav-link" href="/cartPage" style="position: relative;">
+                        <img src="/assets/images/cart.svg">
+                        <% if (cartLength !== null || undefined) { %>
+                            <span class="badge"><%= cartLength %></span>
+                         <% } else { %>
+                            <span class="badge">0</span>
+                        <% } %>
+                        
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" href="/wishList" style="position: relative;">
+                        <span class="material-symbols-outlined me-2" style="color: white;">
+                            favorite
+                        </span>
+                    </a>
+                </li>
+                    <a class="nav-link ms-1" href="/userAccount">
+                        <img src="/assets/images/user.svg">
+                      </a>
+                    <li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- End Header/Navigation -->
+<!-- Start Hero Section -->
+<div class="hero">
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-lg-5">
+                <div class="intro-excerpt">
+                    <h1>Wish List</h1>
+                </div>
+            </div>
+            <div class="col-lg-7">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Hero Section -->
+<div class="container mt-5">
+    <div class="row">
+        <% if (userWishList && userWishList.items.length > 0) { %>
+            <% userWishList.items.forEach(item => { %>
+                <div class="col-md-3">
+                    <div class="card mb-4">
+                        <% if (item.product.images && item.product.images.length > 0) { %>
+                            <img src="/<%= item.product.images[0] %>" alt="" class="image-fluid">
+                        <% } %>
+                        <div class="card-body">
+                            <h5 class="card-title"><%= item.product.product_title %></h5>
+                            <h6 class="card-subtitle mb-2 text-muted"><b>&#8377;</b> <%= item.product.price %></h6>
+                            <!-- Additional card content here -->
+                            <p class="card-text">------------------------------------------------</p>
+                            <div class="d-flex justify-content-evenly">
+                            <span class="material-symbols-outlined remove-btn" onclick="deleteWishList('<%=item.product._id%>')">
+                                close
+                                </span>
+                             <span class="material-symbols-outlined move-to-cart-btn" onclick="addToWishlist('<%=item.product._id%>')">
+                                arrow_forward
+                                </span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <h3 class="text-secondary text-center">Your wishlist is empty</h3>
+        <% } %>
+    </div>
+</div>
+
+
+<footer class="footer-section">
+    <div class="container relative">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="subscription-form">
+                    <form action="#" class="row g-3">
+                        <div class="col-auto">
+                            <input type="text" class="form-control" placeholder="Enter your name">
+                        </div>
+                        <div class="col-auto">
+                            <input type="email" class="form-control" placeholder="Enter your email">
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary">
+                                <span class="fa fa-paper-plane"></span>
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-5 mb-5">
+            <div class="col-lg-4">
+                <div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">Furni<span>.</span></a></div>
+                <p class="mb-4">Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant</p>
+
+                <ul class="list-unstyled custom-social">
+                    <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+                    <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+                    <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+                    <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="row links-wrap">
+                    <div class="col-6 col-sm-6 col-md-3">
+                        <ul class="list-unstyled">
+                            <li><a href="#">About us</a></li>
+                            <li><a href="#">Services</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Contact us</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-6 col-sm-6 col-md-3">
+                        <ul class="list-unstyled">
+                            <li><a href="#">Support</a></li>
+                            <li><a href="#">Knowledge base</a></li>
+                            <li><a href="#">Live chat</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-6 col-sm-6 col-md-3">
+                        <ul class="list-unstyled">
+                            <li><a href="#">Jobs</a></li>
+                            <li><a href="#">Our team</a></li>
+                            <li><a href="#">Leadership</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-6 col-sm-6 col-md-3">
+                        <ul class="list-unstyled">
+                            <li><a href="#">Nordic Chair</a></li>
+                            <li><a href="#">Kruzo Aero</a></li>
+                            <li><a href="#">Ergonomic Chair</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="border-top copyright">
+            <div class="row pt-4">
+                <div class="col-lg-6">
+                    <p class="mb-2 text-center text-lg-start">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed with love by <a href="https://untree.co">Untree.co</a>  Distributed By <a href="https://themewagon.com">ThemeWagon</a>
+                    </p>
+                </div>
+
+                <div class="col-lg-6 text-center text-lg-end">
+                    <ul class="list-unstyled d-inline-flex ms-auto">
+                        <li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</footer>
+<script>
+    function deleteWishList(id) {
+      Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor:  "  #32a852",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch(`/deleteWishList/${id}`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' }
+            });
+  
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+  
+            const data = await response.json();
+  
+            if (data.success) {
+              Swal.fire({
+                title: "Removed!",
+                icon: "success",
+                showConfirmButton:false
+              });           
+              setTimeout(() => {
+                location.reload();
+              }, 2000);
+              
+            } else {
+              throw new Error('Server response indicates failure');
+            }
+          } catch (error) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!"
+            });
+            console.error('Error occurred while deleting wishlist:', error);
+          }
+        }
+      });
+    }
+    async function addToWishlist(id) {
+        Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor:  "  #32a852",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+            fetch(`/addToCart/${id}`, {
+              method: "GET",
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }).then(success => {
+              Swal.fire({
+                icon: "success",
+                title: "Product added to  cart.",
+                showConfirmButton: false
+              });
+              setTimeout(() => {
+                location.reload()
+              }, 2000);
+            })
+              .catch(error => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Something went wrong!",
+
+                });
+                console.error('error occured while product adding to cart');
+              })        }
+      });
+    }
+  </script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSGFpoO/ufreqqF6MVu4JdG7PhIxZlW8sSJv43gkdSHlua9DmM/" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<%- include('../user/userLayout/userFooter.ejs') %>

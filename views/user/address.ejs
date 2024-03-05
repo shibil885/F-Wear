@@ -1,0 +1,202 @@
+<%- include('../user/userLayout/userHeader') %>
+<style>
+    	.badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+</style>
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark pb-3" aria-label="Furni navigation bar"
+        style="height:71px;">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsFurni"
+                aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarsFurni">
+                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/shop">Shop</a>
+                    </li>
+                    <li><a class="nav-link" href="about.html">About us</a></li>
+                    <li><a class="nav-link" href="services.html">Services</a></li>
+                    <li><a class="nav-link" href="blog.html">Blog</a></li>
+                    <li><a class="nav-link" href="contact.html">Contact us</a></li>
+                </ul>
+                <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                    <li>
+                        <a class="nav-link" href="/cartPage" style="position: relative;">
+                            <img src="/assets/images/cart.svg">
+                            <% if (cartLength !== null || undefined) { %>
+                                <span class="badge"><%= cartLength %></span>
+                             <% } else { %>
+                                <span class="badge">0</span>
+                            <% } %>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <aside class="navbar-aside col-md-3" id="offcanvas_asid">
+        <div class="aside-top" style="background-color: #3c5d50;">
+            <a href="/" class="brand-wrap text-decoration-none d-flex">
+                <h3 class="text-warning fw-bold">.f</h3><h3 class="fw-bold text-light">-Wear</h3>
+            </a>
+        </div>
+        <ul class="menu-aside">
+            <li class="menu-item">
+                <a class="menu-link" href="/userAccount"> <i class="icon material-icons md-person"></i>
+                    <span class="text">Info</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" href="/orders"> <i class="icon material-icons md-shopping_cart"></i>
+                    <span class="text">Orders</span>
+                </a>
+            </li>
+            <li class="menu-item active">
+                <a class="menu-link" href="/address"> <i class="icon material-icons md-contact_mail"></i>
+                    <span class="text">Address</span>
+                </a>
+                <div class="submenu">
+                </div>
+            </li>
+            <li class="menu-item ">
+                <a class="menu-link" href="/wallet"> <i class="icon material-icons md-account_balance_wallet"></i>
+                    <span class="text">Wallet</span>
+                </a>
+            </li>
+            <li class="menu-item ">
+                <a class="menu-link" href="/changePasswordPage"> <i class="icon material-icons md-vpn_key"></i>
+                    <span class="text">Change password</span>
+                </a>
+            </li>
+            <li class="menu-item ">
+                <a class="nav-link d-flex text-danger ms-2" href="/userLogout">
+                    <span class="material-symbols-outlined">
+                        logout
+                    </span>
+                    Logout
+                </a>
+            </li>
+        </ul>
+        <hr>
+        <br>
+    </aside>
+    <main class="main-wrap" style="height: 100%;">
+        <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">
+                    <Address></Address>
+                </h2>
+                <div>
+                    <a href="/addAddress" class="btn btn-primary"><i class="material-icons md-plus"></i> Create
+                        new</a>
+                </div>
+            </div>
+            <% if (userAddress && userAddress.details && userAddress.details.length > 0) { %>
+                <% userAddress.details.forEach(element=> { %>
+                    <div class="row mb-3">
+                        <div class="col-lg-4">
+                            <div class="card mb-3 mb-lg-0">
+                                <div class="card-body">
+                                    <address>
+                                        <%= element.firstName %>
+                                            <%= element.lastName %><br>
+                                                <%= element.address %>,<br>
+                                                    <%= element.pincode %>. <br>
+                                                        <%= element.state %>, <%= element.country %>
+                                    </address>
+
+                                    <!-- Delete button -->
+                                    <a href="/editAddresPage/<%= element._id %>" class="btn btn-primary mb-3 text-right">Edit</a>
+                                    <a class="btn btn-danger mb-3 text-right"
+                                        onclick="deleteAddress('<%=element._id %>')">Delete</a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                        <% } else { %>
+                            <h2 class="text-secondary">0 address</h2>
+                            <% } %>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row">
+                <div class="col-sm-6">
+                    <script>
+                        document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script>
+        function deleteAddress(addressId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/deleteAddress/${addressId}`, {
+                            method: 'DELETE',
+                            headers: { 'content-type': 'application/json' }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        console.log(response);
+                        const data = await response.json(); 
+                        if (data.success) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your file has been deleted.",
+                                icon: "success",
+                                showConfirmButton:false
+                            });
+
+                            setTimeout(() => {
+                                location.reload();
+                            }, 2000);
+                        } else {
+                            throw new Error('Server response indicates failure');
+                        }
+
+                    } catch (error) {
+                        console.error(error);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Something went wrong!",
+                        });
+                    }
+                }
+            });
+        }
+
+    </script>
+    <%- include('../user/userLayout/userFooter') %>

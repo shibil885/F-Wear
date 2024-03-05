@@ -1,0 +1,146 @@
+<%-include('../admin/adminLayout/adminHeader') %>
+<style>
+    body {
+        background-color:#3c5d50;
+    }
+    .card{  
+      align-items: center;
+      justify-content: center; 
+      margin-top: 100px; 
+      border: none;
+      
+    }
+    .form-outline small{
+      visibility: hidden;
+     
+    }
+    .form-outline{
+      position: relative;
+    }
+    .form-outline i{
+      position: absolute;
+      top: 39px;
+      right: 10px;
+      visibility: hidden;
+    }
+    .form-outline.success label{
+      color: #2ecc71;
+      visibility: visible;
+    }
+    .form-outline.success i.fa-check-circle{
+      color: #2ecc71;
+      visibility: visible;
+    }
+    .form-outline.error i.fa-exclamation-circle{
+      color: #e74c3c;
+      visibility: visible;
+    }
+    .form-outline.error small{
+      color: #e74c3c;
+      visibility: visible;
+    }
+</style>
+<section class="vh-100 gradient-custom">
+    <div class="container py-5 h-50">
+      <div class="row d-flex justify-content-center align-items-center h-50">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card text-white" style="background-color: #3c5d50;">
+            <div class="card-body text-center outline" style="background-color: #bd9f59; width: 450px;">
+                <h2 class="fw-bold mb-2 text-dark" id="login" >Admin Login</h2>
+                <% if (locals.alert) { %>
+                  <div class=" text-center text-danger" id="error">
+                      <%= alert %>
+                  </div>
+              <% } %>
+                <form action="/adminValidation" class="mt-5" method="post" id="form">
+
+                    <div class="form-outline form-white">
+                      <small>Error message</small>
+                        <input type="email" id="email" placeholder="Email" class="form-control form-control-lg mb-2" name="email" />
+                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-exclamation-circle"></i>    
+                    </div>
+                      <div class="form-outline form-white mb-4">
+                        <small>Error message</small>
+                        <input type="password" id="password" placeholder="Password" class="form-control form-control-lg" name="password"/>
+                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-exclamation-circle"></i>
+                      </div>
+                      
+                      <button class="btn btn-outline-dark btn-lg px-5 mt-3 mb-3" type="submit">Login</button>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+          setTimeout(()=>{
+      document.getElementById('error').style.display='none'
+    },3000)
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('form');
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        checkInputs();
+      });
+  
+      function checkInputs() {
+        const emailValue = email.value.trim();
+        const passwordValue = password.value.trim();
+        // Validating email
+        if (emailValue === '') {
+          setErrorFor(email, 'Email cannot be blank');
+        } else if (
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+            emailValue
+          ) === false
+        ) {
+          setErrorFor(email, 'Invalid email');
+        } else {
+          setSuccessFor(email);
+        }
+  
+        // Validating password
+        if (passwordValue === '') {
+          setErrorFor(password, 'Password cannot be blank');
+        } else if (/^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(passwordValue) === false) {
+          setErrorFor(
+            password,
+            'Invalid Password'
+          );
+        } else {
+          setSuccessFor(password);
+        }
+        // Check if all inputs are successful, then submit the form
+        if (
+          !form.querySelector('.form-outline.error') &&
+
+          emailValue &&
+          passwordValue 
+        ) {
+          form.submit();
+        }
+      }
+  
+      // Handle validation error
+      function setErrorFor(input, message) {
+        const formOutline = input.parentElement; // For taking the form-controll error class
+        const small = formOutline.querySelector('small');
+        small.innerHTML = message;
+        formOutline.className = 'form-outline error';
+      }
+  
+      // Handle validation success
+      function setSuccessFor(input) {
+        const formOutline = input.parentElement; // For taking the form-controll success class
+        formOutline.className = 'form-outline success';
+      }
+    });
+  </script>
+<%-include('../admin/adminLayout/adminFooter') %>

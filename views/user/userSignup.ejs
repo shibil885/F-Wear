@@ -1,0 +1,216 @@
+<%-include('../user/userLayout/userHeader')%>
+<style>
+		body {
+			background: radial-gradient(circle, rgb(136, 203, 192), #3c5d50);
+		}
+    .form-outline small{
+      visibility: hidden;
+    }
+    .form-outline{
+      position: relative;
+    }
+    .form-outline i{
+      position: absolute;
+      top: 39px;
+      right: 10px;
+      visibility: hidden;
+    }
+    .form-outline.success label{
+      color: #2ecc71;
+      visibility: visible;
+    }
+    .form-outline.success i.fa-check-circle{
+      color: #2ecc71;
+      visibility: visible;
+    }
+    .form-outline.error i.fa-exclamation-circle{
+      color: #e74c3c;
+      visibility: visible;
+    }
+    .form-outline.error small{
+      color: #e74c3c;
+      visibility: visible;
+    }
+</style>
+<section class=" mt-5 ">
+  <div class="mask d-flex align-items-center gradient-custom-3">
+    <div class="container">
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class=" col-11 col-md-8 col-lg-6 col-xl-5">
+           <div class="card" style="border-radius: 15px;">
+            <div class="signupcard card-body p-3" style="border-radius: 15px">
+              <h2 class="text-uppercase fw-bold text-center mb-5">Sign up</h2>
+    
+
+            <% if (locals.alert) { %>
+              <div class=" text-center text-danger" id="error">
+                  <%= alert%>
+              </div>
+          <% } %>
+              <form id="form" class="mt-3" action="/signup" method="post">
+                <div class="form-outline">
+                    <label class="form-label" id="usernameLabel">Username</label>
+                    <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <small>Error message</small>
+                  <input type="text" id="username" class="form-control form-control-lg" name="username"/>
+                </div>
+                <div class="form-outline">
+                    <label class="form-label" id="phoneLabel">Phone</label>
+                    <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <small>Error message</small>
+                  <input type="text" id="phone" class="form-control form-control-lg" name="phone"/>
+                </div>
+                <div class="form-outline">
+                    <label class="form-label" id="emailLabel">Email</label>
+                    <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <small>Error message</small>
+                  <input type="email" id="email" class="form-control form-control-lg" name="email"/>
+                </div>
+                <div class="form-outline">
+                    <label class="form-label" id="passwordLabel">Password</label>
+                    <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <small>Error message</small>
+                  <input type="password" id="password" class="form-control form-control-lg" name="password"/>
+                </div>
+                <div class="form-outline">
+                    <label class="form-label" id="confirmpasswordLabel">Confirm password</label>
+                    <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <small>Error message</small>
+                  <input type="password" id="confirmpassword" class="form-control form-control-lg" name="confirmpassword"/>
+                </div>
+
+               
+
+                <div class="d-flex justify-content-center">
+                  <button type="submit"  class="btn-lg text-light btn btn-outline-success mt-4" id="signup-button">Register</button>
+                </div>
+
+                
+
+              </form>
+              <p class="text-center text-muted mb-0 mt-3">Have already an account? <a href="/userLogin"
+                class="text-body"><u>Login</u></a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  setTimeout(()=>{
+    document.getElementById('error').style.display='none'
+  },3000)
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('form');
+    const username = document.getElementById('username');
+    const phone = document.getElementById('phone');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirmpassword = document.getElementById('confirmpassword');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      checkInputs();
+    });
+
+    function checkInputs() {
+      const usernameValue = username.value.trim();
+      const phoneValue = phone.value.trim();
+      const emailValue = email.value.trim();
+      const passwordValue = password.value.trim();
+      const confirmpasswordValue = confirmpassword.value.trim();
+
+      // Validating username
+      if (usernameValue === '') {
+        setErrorFor(username, 'Username cannot be blank');
+      } else if (/^[a-zA-Z][a-zA-Z0-9_-]{2,15}$/.test(usernameValue) === false) {
+        setErrorFor(username, 'Invalid username');
+      } else {
+        setSuccessFor(username);
+      }
+
+      // Validating phone
+      if (phoneValue === '') {
+        setErrorFor(phone, 'Phone cannot be blank');
+      } else if (/^[0-9]{10}$/.test(phoneValue) === false) {
+        setErrorFor(phone, 'Invalid phone number');
+      } else {
+        setSuccessFor(phone);
+      }
+
+      // Validating email
+      if (emailValue === '') {
+        setErrorFor(email, 'Email cannot be blank');
+      } else if (
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+          emailValue
+        ) === false
+      ) {
+        setErrorFor(email, 'Invalid email');
+      } else {
+        setSuccessFor(email);
+      }
+
+      // Validating password
+      if (passwordValue === '') {
+        setErrorFor(password, 'Password cannot be blank');
+      } else if (/^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(passwordValue) === false) {
+        setErrorFor(
+          password,
+          'Password must be at least 8 characters and contain at least 1 letter and 1 digit'
+        );
+      } else {
+        setSuccessFor(password);
+      }
+
+      // Confirm password
+      if (confirmpasswordValue === '') {
+        setErrorFor(confirmpassword, 'Password cannot be blank');
+      } else if (
+        passwordValue !== confirmpasswordValue ||
+        /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(passwordValue) === false
+      ) {
+        setErrorFor(confirmpassword, 'Password does not match');
+      } else {
+        setSuccessFor(confirmpassword);
+      }
+
+      // Check if all inputs are successful, then submit the form
+      if (
+        !form.querySelector('.form-outline.error') &&
+        usernameValue &&
+        phoneValue &&
+        emailValue &&
+        passwordValue &&
+        confirmpasswordValue
+      ) {
+        form.submit();
+      }
+    }
+
+    // Handle validation error
+    function setErrorFor(input, message) {
+      const formOutline = input.parentElement; // For taking the form-controll error class
+      const small = formOutline.querySelector('small');
+      small.innerHTML = message;
+      formOutline.className = 'form-outline error';
+    }
+
+    // Handle validation success
+    function setSuccessFor(input) {
+      const formOutline = input.parentElement; // For taking the form-controll success class
+      formOutline.className = 'form-outline success';
+    }
+  });
+</script>
+
+<%-include('../user/userLayout/userFooter')  %>

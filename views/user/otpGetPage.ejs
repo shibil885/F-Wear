@@ -1,0 +1,101 @@
+<%-include('../user/userLayout/userHeader')  %>
+
+<style>
+  		body {
+			background: radial-gradient(circle, rgb(136, 203, 192), #3c5d50);
+		}
+      .form-outline small{
+      visibility: hidden;
+     
+    }
+    .form-outline{
+      position: relative;
+    }
+    .form-outline i{
+      position: absolute;
+      top: 39px;
+      right: 10px;
+      visibility: hidden;
+    }
+    .form-outline.success label{
+      color: #2ecc71;
+      visibility: visible;
+    }
+    .form-outline.success i.fa-check-circle{
+      color: #2ecc71;
+      visibility: visible;
+    }
+    .form-outline.error i.fa-exclamation-circle{
+      color: #e74c3c;
+      visibility: visible;
+    }
+    .form-outline.error small{
+      color: #e74c3c;
+      visibility: visible;
+    }
+</style>
+
+<section class="mt-5">
+  <div class="mask d-flex align-items-center gradient-custom-3">
+    <div class="container">
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card" style="border-radius: 15px;">
+            <div class="signupcard card-body p-3" style="border-radius: 15px">
+              <h2 class="text-uppercase fw-bold text-center mb-5">OTP Verification</h2>
+
+              <% if (locals.otpAlert) { %>
+                <div class="text-center text-danger">
+                  <%= otpAlert %>
+                </div>
+              <% } %>
+              <form id="form" class="mt-3" action="/userValidation" method="post">
+                <div class="form-outline">
+                  <label class="form-label" id="otpLabel">Enter OTP</label>
+                  <i class="fas fa-check-circle"></i>
+                  <i class="fas fa-exclamation-circle"></i>
+                  <small>Error message</small>
+                  <input type="text" id="otp" class="form-control form-control-lg" name="otp" />
+                </div>
+
+                <div class="d-flex justify-content-center">
+                  <button type="submit" class="btn-lg text-light btn btn-success mt-4 text-success" id="verify-button">Verify</button>
+                </div>
+              </form>
+
+              <div id="resend-otp-container" class="text-center mt-3">
+                <a href="/resendotp" class="text-body"><u></u></a>
+              </div>
+
+              <div id="timer" class="text-center mt-3"></div> <!-- Timer display -->
+
+            </div>
+          </div>
+        </div>      
+      </div>
+    </div>
+  </div>
+</section>
+
+<%-include('../user/userLayout/userFooter')  %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) { 
+    var timeleft = 60; 
+    var downloadTimer = setInterval(function(){
+      document.getElementById("timer").innerHTML = " click resend otp after : " + timeleft + " seconds";
+      timeleft -= 1;
+      if(timeleft <= 0){
+        clearInterval(downloadTimer);
+        document.getElementById("timer").innerHTML = "";
+        var resendButton = document.createElement("button");
+        resendButton.innerHTML = "Resend OTP";
+        resendButton.className = "btn-lg text-light btn btn-success mt-4 text-success";
+        resendButton.onclick = function() {
+          window.location.href = "/resendotp";
+        };
+        document.getElementById("resend-otp-container").appendChild(resendButton);
+      }
+    }, 1000);
+  });
+</script>

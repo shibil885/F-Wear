@@ -1,0 +1,164 @@
+<%-include('../admin/adminLayout/adminHeader') %>
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+          <a href="/adminPanel" class="brand-wrap">
+            <h3>.F-Wear</h3>
+          </a>
+        </div>
+        <nav>
+          <ul class="menu-aside">
+            <li class="menu-item">
+              <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
+                <span class="text">Adminpanel</span>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a class="menu-link" href="/productList"> <i class="icon material-icons md-shopping_bag"></i>
+                <span class="text">Products</span>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a class="menu-link" href="/orderlist"> <i class="icon material-icons md-shopping_cart"></i>
+                <span class="text">Orders</span>
+              </a>
+              <div class="submenu">
+              </div>
+            </li>
+            <li class="menu-item ">
+              <a class="menu-link" href="/users"> <i class="icon material-icons md-person"></i>
+                <span class="text">Users</span>
+              </a>
+            </li>
+            <li class="menu-item ">
+              <a class="menu-link" href="/Categories"> <i class="icon material-icons md-store"></i>
+                <span class="text">Categories</span>
+              </a>
+            </li>
+            <li class="menu-item active">
+              <a class="menu-link" href="/couponList"> <i class="icon material-icons md-local_offer"></i>
+                <span class="text">Coupon</span>
+              </a>
+            </li>
+          </ul>
+          <hr>
+          <br>
+          <br>
+        </nav>
+      </aside>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+              <form class="searchform">
+                <div class="input-group">
+                  <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                  <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+                </div>
+                <datalist id="search_terms">
+                  <option value="Products">
+                  <option value="New orders">
+                  <option value="Apple iphone">
+                  <option value="Ahmed Hassan">
+                </datalist>
+              </form>
+            </div>
+            <div>
+              <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+            </div>
+          </header>
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Coupon List </h2>
+                </div>
+                <div>
+                    <a href="/addCoupon" class="btn btn-primary"><i class="material-icons md-plus"></i>Create new</a>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Coupon Code</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">%</th>
+                                    <th scope="col">Up to</th>
+                                    <th scope="col">Max amount</th>
+                                    <th scope="col">Exp date</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col"> Action </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (coupon.length > 0) { %>
+                                    <% coupon.forEach(element => { %>
+                                        <tr>
+                                            <td><%= element.coupon_code %></td>
+                                            <td><%= element.description %></td>
+                                            <td><%= element.percentage %></td>
+                                            <td><%= element.minimumAmount %></td>
+                                            <td><%= element.maximumAmount %></td>
+                                            <td><%= formatDate(element.expiryDate) %></td>
+                                            <% function formatDate(date) {
+                                                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                                                return new Date(date).toLocaleDateString(undefined, options);
+                                            } %>
+                                            <td>
+                                                <% if (element.isListed == true) { %>
+                                                    <span class="text-success">List</span>
+                                                <% } else { %>
+                                                    <span class="text-danger">Unlist</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (element.isListed) { %>
+                                                    <a class="badge rounded alert-danger" onclick="unlistCoupon('<%= element._id %>')">Unlist</a>
+                                                <% } else { %>
+                                                    <a class="badge rounded alert-success" onclick="listCoupon('<%= element._id %>')">List</a>
+                                                <% } %>
+                                                <a href="/editCoupon/?couponId=<%= element._id %>"class="badge rounded alert-warning" onclick="editCoupon('<%= element._id %>')">Edit</a>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="8">No coupons available.</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive //end -->
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+            <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+      
+<%-include('../admin/adminLayout/adminFooter') %>

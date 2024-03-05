@@ -1,0 +1,268 @@
+<%- include('../user/userLayout/userHeader') %>
+<style>
+    body {
+        background: radial-gradient(circle, rgb(136, 203, 192), #3c5d50);
+    }
+    .cancel-button {
+            padding: 8px 16px;
+            border: 1px solid #dc3545;
+            border-radius: 20px;
+            color: #dc3545;
+            background-color: transparent;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .cancel-button:hover {
+            background-color: #dc3545;
+            /* Red background on hover */
+            color: #fff;
+            /* White text color on hover */
+        }
+        .badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+</style>
+<nav class="custom-navbar navbar navbar-expand-md navbar-dark pb-3" aria-label="Furni navigation bar" style="height:71px;">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsFurni"
+            aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsFurni">
+            <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/shop">Shop</a>
+                </li>
+                <li><a class="nav-link" href="about.html">About us</a></li>
+                <li><a class="nav-link" href="services.html">Services</a></li>
+                <li><a class="nav-link" href="blog.html">Blog</a></li>
+                <li><a class="nav-link" href="contact.html">Contact us</a></li>
+            </ul>
+            <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+                <li>
+                    <a class="nav-link" href="/cartPage" style="position: relative;">
+                        <img src="/assets/images/cart.svg">
+                        <% if (cartLength !== null || undefined) { %>
+                            <span class="badge"><%= cartLength %></span>
+                         <% } else { %>
+                            <span class="badge">0</span>
+                        <% } %>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<aside class="navbar-aside col-md-3" id="offcanvas_asid">
+    <div class="aside-top" style="background-color: #3c5d50;">
+        <a href="/" class="brand-wrap text-decoration-none d-flex">
+            <h3 class="text-warning fw-bold">.f</h3><h3 class="fw-bold text-light">-Wear</h3>
+        </a>
+    </div>
+    <ul class="menu-aside">
+        <li class="menu-item">
+            <a class="menu-link" href="/userAccount"> <i class="icon material-icons md-person"></i>
+                <span class="text">Info</span>
+            </a>
+        </li>
+        <li class="menu-item active">
+            <a class="menu-link" href="/orders"> <i class="icon material-icons md-shopping_cart"></i>
+                <span class="text">Orders</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a class="menu-link" href="/address"> <i class="icon material-icons md-contact_mail"></i>
+                <span class="text">Address</span>
+            </a>
+            <div class="submenu">
+            </div>
+        </li>
+        <li class="menu-item ">
+            <a class="menu-link" href="/wallet"> <i class="icon material-icons md-account_balance_wallet"></i>
+                <span class="text">Wallet</span>
+            </a>
+        </li>
+        <li class="menu-item ">
+            <a class="menu-link" href="/changePasswordPage"> <i class="icon material-icons md-vpn_key"></i>
+                <span class="text">Change password</span>
+            </a>
+        </li>
+        <li class="menu-item ">
+            <a class="nav-link d-flex text-danger ms-2" href="/userLogout">
+                <span class="material-symbols-outlined">
+                    logout
+                </span>
+                Logout
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <br>
+</aside>
+<section class="printable-section">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card" style="border-radius: 10px;">
+                    <div class="card-header px-4 py-5">
+                        <h5 class="text-muted mb-0">Thanks for your Order, <span style="color: #a8729a;">
+                                <%=order.userId.username%>
+                            </span>!</h5>
+                        <hr style="width: 300px;">
+                        <h6><strong>Delivery Address</strong></h6>
+                        <div class="col-lg-6">
+                            <div class="mb-3 mb-lg-0">
+                                <div>
+                                    <!-- Address details -->
+                                    <address>
+                                        <%= order.firstName %>
+                                            <%= order.lastName %><br>
+                                                <%= order.address %>,<br>
+                                                    <%= order.pincode %>. <br>
+                                                        <%= order.state %>, <%= order.country %>,<br>
+                                                        <%= order.phoneNumber %><br>
+                                    </address>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="fw-bold mb-0">Order Details:</p>
+                        <hr>
+                        <div>
+                            <p class="m-0">OrderId : <b>#<%= order._id %></b></p>
+                            <p class="m-0">Payment method : <%= order.paymentMethod %></p>
+                            <p class="m-0">Date : <%= order.date.toLocaleDateString() %></p>
+                        </div>
+                        <hr>
+                        <p class="fw-bold mb-0">Product Details:</p>
+                        <div class="card-body p-4" style="background-color: #f8f8f8;">
+                            <% if (order.products && order.products.length> 0) { %>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Image</th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Qty</th>
+                                                    <th scope="col">Total</th>
+                                                    <th scope="col">Order Status</th>
+                                                    <th scope="col"> Action </th>
+                                                </tr>
+                                            </thead>
+                                                <tbody>
+                                                        <% order.products.reverse().forEach((item,index)=> { %>
+                                                    <tr>
+                                                        <td><img src="/<%= item.productId.images[0] %>" alt="" width="50px"></td>
+                                                        <td><b><%= item.productId.product_title %></b></td>
+                                                        <td><%= item.quantity %></td>
+                                                        <td><%= item.total%>₹</td>
+                                                        <td class="text-warning"><%= item.status %></td>
+                                                        <td>
+                                                        <% if (item.status==='pending' && item.isDelivered==false) { %>
+                                                            <button
+                                                                class="btn btn-danger cancel-button px-2 py-0"
+                                                                onclick="cancelOrder('<%=item.productId._id%>','<%=order._id%>')">
+                                                                Cancel
+                                                            </button>
+                                                            <% } else { %>
+                                                                <button
+                                                                class="btn btn-danger rounded mt-4 p-2" disabled>
+                                                                Cancel
+                                                            </button>
+                                                            <% } %>
+                                                        </td>
+                                                    </tr>
+                                                    <% }) %>
+                                                    <% } else { %>
+                                                        <h3 class="text-secondery text-center">can't find Product</h3>
+                                                      <% } %>
+                                                </tbody>
+                                        </table>
+                                    </div>
+                                            <!-- Display order details -->
+                                            <div class="text-end">
+                                                <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery
+                                                        Charges : </span>  50</p>
+                                            </div>
+                                            <div class='text-end'>
+                                                <p class="text-muted mb-0"><span class="fw-bold me-4">Grand Total :</span>₹
+                                                    <b><%= order.totalPrice %></b>
+                                                </p>
+                                            </div>
+                        </div>
+                        <div class="card-footer border-0 px-4 py-5"
+                            style="background-color:rgb(136, 203, 192) ; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+                            <h5
+                                class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">
+                                Total Bill: <span class="h2 mb-0 ms-2"></span>₹ <%= order.totalPrice %>
+                            </h5>
+                        </div>
+                        <% if (order.paymentStatus == 'paid') { %>
+                            <div class="text-center mt-3">
+                                <a href="/downloadInvoice/<%= order._id %>" class=" btn btn-primary ">Download invoice</a>
+                            </div>
+                         <% } else { %>
+                          
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+<script>
+    function cancelOrder(productId,orderId) {
+        Swal.fire({
+            title: "Are you sure?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#14A44D",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/cancelOrder', {
+                    method: "PATCH",
+                    headers: { 'Content-Type': 'application/json' },
+                    body:JSON.stringify({productId,orderId})
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Something went wrong!');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        Swal.fire({
+                            title: "Cancelled!",
+                            text: "Your order has been cancelled.",
+                            icon: "success",
+                            showConfirmButton:false
+                        });
+                        setTimeout(() => {
+                            location.reload()
+                        }, 2000);
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: error.message || "Something went wrong!",
+                        });
+                    });
+            }
+        });
+    }
+</script>
+
+<%- include('../user/userLayout/userFooter') %>

@@ -1,0 +1,326 @@
+<%- include('../user/userLayout/userHeader') %>
+<style>
+  .form-outline small {
+    visibility: hidden;
+  }
+
+  .form-outline {
+    position: relative;
+  }
+
+  .form-outline i {
+    position: absolute;
+    top: 39px;
+    right: 10px;
+    visibility: hidden;
+  }
+
+  .form-outline.success label {
+    color: #2ecc71;
+    visibility: visible;
+  }
+
+  .form-outline.success i.fa-check-circle {
+    color: #2ecc71;
+    visibility: visible;
+  }
+
+  .form-outline.error i.fa-exclamation-circle {
+    color: #e74c3c;
+    visibility: visible;
+  }
+
+  .form-outline.error small {
+    color: #e74c3c;
+    visibility: visible;
+  }
+  .badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+</style>
+<aside class="navbar-aside col-md-3" id="offcanvas_asid">
+    <div class="aside-top" style="background-color: #3c5d50;">
+        <a href="/" class="brand-wrap text-decoration-none d-flex">
+            <h3 class="text-warning fw-bold">.f</h3><h3 class="fw-bold text-light">-Wear</h3>
+        </a>
+    </div>
+    <ul class="menu-aside">
+        <li class="menu-item">
+            <a class="menu-link" href="/userAccount"> <i class="icon material-icons md-person"></i>
+                <span class="text">Info</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a class="menu-link" href="/orders"> <i class="icon material-icons md-shopping_cart"></i>
+                <span class="text">Orders</span>
+            </a>
+        </li>
+        <li class="menu-item active">
+            <a class="menu-link" href="/address"> <i class="icon material-icons md-contact_mail"></i>
+                <span class="text">Address</span>
+            </a>
+            <div class="submenu">
+            </div>
+        </li>
+        <li class="menu-item ">
+            <a class="menu-link" href="/wallet"> <i class="icon material-icons md-account_balance_wallet"></i>
+                <span class="text">Wallet</span>
+            </a>
+        </li>
+        <li class="menu-item ">
+            <a class="menu-link" href="/changePasswordPage"> <i class="icon material-icons md-vpn_key"></i>
+                <span class="text">Change password</span>
+            </a>
+        </li>
+        <li class="menu-item ">
+            <a class="nav-link d-flex text-danger ms-2" href="/userLogout">
+                <span class="material-symbols-outlined">
+                    logout
+                </span>
+                Logout
+            </a>
+        </li>
+    </ul>
+    <hr>
+    <br>
+</aside>
+<nav class="custom-navbar navbar navbar-expand-md navbar-dark pb-3" aria-label="Furni navigation bar"
+style="height:71px;">
+<div class="container">
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsFurni"
+		aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="navbarsFurni">
+		<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+			<li class="nav-item">
+				<a class="nav-link" href="/">Home</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="/shop">Shop</a>
+			</li>
+			<li><a class="nav-link" href="about.html">About us</a></li>
+			<li><a class="nav-link" href="services.html">Services</a></li>
+			<li><a class="nav-link" href="blog.html">Blog</a></li>
+			<li><a class="nav-link" href="contact.html">Contact us</a></li>
+		</ul>
+		<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+			<li>
+				<a class="nav-link" href="/cartPage" style="position: relative;">
+					<img src="/assets/images/cart.svg">
+					<% if (cartLength !== null || undefined) { %>
+						<span class="badge"><%= cartLength %></span>
+					 <% } else { %>
+						<span class="badge">0</span>
+					<% } %>
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
+</nav>
+<main class="main-wrap">
+  <section class=" gradient-custom">
+    <div class="container py-5">
+      <div class="row d-flex justify-content-center align-items-center">
+		<div class="ms-5">
+			<div class="row">
+				<div class="col-md-6 mb-5 mb-md-0">
+					<form action="/editAddress/<%= addressForEdit._id %>" method="post" id="form">
+						<div class="p-3 p-lg-5 border bg-white">
+							<div class="form-group">
+								<div class="form-outline">
+									<% if(locals.alert){ %>
+										<p class="text-center text-danger" id="alert">
+											<%= alert %>
+										</p>
+										<% } %>
+											<label for="c_country" class="text-black">Country <span
+													class="text-danger">*</span></label>
+											<small>Error message</small>
+											<input type="text" class="form-control" id="c_name" name="c_name" value="<%= addressForEdit.country %>">
+								</div>
+								<div class="form-group row">
+									<div class="form-outline">
+										<label for="c_fname" class="text-black">First Name <span
+												class="text-danger">*</span></label>
+										<small>Error message</small>
+										<input type="text" class="form-control" id="c_fname" name="c_fname" value="<%= addressForEdit.firstName %>">
+									</div>
+									<div class="form-outline">
+										<label for="c_lname" class="text-black">Last Name <span
+												class="text-danger">*</span></label>
+										<small>Error message</small>
+										<input type="text" class="form-control" id="c_lname" name="c_lname" value="<%= addressForEdit.lastName %>">
+									</div>
+								</div>
+								<div class="form-group row">
+									<div class="col-md-12 form-outline">
+										<label for="c_address" class="text-black">Address <span
+												class="text-danger">*</span></label>
+										<small>Error message</small>
+										<input type="text" class="form-control" id="c_address" name="c_address"value="<%= addressForEdit.address %>">
+									</div>
+								</div>
+								<div class="form-group row">
+									<div class="col-md-6 form-outline">
+										<label for="c_state_country" class="text-black">State <span
+												class="text-danger">*</span></label>
+										<small>Error message</small>
+										<input type="text" class="form-control" id="c_state" name="c_state" value="<%= addressForEdit.state %>">
+									</div>
+									<div class="col-md-6 form-outline">
+										<label for="c_postal_zip" class="text-black">Pincode<span
+												class="text-danger">*</span></label>
+										<small>Error message</small>
+										<input type="text" class="form-control" id="c_pincode" name="c_pincode" value="<%= addressForEdit.pincode %>">
+									</div>
+								</div>
+								<div class="col-md-6 form-outline">
+									<label for="c_phone" class="text-black">Phone <span class="text-danger">*</span></label>
+									<small>Error message</small>
+									<input type="text" class="form-control" id="c_phone" name="c_phone"
+										placeholder="Phone Number" value="<%= addressForEdit.phone %>">
+								</div>
+								<button class="btn btn-primary mt-5" type="submit">Submit</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+      </div>
+    </div>
+  </section>
+  <script>
+	setTimeout(() => {
+		document.getElementById('alert').style.display = 'none'
+	}, 3000);
+</script>
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const form = document.getElementById('form');
+		const c_name = document.getElementById('c_name');
+		const c_fname = document.getElementById('c_fname');
+		const c_lname = document.getElementById('c_lname');
+		const c_address = document.getElementById('c_address');
+		const c_state = document.getElementById('c_state');
+		const c_pincode = document.getElementById('c_pincode');
+		const c_phone = document.getElementById('c_phone');
+
+		form.addEventListener('submit', function (e) {
+			e.preventDefault();
+			checkInputs();
+		});
+
+		function checkInputs() {
+			const c_nameValue = c_name.value.trim();
+			const c_fnameValue = c_fname.value.trim();
+			const c_lnameValue = c_lname.value.trim();
+			const c_addressValue = c_address.value.trim();
+			const c_stateValue = c_state.value.trim();
+			const c_pincodeValue = c_pincode.value.trim();
+			const c_phoneValue = c_phone.value.trim();
+
+			// Validating countryname
+			if (c_nameValue === '') {
+				setErrorFor(c_name, 'Country cannot be blank');
+			} else if (/^[a-zA-Z][a-zA-Z0-9_-]{2,15}$/.test(c_nameValue) === false) {
+				setErrorFor(c_name, 'Invalid country name,check first letter is cap');
+			} else {
+				setSuccessFor(c_name);
+			}
+			// Validating fname
+			if (c_fnameValue === '') {
+				setErrorFor(c_fname, 'First name cannot be blank');
+			} else if (/^[a-zA-Z][a-zA-Z0-9_-]{2,15}$/.test(c_fnameValue) === false) {
+				setErrorFor(c_fname, 'Invalid entry');
+			} else {
+				setSuccessFor(c_fname);
+			}
+			// Validating lname
+			if (c_lnameValue === '') {
+				setErrorFor(c_lname, 'Last name cannot be blank');
+			} else if (/^[a-zA-Z][a-zA-Z0-9_-]{2,15}$/.test(c_lnameValue) === false) {
+				setErrorFor(c_lname, 'Invalid entry');
+			} else {
+				setSuccessFor(c_lname);
+			}
+
+			// Validating address
+			if (c_addressValue === '') {
+				setErrorFor(c_address, 'Address cannot be blank');
+			} else if (/^(?=.*.{7,})[a-zA-Z0-9\s,'-]+$/i.test(c_addressValue) === false) {
+				setErrorFor(c_address, 'Is it correct?');
+			} else {
+				setSuccessFor(c_address);
+			}
+
+			// Validating state
+			if (c_stateValue === '') {
+				setErrorFor(c_state, 'State cannot be blank');
+			} else if (/^[a-zA-Z][a-zA-Z0-9_-]{2,15}$/.test(c_stateValue) === false) {
+				setErrorFor(c_state, 'Invalid state name');
+			} else {
+				setSuccessFor(c_state);
+			}
+
+			// Validating pincode
+			if (c_pincodeValue === '') {
+				setErrorFor(c_pincode, 'Pincode cannot be blank');
+			} else if (/^[0-9]{6}$/.test(c_pincodeValue) === false) {
+				setErrorFor(c_pincode, 'Invalid pincode');
+			} else {
+				setSuccessFor(c_pincode);
+			}
+			// Validating phone
+			if (c_phoneValue === '') {
+				setErrorFor(c_phone, 'Phone cannot be blank');
+			} else if (/^[0-9]{10}$/.test(c_phoneValue) === false) {
+				setErrorFor(c_phone, 'Invalid phone number');
+			} else {
+				setSuccessFor(c_phone);
+			}
+
+			// Check if all inputs are successful, then submit the form
+			if (
+				!form.querySelector('.form-outline.error') &&
+				c_nameValue &&
+				c_fnameValue &&
+				c_lnameValue &&
+				c_addressValue &&
+				c_stateValue &&
+				c_pincodeValue &&
+				c_phoneValue
+			) {
+				form.submit();
+			}
+		}
+
+		// Handle validation error
+		function setErrorFor(input, message) {
+			const formOutline = input.parentElement;
+			const small = formOutline.querySelector('small');
+			small.innerHTML = message;
+			formOutline.className = 'form-outline error';
+		}
+
+		// Handle validation success
+		function setSuccessFor(input) {
+			const formOutline = input.parentElement;
+			const small = formOutline.querySelector('small');
+			small.innerHTML = ''; // Clear any existing error message
+			formOutline.className = 'form-outline success';
+		}
+	});
+</script>
+  <%- include('../user/userLayout/userFooter') %>
