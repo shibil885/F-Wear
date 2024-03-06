@@ -1,70 +1,18 @@
-<%-include('../admin/adminLayout/adminHeader') %>
+  <%- include('../admin/adminLayout/adminHeader') %>
+  <style>
+    .error-msg {
+      font-size: 14px;
+      margin-top: -20px;
+      color: red;
+    }
+  </style>
   <div class="screen-overlay"></div>
   <aside class="navbar-aside" id="offcanvas_aside">
-    <div class="aside-top">
-      <a href="/adminPanel" class="brand-wrap">
-        <h3>.F-Wear</h3>
-      </a>
-    </div>
-    <nav>
-      <ul class="menu-aside">
-        <li class="menu-item">
-          <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
-            <span class="text">Adminpanel</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/productList"> <i class="icon material-icons md-shopping_bag"></i>
-            <span class="text">Products</span>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a class="menu-link" href="/orderlist"> <i class="icon material-icons md-shopping_cart"></i>
-            <span class="text">Orders</span>
-          </a>
-          <div class="submenu">
-          </div>
-        </li>
-        <li class="menu-item ">
-          <a class="menu-link" href="/users"> <i class="icon material-icons md-person"></i>
-            <span class="text">Users</span>
-          </a>
-        </li>
-        <li class="menu-item ">
-          <a class="menu-link" href="/Categories"> <i class="icon material-icons md-store"></i>
-            <span class="text">Categories</span>
-          </a>
-        </li>
-        <li class="menu-item active">
-          <a class="menu-link" href="/couponList"> <i class="icon material-icons md-local_offer"></i>
-            <span class="text">Coupon</span>
-          </a>
-        </li>
-      </ul>
-      <hr>
-      <br>
-      <br>
-    </nav>
+    <!-- Navbar content -->
   </aside>
   <main class="main-wrap">
     <header class="main-header navbar">
-      <div class="col-search">
-        <form class="searchform">
-          <div class="input-group">
-            <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-            <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
-          </div>
-          <datalist id="search_terms">
-            <option value="Products">
-            <option value="New orders">
-            <option value="Apple iphone">
-            <option value="Ahmed Hassan">
-          </datalist>
-        </form>
-      </div>
-      <div>
-        <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
-      </div>
+      <!-- Main header content -->
     </header>
     <section class="content-main">
       <div class="content-header">
@@ -80,49 +28,47 @@
                 <div class="text-danger text-center m-3" id="error">
                   <%= locals.alert %>
                 </div>
-                <% } %>
-              <form action="/addCoupon" method="post">
+              <% } %>
+              <form action="/addCoupon" method="post" onsubmit="return validateForm()">
                 <div class="mb-4">
                   <label for="coupon_code" class="form-label">Coupon code</label>
-                  <input type="text" placeholder="Type here" name="coupon_code" class="form-control" id="coupon_code"
-                    onkeyup="validateCode()" />
-                  <span id="code-error" style="font-size: 14px; margin-top: -20px; color: green;"></span>
+                  <input type="text" placeholder="Type here" name="coupon_code" class="form-control" id="coupon_code" onkeyup="validateCode()" />
+                  <span id="code-error" class="error-msg"></span>
                 </div>
 
                 <div class="mb-4">
                   <label class="form-label">Description</label>
-                  <textarea placeholder="Type here" name="description" class="form-control" id="coupon_description"
-                    rows="4" onkeyup="validateDescription()"></textarea>
-                  <span id="description-error" style="font-size: 14px; margin-top: -20px;color: green;"></span>
+                  <textarea placeholder="Type here" name="description" class="form-control" id="coupon_description" rows="4" onkeyup="validateDescription()"></textarea>
+                  <span id="description-error" class="error-msg"></span>
                 </div>
+
                 <div class="mb-4">
                   <label class="form-label">Percentage</label>
-                  <input placeholder="0" name="percentage" class="form-control" id="percentage"
-                    onkeyup="validatePrice()">
-                  <span id="price-error" style="font-size: 14px; margin-top: -20px;color: green;"></span>
+                  <input placeholder="0" name="percentage" class="form-control" id="percentage" onkeyup="validatePrice()">
+                  <span id="price-error" class="error-msg"></span>
                 </div>
+
                 <div class="mb-4">
                   <label for="min_amount" class="form-label">Minimum Amount</label>
-                  <input type="text" placeholder="0" name="min_amount" class="form-control" id="min_amount" min="0"
-                    onkeyup="validateMinAmount()" />
-                  <span id="min-amount-error" style="font-size: 14px; margin-top: -20px;color: green;"></span>
+                  <input type="text" placeholder="0" name="min_amount" class="form-control" id="min_amount" min="0" onkeyup="validateMinAmount()" />
+                  <span id="min-amount-error" class="error-msg"></span>
                 </div>
+
                 <div class="mb-4">
                   <label for="max_amount" class="form-label">Maximum Discount</label>
-                  <input type="text" placeholder="0" name="max_amount" class="form-control" id="max_amount" min="0"
-                    onkeyup="validateMaxAmount()" />
-                  <span id="max-amount-error" style="font-size: 14px; margin-top: -20px;color: green;"></span>
+                  <input type="text" placeholder="0" name="max_amount" class="form-control" id="max_amount" min="0" onkeyup="validateMaxAmount()" />
+                  <span id="max-amount-error" class="error-msg"></span>
                 </div>
+
                 <div class="mb-4">
                   <label for="expiry_date" class="form-label">Expiry Date</label>
                   <input type="date" name="expiry_date" class="form-control" id="expiry_date" onchange="validateDate()">
-                  <span id="date-error" style="font-size: 14px; margin-top: -20px; color: green;"></span>
+                  <span id="date-error" class="error-msg"></span>
                 </div>
+
                 <div class="d-grid">
-                  <button class="btn btn-primary" onclick="return validateForm()">
-                    Add Coupon
-                  </button>
-                  <span id="submit-error" style="font-size: 14px"></span>
+                  <button type="submit" class="btn btn-primary">Add Coupon</button>
+                  <span id="submit-error" class="error-msg"></span>
                 </div>
               </form>
             </div>
@@ -131,97 +77,102 @@
       </div>
     </section>
   </main>
-  <script>
-    var codeError = document.getElementById("code-error");
-    var descriptionError = document.getElementById("description-error");
-    var priceError = document.getElementById("price-error");
-    var minAmountError = document.getElementById("min-amount-error");
-    var maxAmountError = document.getElementById("max-amount-error");
-    var submitError = document.getElementById("submit-error");
 
+  <script>
     function validateCode() {
-      var uppercaseRegex = /^[A-Z0-9]+$/;
+      var codeError = document.getElementById("code-error");
       var code = document.getElementById("coupon_code").value.trim();
+      var uppercaseRegex = /^[A-Z0-9]+$/;
       if (!uppercaseRegex.test(code)) {
         codeError.innerHTML = "Coupon code must contain only uppercase letters and numbers";
         codeError.style.color = "red";
         return false;
       }
-      codeError.innerHTML = "Valid";
-      codeError.style.color = "green";
+      codeError.innerHTML = "";
       return true;
     }
 
     function validateDescription() {
+      var descriptionError = document.getElementById("description-error");
       var desc = document.getElementById("coupon_description").value.trim();
       if (desc.length === 0) {
         descriptionError.innerHTML = "Description is required";
         descriptionError.style.color = "red";
         return false;
       }
-      descriptionError.innerHTML = "Valid";
-      descriptionError.style.color = "green";
+      descriptionError.innerHTML = "";
       return true;
     }
 
     function validatePrice() {
+      var priceError = document.getElementById("price-error");
       var price = document.getElementById("percentage").value.trim();
       if (price.length === 0 || isNaN(price) || parseFloat(price) <= 0 || parseFloat(price) > 100) {
         priceError.innerHTML = "Invalid entry";
         priceError.style.color = "red";
         return false;
       }
-      priceError.innerHTML = "Valid";
-      priceError.style.color = "green";
+      priceError.innerHTML = "";
       return true;
     }
 
     function validateMinAmount() {
+      var minAmountError = document.getElementById("min-amount-error");
       var minAmount = document.getElementById("min_amount").value.trim();
-      if (minAmount.length === 0 || isNaN(minAmount) || parseFloat(minAmount) < 0) {
-        minAmountError.innerHTML = "Minimum amount is required and must be a non-negative number";
+      if (minAmount.length === 0 || minAmount < 1  || isNaN(minAmount) || parseFloat(minAmount) < 0) {
+        minAmountError.innerHTML = "Invalid entry";
         minAmountError.style.color = "red";
         return false;
       }
-      minAmountError.innerHTML = "Valid";
-      minAmountError.style.color = "green";
+      minAmountError.innerHTML = "";
       return true;
     }
 
     function validateMaxAmount() {
+      var maxAmountError = document.getElementById("max-amount-error");
       var maxAmount = document.getElementById("max_amount").value.trim();
-      if (maxAmount.length === 0 || isNaN(maxAmount) || parseFloat(maxAmount) < 0) {
-        maxAmountError.innerHTML = "Maximum discount is required and must be a non-negative number";
+      if (maxAmount.length === 0 || maxAmount < 1 || isNaN(maxAmount) || parseFloat(maxAmount) < 0) {
+        maxAmountError.innerHTML = "Invalid entry";
         maxAmountError.style.color = "red";
         return false;
       }
-      maxAmountError.innerHTML = "Valid";
-      maxAmountError.style.color = "green";
+      maxAmountError.innerHTML = "";
       return true;
     }
 
     function validateDate() {
+      var dateError = document.getElementById("date-error");
       var dateInput = document.getElementById("expiry_date").value;
       var currentDate = new Date();
       var selectedDate = new Date(dateInput);
       if (selectedDate <= currentDate) {
-        document.getElementById("date-error").innerHTML = "Please select a future date";
-        document.getElementById("date-error").style.color = "red";
+        dateError.innerHTML = "Please select a future date";
+        dateError.style.color = "red";
         return false;
-      } else {
-        document.getElementById("date-error").innerHTML = "Valid";
-        document.getElementById("date-error").style.color = "green";
-        return true;
       }
+      dateError.innerHTML = "";
+      return true;
     }
 
     function validateForm() {
-      if (!validateCode() || !validateDescription() || !validatePrice() || !validateMinAmount() || !validateMaxAmount()) {
+      var isValid = true;
+      isValid &= validateCode();
+      isValid &= validateDescription();
+      isValid &= validatePrice();
+      isValid &= validateMinAmount();
+      isValid &= validateMaxAmount();
+      isValid &= validateDate();
+      
+      var submitError = document.getElementById("submit-error");
+      if (!isValid) {
         submitError.innerHTML = "Please enter all the fields correctly to submit";
         submitError.style.color = "red";
         return false;
+      } else {
+        submitError.innerHTML = "";
+        return true;
       }
-      return true;
     }
   </script>
-  <%-include('../admin/adminLayout/adminHeader') %>
+
+<%- include('../admin/adminLayout/adminFooter') %>

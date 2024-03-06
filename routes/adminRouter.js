@@ -90,6 +90,8 @@ admin_router.get('/addCoupon',isAdmin,couponController.addCouponPage)
 admin_router.post('/addCoupon',isAdmin,couponController.addCoupon)
 admin_router.get('/editCoupon',isAdmin,couponController.editCouponPage)
 admin_router.post('/editCoupon/:id',isAdmin,couponController.editCoupon)
+admin_router.patch('/listCoupon',isAdmin,couponController.listCoupon)
+admin_router.patch('/unlistCoupon',isAdmin,couponController.UnListCoupon)
 
 
 //best

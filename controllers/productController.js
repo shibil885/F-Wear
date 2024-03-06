@@ -59,11 +59,7 @@ const productList = async (req, res) => {
         $unwind: "$category"
       }
     ]);
-
     const totalPages = Math.ceil(totalProductsCount / perPage);
-    console.log("totalPages", totalPages);
-    console.log("page", page);
-    console.log("totalProductsCount", totalProductsCount);
     res.render("admin/productlist", {
       product: products,
       totalPages: totalPages,

@@ -1,13 +1,30 @@
 const Coupon = require('../models/couponModel')
 const Cart = require('../models/cartModel')
-const couponList = async (req,res)=>{
+
+const couponList = async (req, res) => {
     try {
+        const perPage = 8;
+        const page = req.query.page || 1;
+
+        const totalCoupons = await Coupon.countDocuments();
+
         const coupon = await Coupon.find()
-        res.status(200).render('admin/coupon',{coupon})
+            .skip(perPage * page - perPage)
+            .limit(perPage);
+
+        const totalPages = Math.ceil(totalCoupons / perPage);
+
+        res.render('admin/coupon', {
+            coupon,
+            totalPages,
+            currentPage: page,
+            perPage
+        });
     } catch (error) {
         console.error(error);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
 
 const addCouponPage = async(req,res)=>{
     try {
@@ -97,7 +114,28 @@ const checkCoupon = async(req,res)=>{
         }else{
             res.json({totalAmount:amountDividedBYPercentage,couponId:couponId})
         }
-        
+    } catch (error) {
+        console.error(error);
+    }
+}
+const listCoupon = async(req,res)=>{
+    try {
+        const couponId = req.body.couponId
+        await Coupon.updateOne({_id:couponId},{
+            isListed:true
+        })
+        res.json({success:true})
+    } catch (error) {
+        console.error(error);
+    }
+}
+const UnListCoupon = async(req,res)=>{
+    try {
+        const couponId = req.body.couponId
+        await Coupon.updateOne({_id:couponId},{
+            isListed:false
+        })
+        res.json({success:true})
     } catch (error) {
         console.error(error);
     }
@@ -109,4 +147,6 @@ module.exports = {
     editCouponPage,
     editCoupon,
     checkCoupon,
+    listCoupon,
+    UnListCoupon
 }
