@@ -17,7 +17,7 @@ const razorPay = async (req, res) => {
     try {
         const userCart = await Cart.findOne({ userID: req.session.userID });
         const couponId = req.body.couponId;
-        
+
         let totalAmount = userCart.totalPrice + 50;
         if (couponId) {
             const selectedCoupon = await Coupon.findById(couponId);
@@ -95,32 +95,32 @@ const orderPlacing = async (req, res) => {
             let totalAmount = userCart.totalPrice + 50
             const { items } = userCart;
             const selectedAddress = userAddress.details.find((address) => address._id.toString() === selectedaddress);
-                const newOrder = new Order({
-                    userId: userId,
-                    totalPrice: totalAmount,
-                    paymentMethod: 'razorPay',
-                    address: selectedAddress.address,
-                    phoneNumber: selectedAddress.phone,
-                    pincode: selectedAddress.pincode,
-                    state: selectedAddress.state,
-                    country: selectedAddress.country,
-                    firstName: selectedAddress.firstName,
-                    lastName: selectedAddress.lastName,
-                    paymentStatus: 'paid',
-                    products: items.map((item) => ({
-                        productId: item.product,
-                        quantity: item.quantity,
-                        salesPrice: item.price,
-                        total: (item.price * item.quantity),
-                    })),
-                });
-                await newOrder.save();
-                console.log("Order saved successfully", newOrder);
-                await Cart.findOneAndUpdate(
-                    { userID: userId },
-                    { $set: { items: [], totalPrice: 0 } }
-                );
-            }
+            const newOrder = new Order({
+                userId: userId,
+                totalPrice: totalAmount,
+                paymentMethod: 'razorPay',
+                address: selectedAddress.address,
+                phoneNumber: selectedAddress.phone,
+                pincode: selectedAddress.pincode,
+                state: selectedAddress.state,
+                country: selectedAddress.country,
+                firstName: selectedAddress.firstName,
+                lastName: selectedAddress.lastName,
+                paymentStatus: 'paid',
+                products: items.map((item) => ({
+                    productId: item.product,
+                    quantity: item.quantity,
+                    salesPrice: item.price,
+                    total: (item.price * item.quantity),
+                })),
+            });
+            await newOrder.save();
+            console.log("Order saved successfully", newOrder);
+            await Cart.findOneAndUpdate(
+                { userID: userId },
+                { $set: { items: [], totalPrice: 0 } }
+            );
+        }
 
     } catch (error) {
         console.error(error);
@@ -131,14 +131,14 @@ const orderInWallet = async (req, res) => {
     try {
         const userId = req.session.userID;
         const selectedaddress = req.body.selectedAddress;
-        const userWallet = await Wallet.findOne({userId:userId})
+        const userWallet = await Wallet.findOne({ userId: userId })
         const walletAmount = userWallet.balance
         const couponId = req.body.couponId
         const userAddress = await Address.findOne({ userID: userId });
         const userCart = await Cart.findOne({ userID: userId }).populate('items.product')
         let totalAmount = userCart.totalPrice + 50
         if (walletAmount < totalAmount) {
-            return res.json({success:false,text:'Not enough money in wallet',icon:'warning'})
+            return res.json({ success: false, text: 'Not enough money in wallet', icon: 'warning' })
         }
         const { items } = userCart;
         const selectedAddress = userAddress.details.find((address) => address._id.toString() === selectedaddress);
@@ -178,54 +178,54 @@ const orderInWallet = async (req, res) => {
             await Coupon.updateOne({ _id: couponId }, {
                 $push: { userID: req.session.userID }
             })
-            return res.json({success:true})
+            return res.json({ success: true })
         } else {
             const userId = req.session.userID;
             const selectedaddress = req.body.selectedAddress;
             const userAddress = await Address.findOne({ userID: userId });
-            const userWallet = await Wallet.findOne({userId:userId})
+            const userWallet = await Wallet.findOne({ userId: userId })
             const walletAmount = userWallet.balance
             const userCart = await Cart.findOne({ userID: userId }).populate('items.product')
             let totalAmount = userCart.totalPrice + 50
             if (walletAmount < totalAmount) {
-                return res.json({success:false,text:'Not enough money in wallet',icon:'warning'})
+                return res.json({ success: false, text: 'Not enough money in wallet', icon: 'warning' })
             }
             const { items } = userCart;
             const selectedAddress = userAddress.details.find((address) => address._id.toString() === selectedaddress);
-                const newOrder = new Order({
-                    userId: userId,
-                    totalPrice: totalAmount,
-                    paymentMethod: 'wallet',
-                    address: selectedAddress.address,
-                    phoneNumber: selectedAddress.phone,
-                    pincode: selectedAddress.pincode,
-                    state: selectedAddress.state,
-                    country: selectedAddress.country,
-                    firstName: selectedAddress.firstName,
-                    lastName: selectedAddress.lastName,
-                    paymentStatus: 'paid',
-                    products: items.map((item) => ({
-                        productId: item.product,
-                        quantity: item.quantity,
-                        salesPrice: item.price,
-                        total: (item.price * item.quantity),
-                    })),
-                });
-                await newOrder.save();
-                console.log("Order saved successfully", newOrder);
-                await Cart.findOneAndUpdate(
-                    { userID: userId },
-                    { $set: { items: [], totalPrice: 0 } }
-                );
-                userWallet.balance -= parseInt(totalAmount);
-                userWallet.history.push({
-                    amount: parseInt(totalAmount),
-                    type: 'debit',
-                    description:'Amount paid to order'
-                });
-                await userWallet.save();
-               return res.json({success:true})
-            }
+            const newOrder = new Order({
+                userId: userId,
+                totalPrice: totalAmount,
+                paymentMethod: 'wallet',
+                address: selectedAddress.address,
+                phoneNumber: selectedAddress.phone,
+                pincode: selectedAddress.pincode,
+                state: selectedAddress.state,
+                country: selectedAddress.country,
+                firstName: selectedAddress.firstName,
+                lastName: selectedAddress.lastName,
+                paymentStatus: 'paid',
+                products: items.map((item) => ({
+                    productId: item.product,
+                    quantity: item.quantity,
+                    salesPrice: item.price,
+                    total: (item.price * item.quantity),
+                })),
+            });
+            await newOrder.save();
+            console.log("Order saved successfully", newOrder);
+            await Cart.findOneAndUpdate(
+                { userID: userId },
+                { $set: { items: [], totalPrice: 0 } }
+            );
+            userWallet.balance -= parseInt(totalAmount);
+            userWallet.history.push({
+                amount: parseInt(totalAmount),
+                type: 'debit',
+                description: 'Amount paid to order'
+            });
+            await userWallet.save();
+            return res.json({ success: true })
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -360,32 +360,32 @@ const failedOrder = async (req, res) => {
             let totalAmount = userCart.totalPrice + 50
             const { items } = userCart;
             const selectedAddress = userAddress.details.find((address) => address._id.toString() === selectedaddress);
-                const newOrder = new Order({
-                    userId: userId,
-                    totalPrice: totalAmount,
-                    paymentMethod: 'razorPay',
-                    address: selectedAddress.address,
-                    phoneNumber: selectedAddress.phone,
-                    pincode: selectedAddress.pincode,
-                    state: selectedAddress.state,
-                    country: selectedAddress.country,
-                    firstName: selectedAddress.firstName,
-                    lastName: selectedAddress.lastName,
-                    paymentStatus: 'failed',
-                    products: items.map((item) => ({
-                        productId: item.product,
-                        quantity: item.quantity,
-                        salesPrice: item.price,
-                        total: (item.price * item.quantity),
-                    })),
-                });
-                await newOrder.save();
-                console.log("Order saved successfully", newOrder);
-                await Cart.findOneAndUpdate(
-                    { userID: userId },
-                    { $set: { items: [], totalPrice: 0 } }
-                );
-            }
+            const newOrder = new Order({
+                userId: userId,
+                totalPrice: totalAmount,
+                paymentMethod: 'razorPay',
+                address: selectedAddress.address,
+                phoneNumber: selectedAddress.phone,
+                pincode: selectedAddress.pincode,
+                state: selectedAddress.state,
+                country: selectedAddress.country,
+                firstName: selectedAddress.firstName,
+                lastName: selectedAddress.lastName,
+                paymentStatus: 'failed',
+                products: items.map((item) => ({
+                    productId: item.product,
+                    quantity: item.quantity,
+                    salesPrice: item.price,
+                    total: (item.price * item.quantity),
+                })),
+            });
+            await newOrder.save();
+            console.log("Order saved successfully", newOrder);
+            await Cart.findOneAndUpdate(
+                { userID: userId },
+                { $set: { items: [], totalPrice: 0 } }
+            );
+        }
 
     } catch (error) {
         console.error(error);
@@ -422,12 +422,29 @@ const orderPlacingFailed = async (req, res) => {
 
 const orderList = async (req, res) => {
     try {
-        const userOrder = await Order.find().populate('userId')
-        res.status(200).render('admin/orderList', { userOrder })
+        const perPage = 7;
+        const page = req.query.page || 1;
+
+        const totalOrders = await Order.countDocuments();
+
+        const userOrders = await Order.find()
+            .populate('userId')
+            .skip(perPage * page - perPage)
+            .limit(perPage);
+
+        const totalPages = Math.ceil(totalOrders / perPage);
+
+        res.render('admin/orderList', {
+            userOrder: userOrders,
+            totalPages: totalPages,
+            currentPage: page,
+            perPage: perPage
+        });
     } catch (error) {
         console.error(error);
     }
 }
+
 const userOrderDetails = async (req, res) => {
     try {
         try {
@@ -457,15 +474,34 @@ const orderDetails = async (req, res) => {
 }
 const orders = async (req, res) => {
     try {
-        const userid = req.session.userID
-        const orders = await Order.find({ userId: userid }).populate('userId')
-        const userCart = await Cart.findOne({ userID: userid })
+        const userid = req.session.userID;
+        const perPage = 6;
+        const page = req.query.page || 1;
+
+        const totalOrders = await Order.countDocuments({ userId: userid });
+
+        const orders = await Order.find({ userId: userid })
+            .populate('userId')
+            .skip(perPage * page - perPage)
+            .limit(perPage);
+
+        const userCart = await Cart.findOne({ userID: userid });
         const cartLength = userCart ? userCart.items.length : 0;
-        res.status(200).render('user/orders', { orders, cartLength })
+
+        const totalPages = Math.ceil(totalOrders / perPage);
+
+        res.render('user/orders', {
+            orders,
+            cartLength,
+            totalPages,
+            currentPage: page,
+            perPage
+        });
     } catch (error) {
         console.error(error);
     }
-}
+};
+
 const cancelOrder = async (req, res) => {
     try {
         const { productId, orderId } = req.body;
@@ -487,11 +523,22 @@ const cancelOrder = async (req, res) => {
                 const userWallet = await Wallet.findOne({ userId: req.session.userID })
                 const amountToWallet = cancelProduct.total + 50
                 userWallet.balance += amountToWallet
-                await userWallet.save()
+                userWallet.history.push({
+                    amount: amountToWallet,
+                    type: 'credit',
+                    description: 'Amount from order cancellation'
+                });
+                await userWallet.save();
             } else {
                 const userWallet = await Wallet.findOne({ userId: req.session.userID })
-                userWallet.balance += cancelProduct.total
-                await userWallet.save()
+                const amountToWallet = cancelProduct.total + 50
+                userWallet.balance += amountToWallet
+                userWallet.history.push({
+                    amount: amountToWallet,
+                    type: 'credit',
+                    description: 'Amount from order cancellation'
+                });
+                await userWallet.save();
             }
             return res.status(200).json({ message: 'Product cancelled successfully', cancelledProduct: cancelProduct });
         }
@@ -540,14 +587,25 @@ const cancelOrderAdmin = async (req, res) => {
             }
             await order.save();
             if (unCancelled.length == 0) {
-                const userWallet = await Wallet.findOne({ userId: userId })
-                const amountToWallet = cancelledAmount + 50
+                const userWallet = await Wallet.findOne({ userId: req.session.userID })
+                const amountToWallet = cancelledAmount.total + 50
                 userWallet.balance += amountToWallet
-                await userWallet.save()
+                userWallet.history.push({
+                    amount: amountToWallet,
+                    type: 'credit',
+                    description: 'Amount from order cancellation'
+                });
+                await userWallet.save();
             } else {
-                const userWallet = await Wallet.findOne({ userId: userId })
-                userWallet.balance += cancelledAmount
-                await userWallet.save()
+                const userWallet = await Wallet.findOne({ userId: req.session.userID })
+                const amountToWallet = cancelledAmount.total + 50
+                userWallet.balance += amountToWallet
+                userWallet.history.push({
+                    amount: amountToWallet,
+                    type: 'credit',
+                    description: 'Amount from order cancellation'
+                });
+                await userWallet.save();
                 return res.status(200).json({ message: 'Product cancelled successfully', order });
             }
         }
@@ -666,72 +724,72 @@ const pendingOrder = async (req, res) => {
     }
 
 }
-const downloadInvoice = async (req,res)=>{
+const downloadInvoice = async (req, res) => {
     try {
         const orderId = req.params.id;
         const order = await Order.findById(orderId);
-        
+
         if (!order) {
-          return res.status(404).json({ error: 'Order not found' });
+            return res.status(404).json({ error: 'Order not found' });
         }
-        
+
         const productsData = await Promise.all(order.products.map(async item => {
-          const product = await Product.findById(item.productId);
-          if (!product) {
-            throw new Error(`Product not found for ID: ${item.productId}`);
-          }
-          return {
-            "quantity": item.quantity,
-            "description": product.product_title,
-            "tax": 0,
-            "price": product.price 
-          };
+            const product = await Product.findById(item.productId);
+            if (!product) {
+                throw new Error(`Product not found for ID: ${item.productId}`);
+            }
+            return {
+                "quantity": item.quantity,
+                "description": product.product_title,
+                "tax": 0,
+                "price": product.price
+            };
         }));
-        
+
         const data = {
-          "currency": "INR",
-          "taxNotation": "vat",
-          "marginTop": 25,
-          "marginRight": 25,
-          "marginLeft": 25,
-          "marginBottom": 25,
-          "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png",
-          "sender": {
-            "company": ".f-Wear",
-            "address": "Maradu Kochi",
-            "zip": "680013",
-            "city": "Kerala",
-            "country": "India"
-          },
-          "client": {
-            "company": order.firstName,
-            "address": order.address,
-            "zip": order.pincode,
-            "city": order.state,
-            "country": order.country
-          },
-          "invoiceDate": order.date.toISOString(),
-          "products": productsData,
-          "total": order.totalPrice+50,
-          "bottomNotice": `Total: ${order.totalPrice} INR`,
+            "currency": "INR",
+            "taxNotation": "vat",
+            "marginTop": 25,
+            "marginRight": 25,
+            "marginLeft": 25,
+            "marginBottom": 25,
+            "logo": "https://public.easyinvoice.cloud/img/logo_en_original.png",
+            "sender": {
+                "company": ".f-Wear",
+                "address": "Maradu Kochi",
+                "zip": "680013",
+                "city": "Kerala",
+                "country": "India"
+            },
+            "client": {
+                "company": order.firstName,
+                "address": order.address,
+                "zip": order.pincode,
+                "city": order.state,
+                "country": order.country
+            },
+            "invoiceDate": order.date.toISOString(),
+            "products": productsData,
+            "total": order.totalPrice + 50,
+            "bottomNotice": `Total: ${order.totalPrice} INR`,
         };
-        
+
         const result = await easyinvoice.createInvoice(data);
-        
+
         const invoicesDir = path.join(__dirname, '..', 'invoices');
         if (!fs.existsSync(invoicesDir)) {
-          fs.mkdirSync(invoicesDir);
+            fs.mkdirSync(invoicesDir);
         }
-        
+
         const filePath = path.join(invoicesDir, `invoice_${orderId}.pdf`);
         fs.writeFileSync(filePath, result.pdf, 'base64');
-        
+
         // Send the file as a response
         res.download(filePath, `invoice_${orderId}.pdf`);
-      } catch (err) {
+    } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to generate invoice' });
-      }
+    }
 }
 module.exports = {
     orderPlacing,

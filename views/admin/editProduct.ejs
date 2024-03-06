@@ -167,7 +167,6 @@
                               <i class="fa-solid fa-trash delete-image-btn text-danger" data-index="<%= index %>"></i>
                             </div>
                             <% }) %>
-                            <div id="image-preview-container"></div>
                         </div>
                         <% } else { %>
                           <p>No existing images</p>
@@ -221,81 +220,16 @@
           fileInput.click();
         });
       });
-    
-function updateFileInput() {
-  const fileInput = document.getElementById('product_image');
-  const existingImages = document.querySelectorAll('.existing-images img');
-  const fileList = new DataTransfer();
 
-  existingImages.forEach(function (image) {
-    const url = image.getAttribute('src');
-    const filename = url.substring(url.lastIndexOf('/') + 1);
-    fetch(url)
-      .then(response => response.blob())
-      .then(blob => {
-        const file = new File([blob], filename, { type: blob.type });
+      function updateFileInput(file, index) {
+        const fileInput = document.getElementById('product_image');
+        const fileList = new DataTransfer();
         fileList.items.add(file);
         fileInput.files = fileList.files;
-      });
-  });
-
-  const newFiles = fileInput.files;
-  if (newFiles) {
-    for (const file of newFiles) {
-      fileList.items.add(file);
-    }
-  }
-
-  fileInput.files = fileList.files;
-}
-
-    
-      window.addEventListener('DOMContentLoaded', function () {
-        const existingImages = document.querySelectorAll('.existing-images img');
-        const fileInput = document.getElementById('product_image');
-        const fileList = new DataTransfer();
-    
-        existingImages.forEach(function (image) {
-          const url = image.getAttribute('src');
-          const filename = url.substring(url.lastIndexOf('/') + 1);
-          fetch(url)
-            .then(response => response.blob())
-            .then(blob => {
-              const file = new File([blob], filename, { type: blob.type });
-              fileList.items.add(file);
-              fileInput.files = fileList.files;
-            });
-        });
-      });
-    
-      document.querySelectorAll('.delete-image-btn').forEach(button => {
-        button.addEventListener('click', function () {
-          const index = this.dataset.index;
-          const parentDiv = this.closest('.image-preview');
-          parentDiv.remove();
-          updateFileInput();
-        });
-      });
-    
-      function updateFileInput() {
-        const fileInput = document.getElementById('product_image');
-        const existingImages = document.querySelectorAll('.existing-images img');
-        const fileList = new DataTransfer();
-    
-        existingImages.forEach(function (image) {
-          const url = image.getAttribute('src');
-          const filename = url.substring(url.lastIndexOf('/') + 1);
-          fetch(url)
-            .then(response => response.blob())
-            .then(blob => {
-              const file = new File([blob], filename, { type: blob.type });
-              fileList.items.add(file);
-              fileInput.files = fileList.files;
-            });
-        });
-      }  
-    </script> 
+      }
+    </script>
     <script>
+
       window.addEventListener('DOMContentLoaded', function () {
         const existingImages = document.querySelectorAll('.existing-images img');
         const fileInput = document.getElementById('product_image');
@@ -339,7 +273,104 @@ function updateFileInput() {
               fileInput.files = fileList.files;
             });
         });
-      }   
-     </script>
-     
+      }
+      </script>
+<script>
+  var nameError = document.getElementById("name-error");
+  var descriptionError = document.getElementById("description-error");
+  var priceError = document.getElementById("price-error");
+  var imageError = document.getElementById("image-error");
+  var stockError = document.getElementById("stock-error");
+  var submitError = document.getElementById("submit-error");
+
+  function validateName() {
+    var name = document.getElementById("product_name").value.trim();
+    if (name.length === 0) {
+      nameError.innerHTML = "Product name is required";
+      nameError.style.color = "red";
+      return false;
+    }
+    nameError.innerHTML = "Valid";
+    nameError.style.color = "green";
+    return true;
+  }
+
+  function validateDescription() {
+    var desc = document.getElementById("product_description").value.trim();
+    if (desc.length === 0) {
+      descriptionError.innerHTML = "Description is required";
+      descriptionError.style.color = "red";
+      return false;
+    }
+    descriptionError.innerHTML = "Valid";
+    descriptionError.style.color = "green";
+    return true;
+  }
+
+  function validatePrice() {
+    var price = document.getElementById("product_price").value.trim();
+    var priceError = document.getElementById("price-error");
+
+    if (price.length === 0 || isNaN(price) || parseFloat(price) <= 0) {
+      priceError.innerHTML = "Price is required and must be a positive number";
+      priceError.style.color = "red";
+      return false;
+    }
+
+    priceError.innerHTML = "Valid";
+    priceError.style.color = "green";
+    return true;
+  }
+
+  function validateImage() {
+    var image = document.getElementById("product_image").value;
+    var validImageExtensions = ['jpg', 'jpeg', 'png',];
+    var fileExtension = image.split('.').pop().toLowerCase();
+
+    if (image.length === 0) {
+      imageError.innerHTML = "Image is required";
+      imageError.style.color = "red";
+      return false;
+    } else if (!validImageExtensions.includes(fileExtension)) {
+      imageError.innerHTML = "Invalid image file format. Please use JPG, JPEG, or PNG";
+      imageError.style.color = "red";
+      return false;
+    }
+
+    imageError.innerHTML = "Valid";
+    imageError.style.color = "green";
+    return true;
+  }
+
+  function validateStock() {
+    var stock = document.getElementById("product_stock").value.trim();
+    if (stock.length === 0 || isNaN(stock) || parseInt(stock) < 0) {
+      stockError.innerHTML = "Stock is required and must be a non-negative number";
+      stockError.style.color = "red";
+      return false;
+    }
+    stockError.innerHTML = "Valid";
+    stockError.style.color = "green";
+    return true;
+  }
+
+  function validateForm() {
+    if (
+      !validateName() ||
+      !validateDescription() ||
+      !validatePrice() ||
+      !validateImage() ||
+      !validateStock()
+    ) {
+      submitError.style.display = "block";
+      submitError.innerHTML = "Please enter all the fields correctly to submit ";
+      submitError.style.color = "red";
+      setTimeout(function () {
+        submitError.style.display = "none";
+      }, 3000);
+      return false;
+    }
+  }
+</script>
+
     <%-include('../admin/adminLayout/adminFooter') %>

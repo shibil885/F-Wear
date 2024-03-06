@@ -21,7 +21,7 @@ async function chart() {
         ordersCount.cashOnDelivery++
       } else if (order.paymentMethod === "razorPay") {
         ordersCount.razorPay++
-      } else if (order.paymentStatus === "wallet") {
+      } else if (order.paymentMethod === "wallet") {
         ordersCount.wallet++
       }
     })

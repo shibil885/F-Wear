@@ -282,13 +282,14 @@
       const orderChart = new Chart(orderCtx, {
         type: 'doughnut',
         data: {
-          labels: ['Cod', 'RazorPay', 'Wallet'],
+          labels: ['Cod', 'RazorPay', 'Delivered','Wallet',],
           datasets: [{
             data: Object.values(initialData),
             backgroundColor: [
               'rgba(75, 30, 132, 0.7)',
               'rgba(255, 205, 25, 0.7)',
-              'rgba(54, 162, 15, 0.7)'
+              'rgba(100, 206, 15,0.7)',
+              'rgba(194, 162, 105,0.7)',
             ],
           }],
         },
@@ -316,7 +317,7 @@
         fetch('/fetchdashboard')
           .then(response => response.json())
           .then(data => {
-            console.log(data.ordersPie);
+            console.log('pie',data.ordersPie);
             updateChartData(data.ordersPie);
           })
           .catch(error => {
