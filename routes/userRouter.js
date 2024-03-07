@@ -25,6 +25,7 @@ user_router.post('/login',isLoggedUser,userController.login)
 user_router.get('/userSignup',isLoggedUser,userController.userSignup)
 user_router.post('/signup',isLoggedUser,otpController.signup)
 user_router.get('/userLogout',isUser,isBlocked,userController.userLogout)
+user_router.get('/about',userController.about)
 //otp
 user_router.post('/userValidation',isLoggedUser,userController.userValidation)
 user_router.get('/resendotp',otpController.resendOtp)

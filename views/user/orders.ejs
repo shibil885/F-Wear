@@ -118,9 +118,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                    <% orders.reverse().forEach((item,index)=> { %>
+                                    <% orders.forEach((item,index)=> { %>
                                         <tr>
-                                            <td>#<%= item._id %> %></td>
+                                            <td>#<%= item._id %></td>
                                             <td><b>
                                                     <%= item.firstName %>
                                                         <%= item.lastName %>

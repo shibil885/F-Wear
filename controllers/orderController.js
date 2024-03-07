@@ -422,7 +422,7 @@ const orderPlacingFailed = async (req, res) => {
 
 const orderList = async (req, res) => {
     try {
-        const perPage = 7;
+        const perPage = 8;
         const page = req.query.page || 1;
 
         const totalOrders = await Order.countDocuments();
@@ -472,16 +472,18 @@ const orderDetails = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 }
+
 const orders = async (req, res) => {
     try {
         const userid = req.session.userID;
-        const perPage = 6;
+        const perPage = 8;
         const page = req.query.page || 1;
 
         const totalOrders = await Order.countDocuments({ userId: userid });
 
         const orders = await Order.find({ userId: userid })
             .populate('userId')
+            .sort({date:-1})
             .skip(perPage * page - perPage)
             .limit(perPage);
 
@@ -692,6 +694,7 @@ const deliveredOrder = async (req, res) => {
         const cancelledProduct = order.products[productIndex];
         console.log("cancelledProduct:", cancelledProduct);
         cancelledProduct.status = 'delivered';
+        cancelledProduct.isDelivered = 'true';
         await order.save();
 
         res.status(200).json({ message: 'Product shipped successfully', order });

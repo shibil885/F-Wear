@@ -73,7 +73,7 @@ admin_router.patch('/unlistCategory/:id',isAdmin,categoryController.unlistCatego
 admin_router.patch('/listCategory/:id',isAdmin,categoryController.listCategory)
 
                 //////////////Brand\\\\\\\\\\\\\\\\
-admin_router.get('/brand',isAdmin,brandController.brandList)
+admin_router.get('/brandList',isAdmin,brandController.brandList)
 admin_router.get('/addBrands',isAdmin,brandController.addBrandPage)
 admin_router.post('/addBrand',isAdmin,brandController.addBrand)
 admin_router.patch('/unListBrand/:id',isAdmin,brandController.unListBrand)

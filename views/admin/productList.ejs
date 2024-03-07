@@ -1,72 +1,107 @@
 <%-include('../admin/adminLayout/adminHeader') %>
-    <div class="screen-overlay"></div>
-    <aside class="navbar-aside" id="offcanvas_aside">
-        <div class="aside-top">
-            <a href="/adminPanel" class="brand-wrap">
-                <h3>.F-Wear</h3>
-            </a>
+<div class="screen-overlay"></div>
+<aside class="navbar-aside" id="offcanvas_aside">
+  <div class="aside-top">
+    <a href="/adminPanel" class="brand-wrap">
+      <p style="font-size: 20px; font-weight: bold">.f-Wear Admin</p>
+    </a>
+    <div>
+      <button class="btn btn-icon btn-aside-minimize">
+        <i class="text-muted material-icons md-menu_open"></i>
+      </button>
+    </div>
+  </div>
+  <nav>
+    <ul class="menu-aside">
+      <li class="menu-item">
+        <a class="menu-link" href="/adminPanel">
+          <i class="icon material-icons md-home"></i>
+          <span class="text">Dashboard</span>
+        </a>
+      </li>
+      <li class="menu-item ">
+        <a class="menu-link" href="/users">
+          <i class="icon material-icons md-person"></i>
+          <span class="text">Users</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a class="menu-link" href="/productList">
+          <i class="icon material-icons md-shopping_bag"></i>
+          <span class="text">Products</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a class="menu-link" href="/categories">
+          <i class="icon material-icons md-store"></i>
+          <span class="text">Categories</span>
+        </a>
+      </li>
+      <li class="menu-item ">
+        <a class="menu-link" href="/brandList">
+          <i class="icon material-icons md-verified"></i>
+          <span class="text">Brands</span>
+        </a>
+      </li>
+      <li class="menu-item ">
+        <a class="menu-link" href="/orderlist">
+          <i class="icon material-icons md-shopping_cart"></i>
+          <span class="text">Orders</span>
+        </a>
+      </li>
+      <li class="menu-item ">
+        <a class="menu-link" href="/couponList">
+          <i class="icon material-icons md-local_offer"></i>
+          <span class="text">Coupons</span>
+        </a>
+      </li>
+      <li class="menu-item has-submenu">
+        <a class="menu-link"> <i class="icon material-icons md-star"></i>
+          <span class="text">Best Selling</span>
+        </a>
+        <div class="submenu">
+          <a href="/bestproducts">Products</a>
+          <a href="/bestcategories">Categories</a>
+          <a href="/bestbrands">Brands</a>
         </div>
-        <nav>
-            <ul class="menu-aside">
-                <li class="menu-item ">
-                    <a class="menu-link" href="/adminPanel"> <i class="icon material-icons md-home"></i>
-                        <span class="text">Adminpanel</span>
-                    </a>
-                </li>
-                <li class="menu-item active">
-                    <a class="menu-link" href="/productList"> <i class="icon material-icons md-shopping_bag"></i>
-                        <span class="text">Products</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="/orderlist"> <i class="icon material-icons md-shopping_cart"></i>
-                        <span class="text">Orders</span>
-                    </a>
-                    <div class="submenu">
-                    </div>
-                </li>
-                <li class="menu-item ">
-                    <a class="menu-link" href="/users"> <i class="icon material-icons md-person"></i>
-                        <span class="text">Users</span>
-                    </a>
-                </li>
-                <li class="menu-item ">
-                    <a class="menu-link" href="/Categories"> <i class="icon material-icons md-store"></i>
-                        <span class="text">Categories</span>
-                    </a>
-                </li>
-                <li class="menu-item ">
-                    <a class="menu-link" href="/couponList"> <i class="icon material-icons md-local_offer"></i>
-                        <span class="text">Coupon</span>
-                    </a>
-                </li>
-            </ul>
-            <hr>
-            <br>
-            <br>
-        </nav>
-    </aside>
-    <main class="main-wrap">
-        <header class="main-header navbar">
-            <div class="col-search">
-                <form class="searchform">
-                    <div class="input-group">
-                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-                        <button class="btn btn-light bg" type="button"> <i
-                                class="material-icons md-search"></i></button>
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="Products">
-                        <option value="New orders">
-                        <option value="Apple iphone">
-                        <option value="Ahmed Hassan">
-                    </datalist>
-                </form>
-            </div>
-            <div>
-                <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
-            </div>
-        </header>
+      </li>
+    </ul>
+  </nav>
+</aside>
+<main class="main-wrap">
+  <header class="main-header navbar">
+    <div class="col-search">
+    </div>
+    <div class="col-nav">
+      <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside">
+        <i class="material-icons md-apps"></i>
+      </button>
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link btn-icon" href="#">
+            <i class="material-icons md-notifications animation-shake"></i>
+            <span class="badge rounded-pill">3</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn-icon darkmode" href="#">
+            <i class="material-icons md-nights_stay"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+        </li>
+        <li class="dropdown nav-item">
+          <a data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
+            aria-expanded="false"><i class="material-icons md-public"></i></a>
+        </li>
+        <li class="dropdown nav-item">
+            <a class="dropdown-item text-danger" href="/adminlogout"><i
+                class="material-icons md-exit_to_app"></i>Logout</a>
+        </li>
+      </ul>
+    </div>
+  </header>
         <section class="content-main">
             <div class="content-header">
                 <h2 class="content-title">Product list</h2>

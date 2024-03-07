@@ -1,5 +1,29 @@
 <%-include('../user/userLayout/userheader') %>
   <style>
+    /* Styling for coupon details */
+.coupon-details {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.coupon-details h5 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.coupon-details p {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+.coupon-details button {
+  margin-top: 10px;
+}
+
     .form-outline small {
       visibility: hidden;
     }
@@ -37,17 +61,13 @@
 
     .payment-method {
       border-radius: 10px;
-      /* Rounded corners */
       transition: background-color 0.3s ease;
-      /* Smooth color transition */
     }
 
     .payment-method:hover {
       opacity: 0.8;
-      /* Reduce opacity on hover for a subtle effect */
     }
   </style>
-  <!-- Start Header/Navigation -->
   <nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
 
     <div class="container">
@@ -81,8 +101,6 @@
     </div>
 
   </nav>
-  <!-- End Header/Navigation -->
-
   <div class="untree_co-section">
     <div class="container">
       <div class="row">
@@ -220,9 +238,11 @@
                           <td class="text-black font-weight-bold text-en"><strong>Delivery charge:</strong></td>
                           <td class="text-black font-weight-bold "><strong>50</strong></td>
                         </tr>
+                        <tr class="text-end d-flex justify-content-between" id="couponDetails">
+                        </tr>
                         <tr class="text-end">
                           <td class="text-black font-weight-bold text-en"><strong>Grand Total:</strong></td>
-                          <td class="text-black font-weight-bold " id="grandTotal"><strong>
+                          <td class="font-weight-bold" id="grandTotal"><strong>
                               <%= grandTotal %>
                             </strong></td>
                           <input type="hidden" id="couponId">
@@ -256,52 +276,64 @@
   </div>
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Coupon Details</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-header bg-dark text-light">
+          <h5 class="modal-title" id="exampleModalLabel">Coupon Details</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <% if (couponToUser.length===0) { %>
-            <p>No coupons available for you.</p>
-            <% } else { %>
-              <% couponToUser.forEach(function(coupon) { %>
-                <div>
-                  <h5>Coupon Code: <%= coupon.coupon_code %>
-                  </h5>
-                  <p>Discount: <%= coupon.discount %> off</p>
-                  <p>Minimum Amount: <%= coupon.minimumAmount %>
-                  </p>
-                  <p>Expiry Date: <%= coupon.expiryDate.toDateString() %>
-                  </p>
-                  <button class="btn btn-primary btn-sm" onclick="checkCoupon('<%= coupon._id %>')"
-                    data-bs-dismiss="modal">Apply</button>
-                </div>
-                <hr>
-                <% }); %>
-                  <% } %>
-        </div>
-        <div class="modal-footer">
+          <% if (couponToUser.length === 0) { %>
+          <p class="text-muted">No coupons available for you.</p>
+          <% } else { %>
+          <% couponToUser.forEach(function(coupon) { %>
+          <div class="card mb-2">
+            <div class="card-body">
+              <h5 class="card-title">Coupon Code: <%= coupon.coupon_code %></h5>
+              <p class="card-text mb-0">Minimum Amount: <%= coupon.minimumAmount %></p>
+              <p class="card-text mb-0">Maximum Discount: <%= coupon.maximumAmount %></p>
+              <p class="card-text">Expiry Date: <%= coupon.expiryDate.toDateString() %></p>
+              <button class="btn btn-dark btn-sm" onclick="checkCoupon('<%= coupon._id %>')" data-bs-dismiss="modal">Apply</button>
+            </div>
+          </div>
+          <% }); %>
+          <% } %>
         </div>
       </div>
     </div>
+  </div>
+  
+  
+  
     <script>
       async function checkCoupon(couponId) {
-        try {
-          const response = await fetch(`/checkCoupon`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ couponId })
-          });
-          const data = await response.json();
-          const grandTotal = document.getElementById('grandTotal');
-          grandTotal.innerText = data.totalAmount;
-          document.getElementById('couponId').innerText = data.couponId;
-        } catch (error) {
-          console.error(error);
-        }
-      }
+  try {
+    const response = await fetch(`/checkCoupon`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ couponId })
+    });
+    const data = await response.json();
+    const grandTotal = document.getElementById('grandTotal');
+    grandTotal.className = 'text-success';
+    grandTotal.style.fontWeight = 'bold'; 
+    grandTotal.innerText = data.totalAmount;
+
+    const couponDetails = document.getElementById('couponDetails');
+    couponDetails.innerHTML = `
+      <p class="text-success">you saved <b>&#x20B9;${data.discountAmount}</b> with '${data.couponCode}'</p> <span type="button" class="material-symbols-outlined text-danger" onclick="removeCoupon()">
+cancel
+</span>
+    `;
+    document.getElementById('couponId').innerText = data.couponId;
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function removeCoupon(params) {
+ location.reload()
+}
+
       async function cashOnDelivery(params) {
         const grandTotal = document.getElementById('grandTotal').innerText
         const selectedAddressElement = document.querySelector('input[name="address"]:checked');

@@ -15,7 +15,7 @@ body {
   line-height: 28px;
   color: #6a6a6a;
   font-size: 14px;
-  background-color: #eff2f1; }
+  background-color: #ffffff; }
 
 a {
   text-decoration: none;
@@ -724,24 +724,4 @@ textarea {
       background-color: rgb(232,238,237);
      }
      
-     .dashboard-menu {
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      margin-bottom: 20px;
-  }
-  .dashboard-content {
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-  }
-  .nav-link {
-    color: white ;
-}
-
-.nav-link.active {
-    color: white;
-    background-color: #314d43;
-}
+  

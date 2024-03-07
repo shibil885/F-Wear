@@ -110,9 +110,10 @@ const checkCoupon = async(req,res)=>{
         const amountDividedBYPercentage = Math.ceil(totalAmount*selectedCoupon.percentage/100)
         if(amountDividedBYPercentage > selectedCoupon.maximumAmount ){
             const amountToPay = totalAmount - selectedCoupon.maximumAmount
-            res.json({totalAmount:amountToPay,couponId:couponId})   
+            res.json({totalAmount:amountToPay,couponId:couponId,discountAmount:selectedCoupon.maximumAmount,couponCode:selectedCoupon.coupon_code})   
         }else{
-            res.json({totalAmount:amountDividedBYPercentage,couponId:couponId})
+            const amountToPay = totalAmount-amountDividedBYPercentage
+            res.json({totalAmount:amountToPay,couponId:couponId,discountAmount:amountDividedBYPercentage,couponCode:selectedCoupon.coupon_code})
         }
     } catch (error) {
         console.error(error);

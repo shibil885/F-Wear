@@ -31,7 +31,7 @@ const addBrand = async (req, res) => {
             description: req.body.description
         })
         await newBrand.save()
-        res.redirect('/brand')
+        res.redirect('/brandList')
     }
 
 }
@@ -84,7 +84,7 @@ const editBrand = async (req, res) => {
         }
     )}
     console.log('successfully edited brand')
-    res.redirect('/brand')
+    res.redirect('/brandList')
 }
 module.exports = {
     brandList,

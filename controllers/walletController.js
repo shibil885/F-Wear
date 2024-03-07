@@ -4,10 +4,12 @@ const Cart = require('../models/cartModel')
 const wallet = async (req,res)=>{
     try {
         const userId = req.session.userID
+        console.log('userId:',userId);
         const wallet = await Wallet.findOne({userId:userId}).populate('userId')
+        console.log('wallet:',wallet);
         const userCart = await Cart.findOne({ userID: userId })
         const cartLength = userCart ? userCart.items.length : 0;
-        res.status(200).render('user/wallet',{wallet,user: req.session.user,cartLength})
+        res.status(200).render('user/wallet',{wallet,user:req.session.user,cartLength})
     } catch (error) {
         console.error(error);
         res.json({error:'Internal server error'})
