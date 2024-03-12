@@ -12,10 +12,8 @@ async function chart() {
     const ordersCount = {
       cashOnDelivery: 0,
       razorPay: 0,
-      delivered: 0,
       wallet: 0
     }
-
     ordersPie.forEach((order) => {
       if (order.paymentMethod === "cashOnDelivery") {
         ordersCount.cashOnDelivery++
@@ -481,6 +479,53 @@ const bestBrands = async (req, res) => {
     console.error(error);
   }
 };
+const formatDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const sales = async (req, res) => {
+  try {
+    const { timeframe } = req.query;
+    let startDate, endDate;
+
+    if (timeframe === 'weekly') {
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);
+      endDate = new Date();
+    } else if (timeframe === 'monthly') {
+      startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 1);
+      endDate = new Date();
+    } else if (timeframe === 'yearly') {
+      startDate = new Date();
+      startDate.setFullYear(startDate.getFullYear() - 1);
+      endDate = new Date();
+    } else {
+      return res.status(400).json({ error: 'Invalid timeframe' });
+    }
+
+    const orders = await Orders.find({
+      date: { $gte: startDate, $lte: endDate },
+      paymentStatus: 'paid'
+    });
+    const salesData = {};
+    orders.forEach(order => {
+      const date = formatDate(order.date);
+      salesData[date] = salesData[date] ? salesData[date] + order.totalPrice : order.totalPrice;
+    });
+
+    const labels = Object.keys(salesData);
+    const values = Object.values(salesData);
+    res.json({ labels, values });
+  } catch (error) {
+    console.error('Error fetching sales:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 
 module.exports = {
   adminLogin,
@@ -495,5 +540,6 @@ module.exports = {
   report,
   bestProducts,
   bestCategories,
-  bestBrands
+  bestBrands,
+  sales
 }

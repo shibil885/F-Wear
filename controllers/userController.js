@@ -44,6 +44,23 @@ const about = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 }
+const services = async (req, res) => {
+    try {
+        const userData = req.session.user;
+        if (userData) {
+            const userCart = await Cart.findOne({ userID: req.session.userID });
+            const cartLength = userCart ? userCart.items.length : 0;
+            res.render('user/services', { userData, cartLength });
+        }else{
+            const userCart = await Cart.findOne({ userID: req.session.userID });
+            const cartLength = userCart ? userCart.items.length : 0;
+            res.render('user/services', { userData, cartLength });
+        }
+    } catch (error) {
+        console.error('Error occurred while rendering home page', error);
+        res.status(500).send('Internal Server Error');
+    }
+}
 
 //rendering Login page
 const userLoginPage = (req, res) => {
@@ -277,5 +294,6 @@ module.exports = {
     editProfile,
     changePasswordPage,
     changePassword,
-    favorite
+    favorite,
+    services
 }

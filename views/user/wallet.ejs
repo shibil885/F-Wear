@@ -133,8 +133,6 @@
                     </li>
                     <li><a class="nav-link" href="about.html">About us</a></li>
                     <li><a class="nav-link" href="services.html">Services</a></li>
-                    <li><a class="nav-link" href="blog.html">Blog</a></li>
-                    <li><a class="nav-link" href="contact.html">Contact us</a></li>
                 </ul>
                 <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
                     <li>
@@ -149,24 +147,36 @@
                                     <% } %>
                         </a>
                     </li>
+                    <li>
+						<a class="nav-link" href="/wishList" style="position: relative;">
+							<span class="material-symbols-outlined me-2" style="color: white;">
+								favorite
+							</span>
+						</a>
+					</li>
                 </ul>
             </div>
         </div>
     </nav>
-    <aside class="navbar-aside col-md-3" id="offcanvas_asid">
+    <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top" style="background-color: #3c5d50;">
-            <a href="/" class="brand-wrap text-decoration-none d-flex">
-                <h3 class="text-warning fw-bold">.f</h3>
-                <h3 class="fw-bold text-light">-Wear</h3>
-            </a>
+          <a href="/" class="brand-wrap text-light text-decoration-none">
+            <h2 style="font-size: 20px; font-weight: bold"><span class="text-warning">.f</span>-Wear</h2>
+          </a>
+          <div>
+            <button class="btn btn-icon btn-aside-minimize">
+              <i class="text-muted material-icons md-menu_open"></i>
+            </button>
+          </div>
         </div>
-        <ul class="menu-aside">
-            <li class="menu-item ">
+        <nav>
+          <ul class="menu-aside">
+            <li class="menu-item">
                 <a class="menu-link" href="/userAccount"> <i class="icon material-icons md-person"></i>
                     <span class="text">Info</span>
                 </a>
             </li>
-            <li class="menu-item">
+            <li class="menu-item ">
                 <a class="menu-link" href="/orders"> <i class="icon material-icons md-shopping_cart"></i>
                     <span class="text">Orders</span>
                 </a>
@@ -175,17 +185,13 @@
                 <a class="menu-link" href="/address"> <i class="icon material-icons md-contact_mail"></i>
                     <span class="text">Address</span>
                 </a>
-                <div class="submenu">
-                </div>
             </li>
             <li class="menu-item active">
                 <a class="menu-link" href="/wallet"> <i class="icon material-icons md-account_balance_wallet"></i>
                     <span class="text">Wallet</span>
                 </a>
-                <div class="submenu">
-                </div>
             </li>
-            <li class="menu-item ">
+            <li class="menu-item">
                 <a class="menu-link" href="/changePasswordPage"> <i class="icon material-icons md-vpn_key"></i>
                     <span class="text">Change password</span>
                 </a>
@@ -195,12 +201,10 @@
                     <span class="material-symbols-outlined">
                         logout
                     </span>
-                    Logout
                 </a>
             </li>
-        </ul>
-        <hr>
-        <br>
+          </ul>
+        </nav>
     </aside>
 
     <main class="main-wrap">
@@ -271,21 +275,15 @@
     <script>
         function addAmount() {
             const amountInput = document.getElementById('amountInput');
-            const amount = amountInput.value.trim(); // Trim to remove leading and trailing whitespaces
-
-            // Regular expression for validating amount (positive decimal numbers)
+            const amount = amountInput.value.trim(); 
             const amountRegex = /^\d*\.?\d+$/;
 
-            // Check if amount is empty or fails the regex test
             if (amount === '' || !amountRegex.test(amount)) {
                 document.getElementById('error').innerText = 'Enter a valid number';
-                return; // Exit the function early if validation fails
+                return; 
             }
 
-            // Clear any previous error message if validation passes
             document.getElementById('error').innerText = '';
-
-            // Call Razorpay payment initialization function
             initiateRazorpayPayment(amount);
         }
 
@@ -340,7 +338,5 @@
             var rzp = new Razorpay(options);
             rzp.open();
         }
-
-
     </script>
     <%- include('../user/userLayout/userFooter') %>

@@ -88,14 +88,19 @@
           </li>
           <li><a class="nav-link" href="about.html">About us</a></li>
           <li><a class="nav-link" href="services.html">Services</a></li>
-          <li><a class="nav-link" href="blog.html">Blog</a></li>
-          <li><a class="nav-link" href="contact.html">Contact us</a></li>
         </ul>
 
         <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
           <!-- <li><a class="nav-link" href="userLogin"><img src="/assets/images/user.svg"></a></li> -->
           <li><a class="nav-link" href="/cartPage"><img src="/assets/images/cart.svg"></a></li>
           <li><a class="nav-link" href="/userAccount"> <img src="/assets/images/user.svg"></a></li>
+          <li>
+						<a class="nav-link" href="/wishList" style="position: relative;">
+							<span class="material-symbols-outlined me-2" style="color: white;">
+								favorite
+							</span>
+						</a>
+					</li>
         </ul>
       </div>
     </div>
@@ -534,6 +539,15 @@ async function removeCoupon(params) {
                 rzp.open();
               })
               .catch(error => {
+                Swal.fire({
+                        title: "Net work error",
+                        text: "Your payment could not be processed. Please try again.",
+                        icon: "error",
+                        showConfirmButton:false
+                      });
+                      setTimeout(() => {
+                      location.reload()
+                      }, 2000);
                 console.error('Error initiating payment:', error);
               });
           }

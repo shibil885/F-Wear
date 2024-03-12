@@ -19,8 +19,9 @@ admin_router.get('/adminLogin',isLoggedAdmin,adminController.adminLogin)
 admin_router.post('/generate-report',isAdmin,adminController.generateReport)
 
 
-admin_router.get('/fetchdashboard',adminController.fetchDashboard)
+admin_router.get('/fetchdashboard',isAdmin,adminController.fetchDashboard)
 
+admin_router.get('/sales',isAdmin,adminController.sales)
 
 
                     ////////////////user\\\\\\\\\\\\\\\\
@@ -71,7 +72,6 @@ admin_router.get('/editCategory/:id',isAdmin,categoryController.editCategoryPage
 admin_router.post('/editCategory',isAdmin,categoryController.editCategory)
 admin_router.patch('/unlistCategory/:id',isAdmin,categoryController.unlistCategory)
 admin_router.patch('/listCategory/:id',isAdmin,categoryController.listCategory)
-
                 //////////////Brand\\\\\\\\\\\\\\\\
 admin_router.get('/brandList',isAdmin,brandController.brandList)
 admin_router.get('/addBrands',isAdmin,brandController.addBrandPage)
@@ -80,10 +80,6 @@ admin_router.patch('/unListBrand/:id',isAdmin,brandController.unListBrand)
 admin_router.patch('/listBrand/:id',isAdmin,brandController.listBrand)
 admin_router.get('/editBrand/:id',isAdmin,brandController.editBrandPage)
 admin_router.post('/editBrand',isAdmin,brandController.editBrand)
-
-
-
-
                 //////////////Coupon\\\\\\\\\\\\\\\\
 admin_router.get('/couponList',isAdmin,couponController.couponList)
 admin_router.get('/addCoupon',isAdmin,couponController.addCouponPage)
@@ -95,7 +91,6 @@ admin_router.patch('/unlistCoupon',isAdmin,couponController.UnListCoupon)
 
 
 //best
-
 admin_router.get('/bestProducts',isAdmin,adminController.bestProducts)
 admin_router.get('/bestCategories',isAdmin,adminController.bestCategories)
 admin_router.get('/bestBrands',isAdmin,adminController.bestBrands)

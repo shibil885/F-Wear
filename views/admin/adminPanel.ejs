@@ -1,10 +1,12 @@
 <!DOCTYPE HTML>
 <html lang="en">
+
 <head>
   <title>.F-Wear</title>
   <!-- Template CSS -->
   <link href="assets/css/main.css" rel="stylesheet" type="text/css" />
 </head>
+
 <body>
   <div class="screen-overlay"></div>
   <aside class="navbar-aside" id="offcanvas_aside">
@@ -99,12 +101,12 @@
             <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
           </li>
           <li class="dropdown nav-item">
-            <a data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
-              aria-expanded="false"><i class="material-icons md-public"></i></a>
+            <a data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i
+                class="material-icons md-public"></i></a>
           </li>
           <li class="dropdown nav-item">
-              <a class="dropdown-item text-danger" href="/adminlogout"><i
-                  class="material-icons md-exit_to_app"></i>Logout</a>
+            <a class="dropdown-item text-danger" href="/adminlogout"><i
+                class="material-icons md-exit_to_app"></i>Logout</a>
           </li>
         </ul>
       </div>
@@ -202,6 +204,9 @@
             <article class="card-body">
               <h5 class="card-title">Sale statistics</h5>
               <div>
+                <a href="#" class="mx-2" id="weekGraphBtn">
+                  <i class="text-muted material-icons md-show_chart"></i>Week Graph
+                </a>
                 <a href="#" class="mx-2" id="monthGraphBtn">
                   <i class="text-muted material-icons md-show_chart"></i>Month Graph
                 </a>
@@ -250,22 +255,20 @@
       </div>
     </section> <!-- content-main end// -->
   </main>
-    <footer class="main-footer font-xs">
-      <div class="row pb-30 pt-15">
-        <div class="col-sm-6">
-          <script>
-            document.write(new Date().getFullYear())
-          </script> ©, Evara - HTML Ecommerce Template .
-        </div>
-        <div class="col-sm-6">
-          <div class="text-sm-end">
-            All rights reserved
-          </div>
+  <footer class="main-footer font-xs">
+    <div class="row pb-30 pt-15">
+      <div class="col-sm-6">
+        <script>
+          document.write(new Date().getFullYear())
+        </script> ©, Evara - HTML Ecommerce Template .
+      </div>
+      <div class="col-sm-6">
+        <div class="text-sm-end">
+          All rights reserved
         </div>
       </div>
-    </footer>
-
-
+    </div>
+  </footer>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function () {
@@ -284,14 +287,11 @@
             $('#downloadButton').show();
           },
           error: function (xhr, status, error) {
-            // Handle error
-            console.error(error);
+          console.error(error);
           }
         });
       });
     });
-  </script>
-  <script>
     document.addEventListener('DOMContentLoaded', function () {
       const initialData = {
         cod: 0,
@@ -302,14 +302,13 @@
       const orderChart = new Chart(orderCtx, {
         type: 'doughnut',
         data: {
-          labels: ['Cod', 'RazorPay', 'Delivered','Wallet',],
+          labels: ['Cod', 'RazorPay', 'Wallet'],
           datasets: [{
             data: Object.values(initialData),
             backgroundColor: [
               'rgba(75, 30, 132, 0.7)',
               'rgba(255, 205, 25, 0.7)',
-              'rgba(100, 206, 15,0.7)',
-              'rgba(194, 162, 105,0.7)',
+              'rgba(194, 0, 105,0.7)',
             ],
           }],
         },
@@ -327,7 +326,6 @@
           },
         },
       });
-
       function updateChartData(data) {
         orderChart.data.datasets[0].data = Object.values(data);
         orderChart.update();
@@ -337,198 +335,91 @@
         fetch('/fetchdashboard')
           .then(response => response.json())
           .then(data => {
-            console.log('pie',data.ordersPie);
             updateChartData(data.ordersPie);
           })
           .catch(error => {
             console.error('Error fetching data:', error);
           });
       }
-
       fetchDataAndUpdateChart();
+      const lineChartCtx = document.getElementById('lineChart').getContext('2d');
+      let lineChartInstance = null;
 
+      function fetchAndRenderGraph(timeframe) {
+        fetch(`/sales?timeframe=${timeframe}`)
+          .then(response => response.json())
+          .then(data => {
+            const labels =data.labels;
+            const values = data.values;
+            console.log('labels:',labels);
+            console.log('values:',values);
 
-
-
-      function updateGraphWithMonthlyData() {
-        const existingChart = Chart.getChart('lineChart');
-        if (existingChart) {
-          existingChart.destroy();
-        }
-        const months = '<%- JSON.stringify(ordersGraph.labels) %>';
-        const counts = '<%- JSON.stringify(ordersGraph.count) %>';
-
-
-        const parsedMonths = JSON.parse(months);
-        const parsedCounts = JSON.parse(counts);
-
-
-        const countsWithNull = new Array(parsedMonths.length).fill(null);
-
-
-        parsedMonths.forEach((month, index) => {
-          const monthIndex = parsedMonths.indexOf(month);
-          if (monthIndex !== -1) {
-            countsWithNull[monthIndex] = parsedCounts[index];
-          }
-        });
-
-        const lineCtx = document.getElementById('lineChart').getContext('2d');
-        const lineChart = new Chart(lineCtx, {
-          type: 'line',
-          data: {
-            labels: parsedMonths,
-            datasets: [{
-              label: 'Orders by Month',
-              data: countsWithNull,
-              borderColor: 'rgba(54, 162, 235, 1)',
-              backgroundColor: 'rgba(54, 162, 235, 0.2)',
-              fill: true,
-            }],
-          },
-          options: {
-            title: {
-              display: true,
-              text: 'Orders by Month',
-            },
-            scales: {
-              x: {
-                type: 'category',
-                position: 'bottom',
+            if (lineChartInstance) {
+              lineChartInstance.destroy();
+            }
+            // Create new chart
+            lineChartInstance = new Chart(lineChartCtx, {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Sales',
+                  data: values,
+                  borderColor: 'rgb(75, 192, 192)',
+                  borderWidth: 1,
+                  fill: false
+                }]
               },
-              y: {
-                type: 'linear',
-                ticks: {
-                  stepSize: 1,
-                  beginAtZero: true,
-                },
-              },
-            },
-            plugins: {
-              legend: {
-                labels: {
-                  color: 'orange',
-                },
-              },
-            },
-          },
-        });
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching graph data:', error);
+          });
       }
-      function updateYearGraph() {
-        const existingChart = Chart.getChart('lineChart');
-        if (existingChart) {
-          existingChart.destroy();
-        }
-        const years = '<%- JSON.stringify(ordersYearGraph.labels) %>';
-        const counts = '<%- JSON.stringify(ordersYearGraph.count) %>';
 
+      const weekGraphBtn = document.getElementById('weekGraphBtn');
+      weekGraphBtn.addEventListener('click', function () {
+        fetchAndRenderGraph('weekly');
+      });
 
-        const parsedYears = JSON.parse(years);
-        const parsedCounts = JSON.parse(counts);
-        const minYear = Math.min(...parsedYears);
-        const maxYear = Math.max(...parsedYears);
-
-        const yearsToShow = [];
-        for (let i = minYear - 3; i <= maxYear + 3; i++) {
-          yearsToShow.push(i);
-        }
-        console.log('yearsToShow:', yearsToShow);
-        const countsWithNull = new Array(yearsToShow.length).fill(null);
-
-
-        parsedYears.forEach((year, index) => {
-          const yearIndex = yearsToShow.indexOf(parseInt(year));
-          if (yearIndex !== -1) {
-            countsWithNull[yearIndex] = parsedCounts[index];
-          }
-        });
-        console.log('countsWithNull:', countsWithNull);
-
-        const lineCtx = document.getElementById('lineChart').getContext('2d');
-        const lineChart = new Chart(lineCtx, {
-          type: 'line',
-          data: {
-            labels: yearsToShow,
-            datasets: [{
-              label: 'Orders by Years',
-              data: countsWithNull,
-              borderColor: 'rgba(54, 162, 235, 1)',
-              backgroundColor: 'rgba(54, 162, 235, 0.2)',
-              fill: true,
-            }],
-          },
-          options: {
-            title: {
-              display: true,
-              text: 'Orders by Years',
-            },
-            scales: {
-              x: {
-                type: 'category',
-                position: 'bottom',
-              },
-              y: {
-                type: 'linear',
-                beginAtZero: true, 
-                ticks: {
-                  stepSize: 1,
-                },
-              },
-            },
-            plugins: {
-              legend: {
-                labels: {
-                  color: 'orange',
-                },
-              },
-            },
-          },
-        });
-      }
-      
       const monthGraphBtn = document.getElementById('monthGraphBtn');
-      console.log('monthGraphBtn:', monthGraphBtn);
-      const yearGraphBtn = document.getElementById('yearGraphBtn');
-      console.log('yearGraphBtn:', yearGraphBtn);
       monthGraphBtn.addEventListener('click', function () {
-        updateGraphWithMonthlyData();
-        monthGraphBtn.classList.add('active');
-        yearGraphBtn.classList.remove('active');
+        fetchAndRenderGraph('monthly');
       });
 
+      const yearGraphBtn = document.getElementById('yearGraphBtn');
       yearGraphBtn.addEventListener('click', function () {
-
-        updateYearGraph();
-
-
-        yearGraphBtn.classList.add('active');
-        monthGraphBtn.classList.remove('active');
+        fetchAndRenderGraph('yearly');
       });
-
-      updateGraphWithMonthlyData();
     })   
   </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- <script src="https://cdn.jsdelivr.net/npm/validator@13.6.0"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/validator@13.6.0"></script> -->
+  <script src="/assets/js/bootstrap.bundle.min.js"></script>
+  <script src="/assets/js/tiny-slider.js"></script>
+  <script src="/assets/js/custom.js"></script>
+  <script src="/assets/js/vendors/chart.js"></script>
+  <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+  <script src="/assets/js/vendors/bootstrap.min.js"></script>
+  <script src="/assets/js/vendors/chart.js"></script>
+  <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+  <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+  <script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+  <script src="/assets/js/vendors/select2.min.js"></script>
+  <script src="/assets/js/main.js" type="text/javascript"></script>
+  <script src="/assets/js/custom-chart.js" type="text/javascript"></script>
 
-
-<script src="/assets/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/js/tiny-slider.js"></script>
-<script src="/assets/js/custom.js"></script>
-<script src="/assets/js/vendors/chart.js"></script>
-
-
-<script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
-<script src="/assets/js/vendors/bootstrap.min.js"></script>
-<script src="/assets/js/vendors/chart.js"></script>
-<script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
-<script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
-<script src="/assets/js/vendors/perfect-scrollbar.js"></script>
-<script src="/assets/js/vendors/select2.min.js"></script>
-<script src="/assets/js/main.js" type="text/javascript"></script> 
-<script src="/assets/js/custom-chart.js" type="text/javascript"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 </body>
+
 </html>
