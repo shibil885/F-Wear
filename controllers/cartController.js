@@ -210,7 +210,7 @@ const checkoutPage = async (req, res) => {
             );
         });
         console.log('couponToUser:================',couponToUser);
-        res.status(200).render('user/CheckoutPage', { userAddress, userCart, user: req.session.user, grandTotal, couponToUser });
+        res.status(200).render('user/checkoutPage', { userAddress, userCart, user: req.session.user, grandTotal, couponToUser });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });

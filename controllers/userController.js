@@ -64,6 +64,7 @@ const services = async (req, res) => {
 const userLoginPage = (req, res) => {
     res.render('user/userLogin')
 }
+
 //user login
 const login = async (req, res) => {
     try {
@@ -78,7 +79,7 @@ const login = async (req, res) => {
                 req.session.user = userData;
                 req.session.userID = userData._id;
                 req.session.isLogged = true;
-                res.redirect('/home');
+                res.redirect('/');
             } else {
                 res.render('user/userLogin', { alert: 'Entered email or password is incorrect' });
             }
