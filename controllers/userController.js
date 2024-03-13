@@ -17,10 +17,8 @@ const homePage = async (req, res) => {
             const userCart = await Cart.findOne({ userID: req.session.userID });
             const cartLength = userCart ? userCart.items.length : 0;
             res.render('user/home', { userData, cartLength });
-        }else{
-            const userCart = await Cart.findOne({ userID: req.session.userID });
-            const cartLength = userCart ? userCart.items.length : 0;
-            res.render('user/home', { userData, cartLength });
+        } else {
+            res.render('user/home', { userData: null, cartLength: 0 });
         }
     } catch (error) {
         console.error('Error occurred while rendering home page', error);
@@ -69,33 +67,26 @@ const userLoginPage = (req, res) => {
 //user login
 const login = async (req, res) => {
     try {
-        const userData = await User.findOne({ email: req.body.email })
+        const userData = await User.findOne({ email: req.body.email });
         if (!userData) {
-            res.render('user/userLogin', { alert: 'Entered email or password is incorrect' })
-        }
-        else if (userData && userData.isBlocked) {
-            res.render('user/userLogin', { alert: 'This account temporarly restricted' })
-        }
-        else if (userData) {
-            const passwordMatch = await bcrypt.compare(req.body.password, userData.password)
-            if (passwordMatch && userData.email === req.body.email) {
-                req.session.user = userData
-                req.session.userID = userData._id
-                req.session.isLogged = true
-                const userCart = await Cart.findOne({ userID:userData._id });
-                const cartLength = userCart ? userCart.items.length : 0;
-                res.render('user/home', { userData, cartLength });
-            } else {
-                res.render('user/userLogin', { alert: 'Entered email or password is incorrect' })
-            }
+            res.render('user/userLogin', { alert: 'Entered email or password is incorrect' });
+        } else if (userData.isBlocked) {
+            res.render('user/userLogin', { alert: 'This account is temporarily restricted' });
         } else {
-            res.redirect('/userSignup', { alert: "Account Doesn't Exist, Please signup" })
+            const passwordMatch = await bcrypt.compare(req.body.password, userData.password);
+            if (passwordMatch && userData.email === req.body.email) {
+                req.session.user = userData;
+                req.session.userID = userData._id;
+                req.session.isLogged = true;
+                res.redirect('/home');
+            } else {
+                res.render('user/userLogin', { alert: 'Entered email or password is incorrect' });
+            }
         }
     } catch (error) {
-        res.status(500).send('Internal server error')
-        console.error(error)
+        res.status(500).send('Internal server error');
+        console.error(error);
     }
-
 }
 //rendering signup page
 const userSignup = ((req, res) => {
