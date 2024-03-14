@@ -60,7 +60,7 @@ const productList = async (req, res) => {
       }
     ]);
     const totalPages = Math.ceil(totalProductsCount / perPage);
-    res.render("admin/productlist", {
+    res.render("admin/productList", {
       product: products,
       totalPages: totalPages,
       currentPage: page,

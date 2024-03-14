@@ -474,7 +474,7 @@ const bestBrands = async (req, res) => {
         },
       },
     ]);
-    res.render('admin/bestbrand', { bestSellingBrands });
+    res.render('admin/bestBrand', { bestSellingBrands });
   } catch (error) {
     console.error(error);
   }

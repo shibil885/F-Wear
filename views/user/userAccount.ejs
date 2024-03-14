@@ -150,12 +150,12 @@
         var phone = document.getElementById("phone").value.trim();
         var nameError = document.getElementById("nameError");
         var phoneError = document.getElementById("phoneError");
-        var namePattern = /^[a-zA-Z\s]+$/;
+        var namePattern = /^[a-zA-Z]+$/;
         var phonePattern = /^\d{10}$/; // 
         nameError.textContent = "";
         phoneError.textContent = "";
         if (!namePattern.test(username)) {
-            nameError.textContent = "Name must contain only letters and spaces";
+            nameError.textContent = "Name must contain only letters";
             return false;
         }
         if (!phonePattern.test(phone)) {

@@ -299,15 +299,14 @@
             })
               .then(response => {
                 if (!response.ok) {
-                  throw new Error('Network response was not ok');
+                  throw new Error('Somthing wrong');
                 }
                 return response.json();
               })
               .then(data => {
-                // Display success message to the user
                 Swal.fire({
                   icon: data.icon,
-                  title: data.message, // Display the message from the backend
+                  title: data.message, 
                   showConfirmButton: false
                 });
                 setTimeout(() => {
@@ -315,12 +314,15 @@
                 }, 2000);
               })
               .catch(error => {
-                // Display error message to the user
-                Swal.fire({
+                  Swal.fire({
                   icon: "error",
                   title: "Oops...",
-                  text: error.message // Display the error message
+                  text: error.message,
+                  showConfirmButton: false
                 });
+                setTimeout(() => {
+                  location.reload();
+                }, 2000);
                 console.error('Error occurred while adding product to wishlist:', error);
               });
           }

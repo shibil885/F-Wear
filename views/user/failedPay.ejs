@@ -140,15 +140,7 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ paymentMethod, totalAmount }),
             });
-            Swal.fire({
-              title: "Payment failed",
-              text: "Your payment could not be processed. Please try again.",
-              icon: "error",
-              showConfirmButton: true
-            });
-            setTimeout(() => {
               window.location.href = '/orders';
-            }, 2000);
           }
         },
         prefill: {
@@ -166,16 +158,8 @@
               method: "POST",
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ paymentMethod, totalAmount }),
-            });
-            Swal.fire({
-              title: "Payment failed",
-              text: "Your payment could not be processed. Please try again.",
-              icon: "error",
-              showConfirmButton: true
-            });
-            setTimeout(() => {
+            })
               window.location.href = '/orders';
-            }, 2000);
       })
       rzp.open();
     }

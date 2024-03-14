@@ -60,7 +60,9 @@ const addAddress = async (req, res) => {
                 await userAddress.save();
                 res.redirect('/address');
             } else {
-                return res.render('user/addAddress', { alert: 'Address already exists' });
+            const userCart = await Cart.findOne({ userID: userId })
+            const cartLength = userCart ? userCart.items.length : 0;
+                return res.render('user/addAddress', { alert: 'Address already exists',cartLength});
             }
         }
     } catch (error) {
@@ -149,8 +151,10 @@ const editAddress = async (req, res) => {
             await userAddress.save();
             res.redirect('/address');
         } else {
+            const userCart = await Cart.findOne({ userID: userId })
+            const cartLength = userCart ? userCart.items.length : 0;
             const addressForEdit = userAddress.details.find((details) => details._id.toString() === addressId.toString())
-            return res.render('user/editAddress', { alert: 'Address already exists', addressForEdit });
+            return res.render('user/editAddress', { alert: 'Address already exists', addressForEdit,cartLength });
         }
     } catch (error) {
         console.error(error);
