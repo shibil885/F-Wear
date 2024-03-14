@@ -3,6 +3,8 @@ const Category = require('../models/categoriesModel')
 const Products = require('../models/productModel')
 const Orders = require('../models/orderModel')
 const pdf = require('html-pdf')
+const PDFDocument = require('pdfkit');
+const fs = require('fs')
 require('dotenv').config()
 
 
@@ -239,104 +241,43 @@ const fetchDashboard = async (req, res, next) => {
 const generateReport = async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
-    console.log('Request Body:', req.body);
 
     const orders = await Orders.find({
-      date: { $gte: new Date(startDate), $lte: new Date(endDate) }
+        date: { $gte: new Date(startDate), $lte: new Date(endDate) }
     }).populate('products.productId');
 
-    let html = `
-            <html>
-                <head>
-                    <style>
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                        }
-                        th, td {
-                            padding: 8px;
-                            text-align: left;
-                            border-bottom: 1px solid #ddd;
-                        }
-                        th {
-                            background-color: #f2f2f2;
-                        }
-                        .status-pending {
-                            color: orange;
-                        }
-                        .status-shipped {
-                            color: green;
-                        }
-                        .status-delivered {
-                            color: blue;
-                        }
-                        .status-cancelled {
-                            color: red;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h1>Order Details Report</h1>
-                    <p>Start Date: ${startDate}</p>
-                    <p>End Date: ${endDate}</p>
-        `;
+    const doc = new PDFDocument();
+    const writeStream = fs.createWriteStream('./temp/report.pdf');
+    doc.pipe(writeStream);
+
+    doc.fontSize(12).text('Order Details Report', { align: 'center' });
+    doc.moveDown();
+    doc.text(`Start Date: ${startDate}`);
+    doc.text(`End Date: ${endDate}`);
+    doc.moveDown();
 
     if (orders.length === 0) {
-      html += `
-                <p style="font-size: 24px; font-weight: bold; color: #666666;">No records found</p>
-            `;
+        doc.fontSize(24).fillColor('#666666').text('No records found', { align: 'center' });
     } else {
-      html += `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Order Date</th>
-                            <th>Status</th>
-                            <th>Payment Status</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
+        orders.forEach(order => {
+            const orderDetails = `Order ID: ${order._id}, Order Date: ${order.date.toDateString()}, Payment Status: ${order.paymentStatus}`;
+            doc.text(orderDetails);
+            order.products.forEach(item => {
+                const itemDetails = `Product: ${item.productId.name}, Quantity: ${item.quantity}, Price: ${item.price}`;
+                doc.text(itemDetails);
+            });
 
-      orders.forEach(order => {
-        order.products.forEach(item => {
-          html += `
-                        <tr>
-                            <td>#${order._id}</td>
-                            <td>${order.date.toDateString()}</td>
-                            <td class="status-${item.status}">${item.status}</td>
-                            <td>${order.paymentStatus}</td>
-                            <td>${item.quantity}</td>
-                            <td>${item.salesPrice}</td>
-                        </tr>
-                    `;
+            doc.moveDown();
         });
-      });
-
-      html += `
-                    </tbody>
-                </table>
-            `;
     }
 
-    html += `
-            </body>
-            </html>
-        `;
-
-    pdf.create(html).toFile('./temp/report.pdf', (err, res) => {
-      if (err) throw err;
-      console.log('PDF Generation Response:', res);
-    });
+    doc.end();
 
     res.json({ reportUrl: './temp/report.pdf' });
-  } catch (err) {
+} catch (err) {
     console.error('Error generating report:', err);
     res.status(500).json({ error: 'Failed to generate report' });
-  }
+}
 }
 const report = (req, res) => {
   const filePath = '../temp/report.pdf';
@@ -474,7 +415,7 @@ const bestBrands = async (req, res) => {
         },
       },
     ]);
-    res.render('admin/bestBrand', { bestSellingBrands });
+    res.render('admin/bestbrand', { bestSellingBrands });
   } catch (error) {
     console.error(error);
   }
