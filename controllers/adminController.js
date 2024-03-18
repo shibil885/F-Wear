@@ -16,8 +16,13 @@ async function chart() {
       razorPay: 0,
       wallet: 0
     }
+    const paymentMethod = {
+      cashOnDelivery:'cashOnDelivery',
+      razorPay:'razorPay',
+      wallet :'wallet'
+    }
     ordersPie.forEach((order) => {
-      if (order.paymentMethod === "cashOnDelivery") {
+      if (order.paymentMethod === paymentMethod.cashOnDelivery) {
         ordersCount.cashOnDelivery++
       } else if (order.paymentMethod === "razorPay") {
         ordersCount.razorPay++

@@ -209,7 +209,6 @@ const checkoutPage = async (req, res) => {
                 coupon.expiryDate >= currentDate
             );
         });
-        console.log('couponToUser:================',couponToUser);
         res.status(200).render('user/checkoutPage', { userAddress, userCart, user: req.session.user, grandTotal, couponToUser });
     } catch (error) {
         console.error(error);

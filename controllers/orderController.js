@@ -403,7 +403,8 @@ const thankYou = (req, res) => {
 const payFailedAmount = async (req, res) => {
     try {
         const orderId = req.params.id
-        const userOrder = await Order.findById(orderId)
+        const userOrder = await Order.findById(orderId).populate('products.productId')
+        console.log('userOrder--------------',userOrder);
         res.render('user/failedPay', { user: req.session.user, userOrder, orderId })
     } catch (error) {
         console.error(error);
