@@ -431,6 +431,7 @@ const orderList = async (req, res) => {
 
         const userOrders = await Order.find()
             .populate('userId')
+            .sort({date:-1})
             .skip(perPage * page - perPage)
             .limit(perPage);
 
