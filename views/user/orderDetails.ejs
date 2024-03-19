@@ -202,7 +202,7 @@
                                                         <td>
                                                             <% if (item.isDelivered == true && item.status !== 'return') { %>
                                                                 <button
-                                                                class="btn btn-danger rounded px-2">
+                                                                class="btn btn-danger rounded px-2" onclick="returnOrder('<%=item.productId._id%>','<%=order._id%>')">
                                                                 Return
                                                             </button>
                                                             <% } else { %>
@@ -251,6 +251,47 @@
         </div>
 </section>
 <script>
+    async function returnOrder(productId,orderId){
+        Swal.fire({
+            title: "Are you sure?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#14A44D",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/returnOrder', {
+                    method: "PATCH",
+                    headers: { 'Content-Type': 'application/json' },
+                    body:JSON.stringify({productId,orderId})
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Something went wrong!');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        Swal.fire({
+                            title: "returned",
+                            icon: "success",
+                            showConfirmButton:false
+                        });
+                        setTimeout(() => {
+                            location.reload()
+                        }, 2000);
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: error.message || "Something went wrong!",
+                        });
+                    });
+            }
+        });
+    }
     function cancelOrder(productId,orderId) {
         Swal.fire({
             title: "Are you sure?",

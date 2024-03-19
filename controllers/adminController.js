@@ -245,45 +245,45 @@ const fetchDashboard = async (req, res, next) => {
 
 const generateReport = async (req, res) => {
   try {
-    const { startDate, endDate } = req.body;
+      const { startDate, endDate } = req.body;
 
-    const orders = await Orders.find({
-        date: { $gte: new Date(startDate), $lte: new Date(endDate) }
-    }).populate('products.productId');
+      // Fetch orders from the database based on the provided date range
+      const orders = await Orders.find({
+          date: { $gte: new Date(startDate), $lte: new Date(endDate) }
+      }).populate('products.productId');
 
-    const doc = new PDFDocument();
-    const writeStream = fs.createWriteStream('./temp/report.pdf');
-    doc.pipe(writeStream);
+      // Process fetched orders to extract necessary information for the report
+      const reportData = orders.map((order, index) => {
+          let totalPrice = 0;
+          order.products.forEach(product => {
+              totalPrice += product.salesPrice * product.quantity;
+          });
 
-    doc.fontSize(12).text('Order Details Report', { align: 'center' });
-    doc.moveDown();
-    doc.text(`Start Date: ${startDate}`);
-    doc.text(`End Date: ${endDate}`);
-    doc.moveDown();
+          return {
+              orderId: order._id,
+              date: order.date,
+              totalPrice,
+              products: order.products.map(product => {
+                  return {
+                      productName: product.productId.product_title,
+                      quantity: product.quantity,
+                      price: product.salesPrice
+                  };
+              }),
+              firstName: order.firstName,
+              lastName: order.lastName,
+              address: order.address,
+              paymentMethod: order.paymentMethod,
+              paymentStatus: order.paymentStatus
+          };
+      });
+      res.status(200).json({ reportData });
+  } catch (err) {
+      console.error('Error generating report:', err);
+      res.status(500).json({ error: 'Failed to generate report' });
+  }
+};
 
-    if (orders.length === 0) {
-        doc.fontSize(24).fillColor('#666666').text('No records found', { align: 'center' });
-    } else {
-        orders.forEach(order => {
-            const orderDetails = `Order ID: ${order._id}, Order Date: ${order.date.toDateString()}, Payment Status: ${order.paymentStatus}`;
-            doc.text(orderDetails);
-            order.products.forEach(item => {
-                const itemDetails = `Product: ${item.productId.name}, Quantity: ${item.quantity}, Price: ${item.price}`;
-                doc.text(itemDetails);
-            });
-
-            doc.moveDown();
-        });
-    }
-
-    doc.end();
-
-    res.json({ reportUrl: './temp/report.pdf' });
-} catch (err) {
-    console.error('Error generating report:', err);
-    res.status(500).json({ error: 'Failed to generate report' });
-}
-}
 const report = (req, res) => {
   const filePath = '../temp/report.pdf';
   res.sendFile(filePath, { root: '.' }, (err) => {
@@ -420,7 +420,7 @@ const bestBrands = async (req, res) => {
         },
       },
     ]);
-    res.render('admin/bestbrand', { bestSellingBrands });
+    res.render('admin/bestBrand', { bestSellingBrands });
   } catch (error) {
     console.error(error);
   }

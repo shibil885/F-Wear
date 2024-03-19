@@ -26,13 +26,10 @@ const addToCart = async (req, res) => {
 
         // Find the product by ID
         const product = await Products.findById(productID);
-        console.log("product:", product);
-
-        // Find the user's cart\    
+        console.log("product:", product);   
         let userCart = await Cart.findOne({ userID: userId });
 
         if (!userCart) {
-            // If the user doesn't have a cart, create a new one
             const newCart = new Cart({
                 userID: userId,
                 items: [{
@@ -42,16 +39,12 @@ const addToCart = async (req, res) => {
                 }],
                 totalPrice: product.price * quantity
             });
-            // Save the new cart to the database
             const updatedProduct = await Products.findByIdAndUpdate(productID,
                 { $inc: { stock: -stock } },
                 { new: true })
             console.log('updatedProduct:', updatedProduct);
             await newCart.save();
         } else {
-            // If the user already has a cart
-
-            // Check if the product already exists in the cart
             const existingProduct = userCart.items.find(item => item.product.toString() === productID.toString());
 
             if (existingProduct) {
@@ -73,10 +66,8 @@ const addToCart = async (req, res) => {
                     { new: true })
                 console.log('updatedProduct:', updatedProduct);
             }
-            // Update the total price in the cart
             userCart.totalPrice = userCart.items.reduce((total, item) => total + (item.price * item.quantity), 0);
 
-            // Save the updated cart to the database
             await userCart.save();
         }
 

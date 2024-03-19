@@ -564,6 +564,63 @@ const cancelOrder = async (req, res) => {
         console.error(error);
     }
 }
+const returnOrder = async (req, res) => {
+    try {
+        const { productId, orderId } = req.body;
+        const order = await Order.findOne({ _id: orderId })
+        if (order.paymentMethod === 'razorPay') {
+            const returnProduct = order.products.find(product => product.productId.toString() === productId);
+            if (!returnProduct) {
+                return res.status(404).json({ error: 'Product not found in order' });
+            }
+            returnProduct.status = 'return';
+            order.totalPrice -= returnProduct.total;
+            await Product.findByIdAndUpdate(returnProduct.productId, { $inc: { stock: returnProduct.quantity } });
+            const unReturn = order.products.filter((product) => product.status !== 'return')
+            if (unReturn.length == 0) {
+                order.totalPrice = 0
+            }
+            await order.save();
+            if (unReturn.length == 0) {
+                const userWallet = await Wallet.findOne({ userId: req.session.userID })
+                const amountToWallet = returnProduct.total + 50
+                userWallet.balance += amountToWallet
+                userWallet.history.push({
+                    amount: amountToWallet,
+                    type: 'credit',
+                    description: 'Amount from order return'
+                });
+                await userWallet.save();
+            } else {
+                const userWallet = await Wallet.findOne({ userId: req.session.userID })
+                const amountToWallet = returnProduct.total + 50
+                userWallet.balance += amountToWallet
+                userWallet.history.push({
+                    amount: amountToWallet,
+                    type: 'credit',
+                    description: 'Amount from order return'
+                });
+                await userWallet.save();
+            }
+            return res.status(200).json({ message: 'Product returned successfully', returnProduct: returnProduct });
+        }
+        const returnProduct = order.products.find(product => product.productId.toString() === productId);
+        if (!returnProduct) {
+            return res.status(404).json({ error: 'Product not found in order' });
+        }
+        returnProduct.status = 'return';
+        order.totalPrice -= returnProduct.total;
+        await Product.findByIdAndUpdate(returnProduct.productId, { $inc: { stock: returnProduct.quantity } });
+        const unReturn = order.products.filter((product) => product.status !== 'return')
+        if (unReturn.length == 0) {
+            order.totalPrice = 0
+        }
+        await order.save();
+        res.status(200).json({ message: 'Product returned successfully', returnProduct: returnProduct });
+    } catch (error) {
+        console.error(error);
+    }
+}
 const cancelOrderAdmin = async (req, res) => {
     try {
         const { productId, orderId } = req.body;
@@ -808,6 +865,7 @@ module.exports = {
     orders,
     userOrderDetails,
     cancelOrder,
+    returnOrder,
     cancelOrderAdmin,
     confirmOrder,
     shippedOrder,

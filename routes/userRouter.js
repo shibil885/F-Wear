@@ -64,6 +64,7 @@ user_router.get('/thankYou',isUser,isBlocked,orderController.thankYou)
 user_router.get('/orders',isUser,isBlocked,orderController.orders)
 user_router.get('/orderDetails/:id',isBlocked,orderController.orderDetails)
 user_router.patch('/cancelOrder',isUser,isBlocked,orderController.cancelOrder)
+user_router.patch('/returnOrder',isUser,isBlocked,orderController.returnOrder)
 user_router.get('/downloadInvoice/:id',isUser,isBlocked,orderController.downloadInvoice)
 
 //wallet
