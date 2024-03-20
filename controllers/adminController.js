@@ -2,9 +2,6 @@ const User = require('../models/userModel')
 const Category = require('../models/categoriesModel')
 const Products = require('../models/productModel')
 const Orders = require('../models/orderModel')
-const pdf = require('html-pdf')
-const PDFDocument = require('pdfkit');
-const fs = require('fs')
 require('dotenv').config()
 
 
@@ -24,9 +21,9 @@ async function chart() {
     ordersPie.forEach((order) => {
       if (order.paymentMethod === paymentMethod.cashOnDelivery) {
         ordersCount.cashOnDelivery++
-      } else if (order.paymentMethod === "razorPay") {
+      } else if (order.paymentMethod === paymentMethod.razorPay) {
         ordersCount.razorPay++
-      } else if (order.paymentMethod === "wallet") {
+      } else if (order.paymentMethod === paymentMethod.wallet) {
         ordersCount.wallet++
       }
     })
@@ -34,73 +31,6 @@ async function chart() {
     return ordersCount;
   } catch (error) {
     console.log("An error occured in orders count function chart", error.message);
-  }
-}
-
-async function monthgraph() {
-  try {
-    const ordersCountByMonth = await Orders.aggregate([
-      {
-        $project: {
-          yearMonth: {
-            $dateToString: {
-              format: "%Y-%m",
-              date: "$date"
-            }
-          }
-        }
-      },
-      {
-        $group: {
-          _id: "$yearMonth",
-          count: { $sum: 1 }
-        }
-      },
-      {
-        $sort: { _id: 1 }
-      }
-    ]);
-
-    const labels = ordersCountByMonth.map(val => val._id);
-    const count = ordersCountByMonth.map(val => val.count);
-    return {
-      labels: labels,
-      count: count
-    };
-  } catch (error) {
-    console.log('Error retrieving orders in monthgraph function:', error.message);
-    throw error;
-  }
-}
-
-async function yeargraph() {
-  try {
-    const ordersCountByYear = await Orders.aggregate([
-      {
-        $project: {
-          year: { $year: { date: '$date' } },
-        },
-      },
-      {
-        $group: {
-          _id: '$year',
-          count: { $sum: 1 },
-        },
-      },
-      {
-        $sort: { _id: 1 },
-      },
-    ]);
-
-    const labels = ordersCountByYear.map((val) => val._id.toString());
-    const count = ordersCountByYear.map((val) => val.count);
-
-    return {
-      labels: labels,
-      count: count
-    };
-  } catch (error) {
-    console.log('Error retrieving orders in yeargraph function:', error.message);
   }
 }
 
@@ -130,18 +60,16 @@ const adminPanel = async (req, res, next) => {
   try {
     const products = await Products.find()
     const users = await User.find()
-    const orders = await Orders.find()
+    const orders = await Orders.find({paymentStatus:'paid'})
     const categories = await Category.find()
     const ordersPie = await chart()
-    const ordersGraph = await monthgraph();
-    const ordersYearGraph = await yeargraph();
 
     let totalOrderPrice = 0;
     orders.forEach(order => {
       totalOrderPrice += order.totalPrice || 0;
     });
 
-    res.render("admin/adminPanel", { users: users, orders: orders, products: products, ordersPie: ordersPie, categories: categories, ordersGraph, ordersYearGraph, totalOrderPrice });
+    res.render("admin/adminPanel", { users: users, orders: orders, products: products, ordersPie: ordersPie, categories: categories , totalOrderPrice });
   } catch (error) {
     next(error)
   }
@@ -333,42 +261,33 @@ const bestProducts = async (req, res) => {
 const bestCategories = async (req, res) => {
   try {
     const bestSellingCategories = await Orders.aggregate([
-      // Unwind the products array to denormalize it
       { $unwind: '$products' },
-      // Perform a lookup to get product details including category
       {
         $lookup: {
-          from: 'productmodels', // Collection name for products
+          from: 'productmodels', 
           localField: 'products.productId',
           foreignField: '_id',
           as: 'product',
         },
       },
-      // Unwind the product array created by the lookup
       { $unwind: '$product' },
-      // Group by category and sum up the quantities
       {
         $group: {
-          _id: '$product.categoryId', // Group by category ID
-          totalQuantity: { $sum: '$products.quantity' }, // Calculate total quantity for each category
+          _id: '$product.categoryId',
+          totalQuantity: { $sum: '$products.quantity' }, 
         },
       },
-      // Sort by total quantity in descending order
       { $sort: { totalQuantity: -1 } },
-      // Limit to the top 10 categories
       { $limit: 10 },
-      // Perform a lookup to get category details based on the category ID
       {
         $lookup: {
-          from: 'categories', // Collection name for categories
+          from: 'categories',
           localField: '_id',
           foreignField: '_id',
           as: 'category',
         },
       },
-      // Unwind the category array created by the lookup
       { $unwind: '$category' },
-      // Project the fields to include in the output
       {
         $project: {
           _id: '$category._id',
@@ -397,7 +316,7 @@ const bestBrands = async (req, res) => {
       { $unwind: '$product' },
       {
         $group: {
-          _id: '$product.brandId', // Use brandId from the product schema
+          _id: '$product.brandId',
           totalQuantity: { $sum: '$products.quantity' },
         },
       },
@@ -414,8 +333,8 @@ const bestBrands = async (req, res) => {
       { $unwind: '$brand' },
       {
         $project: {
-          _id: '$_id', // Keep the _id unchanged
-          brandName: '$brand.name', // Use the correct field name for brand name
+          _id: '$_id', 
+          brandName: '$brand.name',   
           totalQuantity: 1,
         },
       },
@@ -439,16 +358,16 @@ const sales = async (req, res) => {
 
     if (timeframe === 'weekly') {
       startDate = new Date();
-      startDate.setDate(startDate.getDate() - 7);
+      startDate.setDate(startDate.getDate() - 6); 
       endDate = new Date();
     } else if (timeframe === 'monthly') {
       startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 1);
+      startDate.setMonth(startDate.getMonth() - 1); 
       endDate = new Date();
     } else if (timeframe === 'yearly') {
-      startDate = new Date();
-      startDate.setFullYear(startDate.getFullYear() - 1);
       endDate = new Date();
+      startDate = new Date(endDate.getFullYear(), 0, 1);
+      console.log(startDate);
     } else {
       return res.status(400).json({ error: 'Invalid timeframe' });
     }
@@ -457,20 +376,43 @@ const sales = async (req, res) => {
       date: { $gte: startDate, $lte: endDate },
       paymentStatus: 'paid'
     });
+    
     const salesData = {};
+    if (timeframe === 'weekly') {
+      for (let i = 0; i < 7; i++) {
+        const date = formatDate(new Date(startDate.getTime() + (i * 24 * 60 * 60 * 1000)));
+        salesData[date] = 0;
+      }
+    } else if (timeframe === 'monthly') {
+      for (let i = 0; i < 30; i++) {
+        const date = formatDate(new Date(startDate.getTime() + (i * 24 * 60 * 60 * 1000)));
+        salesData[date] = 0;
+      }
+    }else if (timeframe === 'yearly') {
+      for (let i = 0; i < 12; i++) {
+        const monthStartDate = new Date(startDate.getFullYear(), i, 1);
+        const monthEndDate = new Date(startDate.getFullYear(), i + 1, 1);
+        const monthSales = orders.filter(order => order.date >= monthStartDate && order.date <= monthEndDate);
+        const monthTotalSales = monthSales.reduce((total, order) => total + order.totalPrice, 0);
+        salesData[monthStartDate.toISOString()] = monthTotalSales;
+      }
+    }
     orders.forEach(order => {
       const date = formatDate(order.date);
-      salesData[date] = salesData[date] ? salesData[date] + order.totalPrice : order.totalPrice;
+      salesData[date] += order.totalPrice; 
     });
 
-    const labels = Object.keys(salesData);
+    const labels = Object.keys(salesData).map(date => formatDate(new Date(date)));
     const values = Object.values(salesData);
+    
     res.json({ labels, values });
   } catch (error) {
     console.error('Error fetching sales:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+
 
 
 module.exports = {

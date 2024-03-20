@@ -9,6 +9,8 @@ const Wallet = require('../models/walletModel')
 const Cart = require('../models/cartModel')
 const Wishlist = require('../models/wishlistModel')
 
+
+
 //rendering home page
 const homePage = async (req, res) => {
     try {

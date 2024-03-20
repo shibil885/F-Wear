@@ -1,11 +1,6 @@
 const Address = require('../models/addressModel')
 const Cart = require('../models/cartModel')
 
-
-
-
-
-
 const addAddressPage = async (req, res) => {
     try {
         const userCart = await Cart.findOne({ userID: req.session.userID })

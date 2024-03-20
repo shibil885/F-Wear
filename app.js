@@ -23,7 +23,6 @@ app.use(express.json())
 
 //setting paths 
 app.use('/assets',express.static('public/assets'));
-app.use('/temp',express.static('temp'));
 app.use(express.static('upload'))
 
 
@@ -38,7 +37,9 @@ app.use(session({
 //to handle route
 app.use('/',userRouter)
 app.use('/',adminRouter)
-
+app.get('*',(req,res)=>[
+    res.render('error')
+])
 
 //connecting data base
  mongoose.connect(process.env.MONGODB)

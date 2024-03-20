@@ -4,8 +4,6 @@ const user_router = express.Router()
 
 //middleware
 const {isUser,isLoggedUser,isBlocked} = require('../middleware/userAuth')
-
-
 //controllers
 const cartController = require('../controllers/cartController')
 const addressController = require('../controllers/addressController')
@@ -66,15 +64,11 @@ user_router.get('/orderDetails/:id',isBlocked,orderController.orderDetails)
 user_router.patch('/cancelOrder',isUser,isBlocked,orderController.cancelOrder)
 user_router.patch('/returnOrder',isUser,isBlocked,orderController.returnOrder)
 user_router.get('/downloadInvoice/:id',isUser,isBlocked,orderController.downloadInvoice)
-
 //wallet
 user_router.get('/wallet',isUser,isBlocked,walletController.wallet)
 user_router.post('/addAmount',isUser,isBlocked,walletController.addAmount)
-
 //coupon
 user_router.patch('/checkCoupon',isUser,isBlocked,couponController.checkCoupon)
-
-
 //whishList
 user_router.get('/wishList',isUser,isBlocked,wishListController.favorite)
 user_router.patch('/addToWishList/:id',isUser,isBlocked,wishListController.addToWishList)

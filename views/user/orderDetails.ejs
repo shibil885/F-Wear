@@ -1,24 +1,6 @@
 <%-include('../user/userLayout/userHeader.ejs') %>
 <style>
-    body {
-        background: radial-gradient(circle, rgb(136, 203, 192), #3c5d50);
-    }
-    .cancel-button {
-            padding: 8px 16px;
-            border: 1px solid #dc3545;
-            border-radius: 20px;
-            color: #dc3545;
-            background-color: transparent;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .cancel-button:hover {
-            background-color: #dc3545;
-            /* Red background on hover */
-            color: #fff;
-            /* White text color on hover */
-        }
-        .badge {
+    .badge {
     position: absolute;
     top: 4px;
     right: 4px;
@@ -122,7 +104,7 @@
     <div class="container py-5">
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col-lg-10 col-xl-8">
-                <div class="card" style="border-radius: 10px;">
+                <div class="card card-light" style="border-radius: 10px; ">
                     <div class="card-header px-4 py-5">
                         <h5 class="text-muted mb-0">Thanks for your Order, <span style="color: #a8729a;">
                                 <%=order.userId.username%>
@@ -178,23 +160,23 @@
                                                         <% if (item.isDelivered == true) { %>
                                                             <td class="text-success">delivered</td>
                                                             <% } else { %>
-                                                                <td class="text-warning"><%= item.status %></td>
+                                                                <td class="text-dark"><%= item.status %></td>
                                                         <% } %>
                                                         <td>
                                                         <% if (item.status==='pending' && item.isDelivered==false) { %>
                                                             <button
-                                                                class="btn btn-danger cancel-button px-2 py-0"
+                                                                class="btn btn-danger px-2 py-1"
                                                                 onclick="cancelOrder('<%=item.productId._id%>','<%=order._id%>')">
                                                                 Cancel
                                                             </button>
                                                             <% } else if (item.status==='delivered' && item.isDelivered==true) { %>
                                                                 <button
-                                                                class="btn btn-danger rounded  px-2" disabled>
+                                                                class="btn btn-danger rounded  px-2 py-1" disabled>
                                                                 Cancel
                                                             </button>
                                                             <% } else { %>
                                                                 <button
-                                                                class="btn btn-danger rounded  px-2" disabled>
+                                                                class="btn btn-danger rounded  px-2 py-1" disabled>
                                                                 Cancel
                                                             </button>
                                                             <% } %>
@@ -202,12 +184,12 @@
                                                         <td>
                                                             <% if (item.isDelivered == true && item.status !== 'return') { %>
                                                                 <button
-                                                                class="btn btn-danger rounded px-2" onclick="returnOrder('<%=item.productId._id%>','<%=order._id%>')">
+                                                                class="btn btn-danger rounded px-2 py-1" onclick="returnOrder('<%=item.productId._id%>','<%=order._id%>')">
                                                                 Return
                                                             </button>
                                                             <% } else { %>
                                                                 <button
-                                                                class="btn btn-danger rounded px-2" disabled>
+                                                                class="btn btn-danger rounded px-2 py-1" disabled>
                                                                 Return
                                                             </button>
                                                             <% } %>

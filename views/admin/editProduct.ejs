@@ -168,14 +168,13 @@
                   <div class="mb-4">
                     <label for="product_category" class="form-label">Category</label>
                     <select name="category" class="form-control" id="product_category">
-
                       <% category.forEach(category=> { %>
                         <option value="<%= category._id %>">
                           <%= category.category %>
                         </option>
                         <% }); %>
                     </select>
-                  </div>
+                  </div>  
                   <div class="mb-4">
                     <label for="product_brand" class="form-label">Brand</label>
                     <select name="brand" class="form-control" id="product_brand">
@@ -231,82 +230,87 @@
       </section>
     </main>
     <script>
-      // Handle replacement of images
-      document.querySelectorAll('.replace-image-icon').forEach(icon => {
-        icon.addEventListener('click', function () {
-          const index = this.dataset.index;
-          const fileInput = document.createElement('input');
-          fileInput.type = 'file';
-          fileInput.accept = 'image/jpg,image/jpeg';
-          fileInput.onchange = function (event) {
-            const file = event.target.files[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = function (e) {
-                const imagePreview = document.querySelector(`.existing-images .image-container .image-preview:nth-child(${parseInt(index) + 1}) img`);
-                imagePreview.src = e.target.result;
-                updateFileInput(file, index);
-              };
-              reader.readAsDataURL(file);
-            }
-          };
-          fileInput.click();
-        });
+document.querySelectorAll('.replace-image-icon').forEach(icon => {
+      icon.addEventListener('click', function () {
+        const index = this.dataset.index;
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+        fileInput.onchange = function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const imagePreview = document.querySelector(`.existing-images .image-container .image-preview:nth-child(${parseInt(index) + 1}) img`);
+              imagePreview.src = e.target.result;
+              updateFileInput(file, index);
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+        fileInput.click();
       });
+    });
+  
+    function updateFileInput(file, index) {
+      const fileInput = document.getElementById('product_image');
+      const fileList = new DataTransfer();
+      fileList.items.add(file);
+      fileInput.files = fileList.files;
+    }
+</script>
 
-      function updateFileInput(file, index) {
-        const fileInput = document.getElementById('product_image');
-        const fileList = new DataTransfer();
-        fileList.items.add(file);
-        fileInput.files = fileList.files;
-      }
-    </script>
     <script>
+   
+   window.addEventListener('DOMContentLoaded', function () {
+    const existingImages = document.querySelectorAll('.existing-images img');
+    const fileInput = document.getElementById('product_image');
+    const fileList = new DataTransfer();
 
-      window.addEventListener('DOMContentLoaded', function () {
-        const existingImages = document.querySelectorAll('.existing-images img');
-        const fileInput = document.getElementById('product_image');
-        const fileList = new DataTransfer();
-
-        existingImages.forEach(function (image) {
-          const url = image.getAttribute('src');
-          const filename = url.substring(url.lastIndexOf('/') + 1);
-          fetch(url)
+    existingImages.forEach(function (image) {
+        const url = image.getAttribute('src');
+        const filename = url.substring(url.lastIndexOf('/') + 1);
+        fetch(url)
             .then(response => response.blob())
             .then(blob => {
-              const file = new File([blob], filename, { type: blob.type });
-              fileList.items.add(file);
-              fileInput.files = fileList.files;
+                const file = new File([blob], filename, { type: blob.type });
+                fileList.items.add(file);
+                fileInput.files = fileList.files;
             });
-        });
-      });
+    });
+});
 
-      document.querySelectorAll('.delete-image-btn').forEach(button => {
-        button.addEventListener('click', function () {
-          const index = this.dataset.index;
-          const parentDiv = this.parentElement;
-          parentDiv.remove();
-          updateFileInput();
-        });
-      });
+document.querySelectorAll('.delete-image-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const index = this.dataset.index;
+        const parentDiv = this.parentElement;
+        parentDiv.remove(); 
+        updateFileInput(); 
+    });
+});
 
-      function updateFileInput() {
-        const fileInput = document.getElementById('product_image');
-        const existingImages = document.querySelectorAll('.existing-images img');
-        const fileList = new DataTransfer();
-
-        existingImages.forEach(function (image) {
-          const url = image.getAttribute('src');
-          const filename = url.substring(url.lastIndexOf('/') + 1);
-          fetch(url)
+function updateFileInput() {
+    const fileInput = document.getElementById('product_image');
+    const existingImages = document.querySelectorAll('.existing-images img');
+    const fileList = new DataTransfer();
+    
+    existingImages.forEach(function (image) {
+        const url = image.getAttribute('src');
+        const filename = url.substring(url.lastIndexOf('/') + 1);
+        fetch(url)
             .then(response => response.blob())
             .then(blob => {
-              const file = new File([blob], filename, { type: blob.type });
-              fileList.items.add(file);
-              fileInput.files = fileList.files;
+                const file = new File([blob], filename, { type: blob.type });
+                fileList.items.add(file);
+                fileInput.files = fileList.files;
             });
-        });
-      }
+    });
+
+    
+    if (existingImages.length === 0) {
+        fileInput.value = ''; 
+    }
+}
       </script>
 <script>
   var nameError = document.getElementById("name-error");
@@ -352,26 +356,6 @@
 
     priceError.innerHTML = "Valid";
     priceError.style.color = "green";
-    return true;
-  }
-
-  function validateImage() {
-    var image = document.getElementById("product_image").value;
-    var validImageExtensions = ['jpg', 'jpeg', 'png',];
-    var fileExtension = image.split('.').pop().toLowerCase();
-
-    if (image.length === 0) {
-      imageError.innerHTML = "Image is required";
-      imageError.style.color = "red";
-      return false;
-    } else if (!validImageExtensions.includes(fileExtension)) {
-      imageError.innerHTML = "Invalid image file format. Please use JPG, JPEG, or PNG";
-      imageError.style.color = "red";
-      return false;
-    }
-
-    imageError.innerHTML = "Valid";
-    imageError.style.color = "green";
     return true;
   }
 

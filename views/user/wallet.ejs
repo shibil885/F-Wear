@@ -234,7 +234,7 @@
                     <div class="wallet-info">
                         <h3 class="mb-3">Transaction History:</h3>
                         <ul class="list-group">
-                            <% wallet.history.forEach(transaction => { %>
+                            <% wallet.history.reverse().forEach(transaction => { %>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
                                         <span class="text-muted"><%= transaction.createdAt.toLocaleDateString() %></span>

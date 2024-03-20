@@ -511,53 +511,28 @@ const cancelOrder = async (req, res) => {
     try {
         const { productId, orderId } = req.body;
         const order = await Order.findOne({ _id: orderId })
-        if (order.paymentMethod === 'razorPay') {
-            const cancelProduct = order.products.find(product => product.productId.toString() === productId);
-            if (!cancelProduct) {
-                return res.status(404).json({ error: 'Product not found in order' });
-            }
-            cancelProduct.status = 'cancelled';
-            order.totalPrice -= cancelProduct.total;
-            await Product.findByIdAndUpdate(cancelProduct.productId, { $inc: { stock: cancelProduct.quantity } });
-            const unCancelled = order.products.filter((product) => product.status !== 'cancelled')
-            if (unCancelled.length == 0) {
-                order.totalPrice = 0
-            }
-            await order.save();
-            if (unCancelled.length == 0) {
-                const userWallet = await Wallet.findOne({ userId: req.session.userID })
-                const amountToWallet = cancelProduct.total + 50
-                userWallet.balance += amountToWallet
-                userWallet.history.push({
-                    amount: amountToWallet,
-                    type: 'credit',
-                    description: 'Amount from order cancellation'
-                });
-                await userWallet.save();
-            } else {
-                const userWallet = await Wallet.findOne({ userId: req.session.userID })
-                const amountToWallet = cancelProduct.total + 50
-                userWallet.balance += amountToWallet
-                userWallet.history.push({
-                    amount: amountToWallet,
-                    type: 'credit',
-                    description: 'Amount from order cancellation'
-                });
-                await userWallet.save();
-            }
-            return res.status(200).json({ message: 'Product cancelled successfully', cancelledProduct: cancelProduct });
-        }
         const cancelProduct = order.products.find(product => product.productId.toString() === productId);
         if (!cancelProduct) {
             return res.status(404).json({ error: 'Product not found in order' });
         }
+        if (order.paymentMethod === 'razorPay' || order.paymentMethod === 'wallet') {
+            cancelProduct.status = 'cancelled';
+            await Product.findByIdAndUpdate(cancelProduct.productId, { $inc: { stock: cancelProduct.quantity } });
+            await order.save();
+                const userWallet = await Wallet.findOne({ userId: req.session.userID })
+                const amountToWallet = cancelProduct.total + 50
+                userWallet.balance += amountToWallet
+                userWallet.history.push({
+                    amount: amountToWallet,
+                    type: 'credit',
+                    description: 'Amount from order cancellation'
+                });
+                await userWallet.save();
+                return res.status(200).json({ message: 'Product cancelled successfully', cancelledProduct: cancelProduct });
+        }
         cancelProduct.status = 'cancelled';
         order.totalPrice -= cancelProduct.total;
         await Product.findByIdAndUpdate(cancelProduct.productId, { $inc: { stock: cancelProduct.quantity } });
-        const unCancelled = order.products.filter((product) => product.status !== 'cancelled')
-        if (unCancelled.length == 0) {
-            order.totalPrice = 0
-        }
         await order.save();
         res.status(200).json({ message: 'Product cancelled successfully', cancelledProduct: cancelProduct });
     } catch (error) {
@@ -568,12 +543,13 @@ const returnOrder = async (req, res) => {
     try {
         const { productId, orderId } = req.body;
         const order = await Order.findOne({ _id: orderId })
-        if (order.paymentMethod === 'razorPay') {
+        if (order.paymentMethod === 'razorPay' || order.paymentMethod === 'wallet') {
             const returnProduct = order.products.find(product => product.productId.toString() === productId);
             if (!returnProduct) {
                 return res.status(404).json({ error: 'Product not found in order' });
             }
             returnProduct.status = 'return';
+            returnProduct.isDelivered = false;
             order.totalPrice -= returnProduct.total;
             await Product.findByIdAndUpdate(returnProduct.productId, { $inc: { stock: returnProduct.quantity } });
             const unReturn = order.products.filter((product) => product.status !== 'return')
@@ -629,38 +605,16 @@ const cancelOrderAdmin = async (req, res) => {
             return res.status(404).json({ error: 'Order or product not found' });
         }
 
-        if (order.paymentMethod === 'razorPay') {
+        if (order.paymentMethod === 'razorPay' || order.paymentMethod === 'wallet') {
             const userId = order.userId
             const productIndex = order.products.findIndex(product => product._id.equals(productId));
             const cancelledProduct = order.products[productIndex];
-            console.log("cancelledProduct:", cancelledProduct);
+            console.log('cancelledProduct---------------:',cancelledProduct);
             cancelledProduct.status = 'cancelled';
-
-            const cancelledAmount = cancelledProduct.total;
-            order.totalPrice -= cancelledAmount;
             await Product.findByIdAndUpdate(cancelledProduct.productId, { $inc: { stock: cancelledProduct.quantity } });
-            const nonCancelled = order.products.reduce((product) => product.status == 'cancelled')
-            if (nonCancelled.length == 1) {
-                order.totalPrice = 0
-            }
-            const unCancelled = order.products.filter((product) => product.status !== 'cancelled')
-            if (unCancelled.length == 0) {
-                order.totalPrice = 0
-            }
             await order.save();
-            if (unCancelled.length == 0) {
-                const userWallet = await Wallet.findOne({ userId: req.session.userID })
-                const amountToWallet = cancelledAmount.total + 50
-                userWallet.balance += amountToWallet
-                userWallet.history.push({
-                    amount: amountToWallet,
-                    type: 'credit',
-                    description: 'Amount from order cancellation'
-                });
-                await userWallet.save();
-            } else {
-                const userWallet = await Wallet.findOne({ userId: req.session.userID })
-                const amountToWallet = cancelledAmount.total + 50
+                const userWallet = await Wallet.findOne({ userId: userId })
+                const amountToWallet = cancelledProduct.total + 50
                 userWallet.balance += amountToWallet
                 userWallet.history.push({
                     amount: amountToWallet,
@@ -670,25 +624,11 @@ const cancelOrderAdmin = async (req, res) => {
                 await userWallet.save();
                 return res.status(200).json({ message: 'Product cancelled successfully', order });
             }
-        }
         const productIndex = order.products.findIndex(product => product._id.equals(productId));
         const cancelledProduct = order.products[productIndex];
-        console.log("cancelledProduct:", cancelledProduct);
         cancelledProduct.status = 'cancelled';
-
-        const cancelledAmount = cancelledProduct.total;
-        order.totalPrice -= cancelledAmount;
         await Product.findByIdAndUpdate(cancelledProduct.productId, { $inc: { stock: cancelledProduct.quantity } });
-        const nonCancelled = order.products.reduce((product) => product.status == 'cancelled')
-        if (nonCancelled.length == 1) {
-            order.totalPrice = 0
-        }
-        const unCancelled = order.products.filter((product) => product.status !== 'cancelled')
-        if (unCancelled.length == 0) {
-            order.totalPrice = 0
-        }
         await order.save();
-
         res.status(200).json({ message: 'Product cancelled successfully', order });
     } catch (error) {
         console.error(error);
@@ -700,13 +640,10 @@ const confirmOrder = async (req, res) => {
     try {
         const { productId, orderId } = req.body;
         const order = await Order.findOne({ _id: orderId, 'products._id': productId });
-
         if (!order) {
             return res.status(404).json({ error: 'Order or product not found' });
         }
-
         const productIndex = order.products.findIndex(product => product._id.equals(productId));
-
         const cancelledProduct = order.products[productIndex];
         console.log("cancelledProduct:", cancelledProduct);
         cancelledProduct.status = 'confirmed';
