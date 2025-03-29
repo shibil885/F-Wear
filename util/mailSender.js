@@ -21,7 +21,7 @@ const mailSender = async (email, title, body) => {
         return info;
     } catch (error) {
         console.error('Error occurred while sending email', error);
-        throw error; // Re-throw the error to handle it at the calling site
+        throw error; 
     }
 };
 

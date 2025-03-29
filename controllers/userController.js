@@ -1,5 +1,5 @@
 const User = require('../models/userModel')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const saltRound = 10
 const OTP = require('../models/otpmodel')
 const Product = require('../models/productModel')

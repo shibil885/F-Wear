@@ -14,9 +14,9 @@ async function chart() {
       wallet: 0
     }
     const paymentMethod = {
-      cashOnDelivery:'cashOnDelivery',
-      razorPay:'razorPay',
-      wallet :'wallet'
+      cashOnDelivery: 'cashOnDelivery',
+      razorPay: 'razorPay',
+      wallet: 'wallet'
     }
     ordersPie.forEach((order) => {
       if (order.paymentMethod === paymentMethod.cashOnDelivery) {
@@ -60,7 +60,7 @@ const adminPanel = async (req, res, next) => {
   try {
     const products = await Products.find()
     const users = await User.find()
-    const orders = await Orders.find({paymentStatus:'paid'})
+    const orders = await Orders.find({ paymentStatus: 'paid' })
     const categories = await Category.find()
     const ordersPie = await chart()
 
@@ -69,7 +69,7 @@ const adminPanel = async (req, res, next) => {
       totalOrderPrice += order.totalPrice || 0;
     });
 
-    res.render("admin/adminPanel", { users: users, orders: orders, products: products, ordersPie: ordersPie, categories: categories , totalOrderPrice });
+    res.render("admin/adminPanel", { users: users, orders: orders, products: products, ordersPie: ordersPie, categories: categories, totalOrderPrice });
   } catch (error) {
     next(error)
   }
@@ -173,54 +173,50 @@ const fetchDashboard = async (req, res, next) => {
 
 const generateReport = async (req, res) => {
   try {
-      const { startDate, endDate } = req.body;
-
-      // Fetch orders from the database based on the provided date range
-      const orders = await Orders.find({
-          date: { $gte: new Date(startDate), $lte: new Date(endDate) }
-      }).populate('products.productId');
-
-      // Process fetched orders to extract necessary information for the report
-      const reportData = orders.map((order, index) => {
-          let totalPrice = 0;
-          order.products.forEach(product => {
-              totalPrice += product.salesPrice * product.quantity;
-          });
-
-          return {
-              orderId: order._id,
-              date: order.date,
-              totalPrice,
-              products: order.products.map(product => {
-                  return {
-                      productName: product.productId.product_title,
-                      quantity: product.quantity,
-                      price: product.salesPrice
-                  };
-              }),
-              firstName: order.firstName,
-              lastName: order.lastName,
-              address: order.address,
-              paymentMethod: order.paymentMethod,
-              paymentStatus: order.paymentStatus
-          };
+    const { startDate, endDate } = req.body;
+    const orders = await Orders.find({
+      date: { $gte: new Date(startDate), $lte: new Date(endDate) }
+    }).populate('products.productId');
+    const reportData = orders.map((order, index) => {
+      let totalPrice = 0;
+      order.products.forEach(product => {
+        totalPrice += product.salesPrice * product.quantity;
       });
-      res.status(200).json({ reportData });
+
+      return {
+        orderId: order._id,
+        date: order.date,
+        totalPrice,
+        products: order.products.map(product => {
+          return {
+            productName: product.productId.product_title,
+            quantity: product.quantity,
+            price: product.salesPrice
+          };
+        }),
+        firstName: order.firstName,
+        lastName: order.lastName,
+        address: order.address,
+        paymentMethod: order.paymentMethod,
+        paymentStatus: order.paymentStatus
+      };
+    });
+    res.status(200).json({ reportData });
   } catch (err) {
-      console.error('Error generating report:', err);
-      res.status(500).json({ error: 'Failed to generate report' });
+    console.error('Error generating report:', err);
+    res.status(500).json({ error: 'Failed to generate report' });
   }
 };
 
-const report = (req, res) => {
-  const filePath = '../temp/report.pdf';
-  res.sendFile(filePath, { root: '.' }, (err) => {
-    if (err) {
-      console.error('Error sending file:', err);
-      res.status(404).send('File not found');
-    }
-  });
-}
+// const report = (req, res) => {
+//   const filePath = '../temp/report.pdf';
+//   res.sendFile(filePath, { root: '.' }, (err) => {
+//     if (err) {
+//       console.error('Error sending file:', err);
+//       res.status(404).send('File not found');
+//     }
+//   });
+// }
 
 const bestProducts = async (req, res) => {
   try {
@@ -264,7 +260,7 @@ const bestCategories = async (req, res) => {
       { $unwind: '$products' },
       {
         $lookup: {
-          from: 'productmodels', 
+          from: 'productmodels',
           localField: 'products.productId',
           foreignField: '_id',
           as: 'product',
@@ -274,7 +270,7 @@ const bestCategories = async (req, res) => {
       {
         $group: {
           _id: '$product.categoryId',
-          totalQuantity: { $sum: '$products.quantity' }, 
+          totalQuantity: { $sum: '$products.quantity' },
         },
       },
       { $sort: { totalQuantity: -1 } },
@@ -333,8 +329,8 @@ const bestBrands = async (req, res) => {
       { $unwind: '$brand' },
       {
         $project: {
-          _id: '$_id', 
-          brandName: '$brand.name',   
+          _id: '$_id',
+          brandName: '$brand.name',
           totalQuantity: 1,
         },
       },
@@ -358,11 +354,11 @@ const sales = async (req, res) => {
 
     if (timeframe === 'weekly') {
       startDate = new Date();
-      startDate.setDate(startDate.getDate() - 6); 
+      startDate.setDate(startDate.getDate() - 6);
       endDate = new Date();
     } else if (timeframe === 'monthly') {
       startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 1); 
+      startDate.setMonth(startDate.getMonth() - 1);
       endDate = new Date();
     } else if (timeframe === 'yearly') {
       endDate = new Date();
@@ -376,7 +372,7 @@ const sales = async (req, res) => {
       date: { $gte: startDate, $lte: endDate },
       paymentStatus: 'paid'
     });
-    
+
     const salesData = {};
     if (timeframe === 'weekly') {
       for (let i = 0; i < 7; i++) {
@@ -388,7 +384,7 @@ const sales = async (req, res) => {
         const date = formatDate(new Date(startDate.getTime() + (i * 24 * 60 * 60 * 1000)));
         salesData[date] = 0;
       }
-    }else if (timeframe === 'yearly') {
+    } else if (timeframe === 'yearly') {
       for (let i = 0; i < 12; i++) {
         const monthStartDate = new Date(startDate.getFullYear(), i, 1);
         const monthEndDate = new Date(startDate.getFullYear(), i + 1, 1);
@@ -399,12 +395,12 @@ const sales = async (req, res) => {
     }
     orders.forEach(order => {
       const date = formatDate(order.date);
-      salesData[date] += order.totalPrice; 
+      salesData[date] += order.totalPrice;
     });
 
     const labels = Object.keys(salesData).map(date => formatDate(new Date(date)));
     const values = Object.values(salesData);
-    
+
     res.json({ labels, values });
   } catch (error) {
     console.error('Error fetching sales:', error);
@@ -425,7 +421,7 @@ module.exports = {
   unBlockUser,
   fetchDashboard,
   generateReport,
-  report,
+  // report,
   bestProducts,
   bestCategories,
   bestBrands,

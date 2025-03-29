@@ -1,26 +1,25 @@
 const otpGenerator = require('otp-generator');
 const OTP = require('../models/otpmodel');
 const User = require('../models/userModel');
-const mailSender = require('../util/mailSender');
+//const mailSender = require('../util/mailSender');
+const twilio = require('twilio')
 
 const signup = async (req, res) => {
     try {
          req.session.userDetails = req.body;
          const email = req.session.userDetails.email
-        // Check if user is already present
         const checkUserPresent = await User.findOne({ email: email});
-        // If user found with provided email
         if (checkUserPresent) {
             return res.render('user/userSignup',{alert:'email already exist'});
-        }else{
-          // Generate OTP
+        }
+        else{
+
+        //   Generate OTP
           let otp = otpGenerator.generate(6, {
               upperCaseAlphabets: false,
               lowerCaseAlphabets: false,
               specialChars: false,
           });
-  
-          // Ensure OTP is unique
           let result = await OTP.findOne({ otp });
           while (result) {
               otp = otpGenerator.generate(6, {
@@ -28,15 +27,13 @@ const signup = async (req, res) => {
               });
               result = await OTP.findOne({ otp });
           }
-  
-          // Save OTP to the database
+
           const otpPayload = { email, otp };
           const otpBody = await OTP.create(otpPayload);
-          console.log('mail and otp',otpBody);
-  
-          // Send OTP via email
+        //   Send OTP via email
           await mailSender(email, 'Verification Email', `<h3>Confirm your OTP</h3><h5>Here is your OTP: <b>${otp}</b></h5>`);
           // Rendering otp page
+        
           return res.render('user/otpGetPage',{email })
         }      
     } catch (error) {

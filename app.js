@@ -17,6 +17,7 @@ app.set('view engine','ejs')
 
 //nocache
 app.use(nocache())
+
 //parsing data
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())

@@ -20,7 +20,6 @@ admin_router.post('/generate-report',isAdmin,adminController.generateReport)
 
 
 admin_router.get('/fetchdashboard',isAdmin,adminController.fetchDashboard)
-
 admin_router.get('/sales',isAdmin,adminController.sales)
 
 

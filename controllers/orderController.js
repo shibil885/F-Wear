@@ -13,7 +13,6 @@ const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET
 })
-
 const razorPay = async (req, res) => {
     try {
         const userCart = await Cart.findOne({ userID: req.session.userID });
@@ -25,7 +24,6 @@ const razorPay = async (req, res) => {
             const amountDividedBYPercentage = Math.ceil(totalAmount * selectedCoupon.percentage / 100);
             totalAmount = Math.max(amountDividedBYPercentage, totalAmount - selectedCoupon.maximumAmount);
         }
-
         const paymentData = {
             amount: totalAmount * 100,
             currency: 'INR',
@@ -732,7 +730,6 @@ const downloadInvoice = async (req, res) => {
         if (!order) {
             return res.status(404).json({ error: 'Order not found' });
         }
-
         const productsData = await Promise.all(order.products.map(async item => {
             const product = await Product.findById(item.productId);
             if (!product) {
@@ -780,10 +777,8 @@ const downloadInvoice = async (req, res) => {
         if (!fs.existsSync(invoicesDir)) {
             fs.mkdirSync(invoicesDir);
         }
-
         const filePath = path.join(invoicesDir, `invoice_${orderId}.pdf`);
         fs.writeFileSync(filePath, result.pdf, 'base64');
-
         // Send the file as a response
         res.download(filePath, `invoice_${orderId}.pdf`);
     } catch (err) {
