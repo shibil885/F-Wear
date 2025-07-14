@@ -1,330 +1,319 @@
-<%-include('../user/userLayout/userHeader.ejs') %>
-  <style>
-    .icon-hover:hover {
-      border-color: #3b71ca !important;
-      background-color: white !important;
-      color: #3b71ca !important;
-    }
-
-    .icon-hover:hover i {
-      color: #3b71ca !important;
-    }
-
-    .badge {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      background-color: red;
-      color: white;
-      border-radius: 50%;
-      padding: 3px 6px;
-      font-size: 12px;
-      font-weight: bold;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-    }
-  </style>
-  <!-- Start Header/Navigation -->
-  <nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
-    <div class="container">
+<%-include('./userLayout/userHeader.ejs') %>
+<style>
+   .icon-hover:hover {
+   border-color: #3b71ca !important;
+   background-color: white !important;
+   color: #3b71ca !important;
+   }
+   .icon-hover:hover i {
+   color: #3b71ca !important;
+   }
+   .badge {
+   position: absolute;
+   top: 4px;
+   right: 4px;
+   background-color: red;
+   color: white;
+   border-radius: 50%;
+   padding: 3px 6px;
+   font-size: 12px;
+   font-weight: bold;
+   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+   }
+</style>
+<!-- Start Header/Navigation -->
+<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+   <div class="container">
       <a class="navbar-brand" href="/">.<span class="text-warning">f</span>-Wear</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni"
-        aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+         aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarsFurni">
-        <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-          <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="/shop">Shop</a>
-          </li>
-          <li><a class="nav-link" href="about.html">About us</a></li>
-          <li><a class="nav-link" href="services.html">Services</a></li>
-        </ul>
-
-
-        <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-          <li>
-            <a class="nav-link" href="/cartPage" style="position: relative;">
-              <img src="/assets/images/cart.svg">
-              <% if (cartLength !==null || undefined && userData !==null || undefined) { %>
-                <span class="badge">
-                  <%= cartLength %>
-                </span>
-                <% } else { %>
-                  <span class="badge">0</span>
-                  <% } %>
-            </a>
-          </li>
-          <li>
-						<a class="nav-link" href="/wishList" style="position: relative;">
-							<span class="material-symbols-outlined me-3" style="color: white;">
-								favorite
-							</span>
-						</a>
-					</li>
-          <% if(userData) { %>
+         <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+            <li class="nav-item">
+               <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item active">
+               <a class="nav-link" href="/shop">Shop</a>
+            </li>
+            <li><a class="nav-link" href="about.html">About us</a></li>
+            <li><a class="nav-link" href="services.html">Services</a></li>
+         </ul>
+         <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+            <li>
+               <a class="nav-link" href="/cartPage" style="position: relative;">
+               <img src="/assets/images/cart.svg">
+               <span class="badge" id="cartItemCount"><%= cartLength %></span>
+               </a>
+            </li>
+            <li>
+               <a class="nav-link" href="/wishList" style="position: relative;">
+               <span class="material-symbols-outlined me-3" style="color: white;">
+               favorite
+               </span>
+               </a>
+            </li>
+            <% if(userData) { %>
             <a class="nav-link" href="/userAccount">
-              <img src="/assets/images/user.svg">
+            <img src="/assets/images/user.svg">
             </a>
             <% } else { %>
-              <li>
-                <a class="nav-link d-flex" href="/userLogin">
-                  <span class="material-symbols-outlined">
-                    login
-                  </span>
-                  Login
-                </a>
-              </li>
-              <% } %> 
-        </ul>
+            <li>
+               <a class="nav-link d-flex" href="/userLogin">
+               <span class="material-symbols-outlined">
+               login
+               </span>
+               Login
+               </a>
+            </li>
+            <% } %>
+         </ul>
       </div>
-    </div>
-  </nav>
-  <!-- End Header/Navigation -->
-
-  <!-- Start Hero Section -->
-  <div class="hero">
-    <div class="container">
+   </div>
+</nav>
+<!-- End Header/Navigation -->
+<!-- Start Hero Section -->
+<div class="hero">
+   <div class="container">
       <div class="row justify-content-between">
-        <div class="col-lg-5">
-          <div class="intro-excerpt">
-            <h1>Shop</h1>
-          </div>
-        </div>
-        <div class="col-lg-7">
-
-        </div>
+         <div class="col-lg-5">
+            <div class="intro-excerpt">
+               <h1>Shop</h1>
+            </div>
+         </div>
+         <div class="col-lg-7">
+         </div>
       </div>
-    </div>
-  </div>
-  <!-- End Hero Section -->
-
-  <% if(product) { %>
-    <section class="py-5">
-      <div class="container">
-        <div class="row gx-5">
-          <aside class="col-lg-6">
+   </div>
+</div>
+<!-- End Hero Section -->
+<% if(product) { %>
+<section class="py-5">
+   <div class="container">
+      <div class="row gx-5">
+         <aside class="col-lg-6">
             <div class="border rounded-4 mb-3 d-flex justify-content-center">
-              <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image">
-                <img style="max-width: 100%; max-height: 70vh; margin: auto;" class="rounded-4 fit"
+               <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image">
+               <img style="max-width: 100%; max-height: 70vh; margin: auto;" class="rounded-4 fit"
                   src="/<%= product.images[0] %>" alt="Product Image" />
-              </a>
+               </a>
             </div>
             <div class="d-flex justify-content-center mb-3">
-              <% product.images.forEach(element=> { %>
-                <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image"
+               <% product.images.forEach(element=> { %>
+               <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image"
                   class="item-thumb">
-                  <img width="200" class="rounded-2" src="/<%=element%>" alt="Thumbnail Image" />
-                </a>
-                <% }) %>
+               <img width="200" class="rounded-2" src="/<%=element%>" alt="Thumbnail Image" />
+               </a>
+               <% }) %>
             </div>
-          </aside>
-          <main class="col-lg-6">
+         </aside>
+         <main class="col-lg-6">
             <div class="ps-lg-3">
-              <h4 class="title text-dark">
-                <%= product.product_title %>
-              </h4>
-              <div class="mb-3">
-                <span class="h5"><b> &#8377;</b>
+               <h4 class="title text-dark">
+                  <%= product.product_title %>
+               </h4>
+               <div class="mb-3">
+                  <span class="h5"><b> &#8377;</b>
                   <%=product.price %>
-                </span>
-              </div>
-
-              <p>
-                <%= product.description %>
-              </p>
-              <hr />
-              <% if (product.stock===0) { %>
-                <button class="btn btn-secondary shadow-0" disabled>
-                  <i class="me-1 fa fa-shopping-basket"></i> Out of stock
-                </button>
-                <% } else { %>
-                  <button class="btn btn-primary shadow-0" onclick="addToCart('<%= product._id %>')">
-                    <i class="me-1 fa fa-shopping-basket"></i> Add to cart
-                  </button>
-                  <% } %>
-                    <a class="btn btn-dark border border-secondary py-2 icon-hover px-3 ms-2"
-                      onclick="addToWishlist('<%= product._id %>')">
-                      <i class="me-1 fa fa-heart"></i> Save
-                    </a>
+                  </span>
+               </div>
+               <p>
+                  <%= product.description %>
+               </p>
+               <hr />
+               <% if (product.stock===0) { %>
+               <button class="btn btn-secondary shadow-0" disabled>
+               <i class="me-1 fa fa-shopping-basket"></i> Out of stock
+               </button>
+               <% } else { %>
+               <button class="btn btn-primary shadow-0" onclick="addToCart('<%= product._id %>')">
+               <i class="me-1 fa fa-shopping-basket"></i> Add to cart
+               </button>
+               <% } %>
+               <a class="btn btn-dark border border-secondary py-2 icon-hover px-3 ms-2"
+                  onclick="addToWishlist('<%= product._id %>')">
+               <i class="me-1 fa fa-heart"></i> Save
+               </a>
             </div>
-          </main>
-        </div>
+         </main>
       </div>
-    </section>
-
-
-
-    <% } else { %>
-      <h1 class="text-center text-secondary mt-5">The product not available yet</h1>
-      <% } %>
-        <!-- Start Footer Section -->
-        <footer class="footer-section">
-          <div class="container relative">
-            <div class="row">
-              <div class="col-lg-8">
-                <div class="subscription-form">
-                  <form action="#" class="row g-3">
-                    <div class="col-auto">
-                      <input type="text" class="form-control" placeholder="Enter your name">
-                    </div>
-                    <div class="col-auto">
-                      <input type="email" class="form-control" placeholder="Enter your email">
-                    </div>
-                    <div class="col-auto">
-                      <button class="btn btn-primary">
-                        <span class="fa fa-paper-plane"></span>
-                      </button>
-                    </div>
-                  </form>
-
-                </div>
-              </div>
+   </div>
+</section>
+<% } else { %>
+<h1 class="text-center text-secondary mt-5">The product not available yet</h1>
+<% } %>
+<!-- Start Footer Section -->
+<footer class="footer-section">
+   <div class="container relative">
+      <div class="row">
+         <div class="col-lg-8">
+            <div class="subscription-form">
+               <form action="#" class="row g-3">
+                  <div class="col-auto">
+                     <input type="text" class="form-control" placeholder="Enter your name">
+                  </div>
+                  <div class="col-auto">
+                     <input type="email" class="form-control" placeholder="Enter your email">
+                  </div>
+                  <div class="col-auto">
+                     <button class="btn btn-primary">
+                     <span class="fa fa-paper-plane"></span>
+                     </button>
+                  </div>
+               </form>
             </div>
-
-            <div class="row g-5 mb-5">
-              <div class="col-lg-4">
-                <div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">Furni<span>.</span></a></div>
-                <p class="mb-4">Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus
-                  malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.
-                  Pellentesque habitant</p>
-
-                <ul class="list-unstyled custom-social">
-                  <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
-                  <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
-                  <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
-                  <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
-                </ul>
-              </div>
-
-              <div class="col-lg-8">
-                <div class="row links-wrap">
-                  <div class="col-6 col-sm-6 col-md-3">
-                    <ul class="list-unstyled">
-                      <li><a href="#">About us</a></li>
-                      <li><a href="#">Services</a></li>
-                      <li><a href="#">Blog</a></li>
-                      <li><a href="#">Contact us</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="col-6 col-sm-6 col-md-3">
-                    <ul class="list-unstyled">
-                      <li><a href="#">Support</a></li>
-                      <li><a href="#">Knowledge base</a></li>
-                      <li><a href="#">Live chat</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="col-6 col-sm-6 col-md-3">
-                    <ul class="list-unstyled">
-                      <li><a href="#">Jobs</a></li>
-                      <li><a href="#">Our team</a></li>
-                      <li><a href="#">Leadership</a></li>
-                      <li><a href="#">Privacy Policy</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="col-6 col-sm-6 col-md-3">
-                    <ul class="list-unstyled">
-                      <li><a href="#">Nordic Chair</a></li>
-                      <li><a href="#">Kruzo Aero</a></li>
-                      <li><a href="#">Ergonomic Chair</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <div class="border-top copyright">
-              <div class="row pt-4">
-                <div class="col-lg-6">
-                  <p class="mb-2 text-center text-lg-start">Copyright &copy;
-                    <script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed
-                    with love by <a href="https://untree.co">Untree.co</a> Distributed By <a
-                      href="https://themewagon.com">ThemeWagon</a>
-                    <!-- License information: https://untree.co/license/ -->
-                  </p>
-                </div>
-
-                <div class="col-lg-6 text-center text-lg-end">
-                  <ul class="list-unstyled d-inline-flex ms-auto">
-                    <li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
+         </div>
+      </div>
+      <div class="row g-5 mb-5">
+         <div class="col-lg-4">
+            <div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">Furni<span>.</span></a></div>
+            <p class="mb-4">Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus
+               malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.
+               Pellentesque habitant
+            </p>
+            <ul class="list-unstyled custom-social">
+               <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+               <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+               <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+               <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+            </ul>
+         </div>
+         <div class="col-lg-8">
+            <div class="row links-wrap">
+               <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                     <li><a href="#">About us</a></li>
+                     <li><a href="#">Services</a></li>
+                     <li><a href="#">Blog</a></li>
+                     <li><a href="#">Contact us</a></li>
                   </ul>
-                </div>
-
-              </div>
+               </div>
+               <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                     <li><a href="#">Support</a></li>
+                     <li><a href="#">Knowledge base</a></li>
+                     <li><a href="#">Live chat</a></li>
+                  </ul>
+               </div>
+               <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                     <li><a href="#">Jobs</a></li>
+                     <li><a href="#">Our team</a></li>
+                     <li><a href="#">Leadership</a></li>
+                     <li><a href="#">Privacy Policy</a></li>
+                  </ul>
+               </div>
+               <div class="col-6 col-sm-6 col-md-3">
+                  <ul class="list-unstyled">
+                     <li><a href="#">Nordic Chair</a></li>
+                     <li><a href="#">Kruzo Aero</a></li>
+                     <li><a href="#">Ergonomic Chair</a></li>
+                  </ul>
+               </div>
             </div>
-
-          </div>
-        </footer>
-        <script>
-
-          function addToCart(id) {
-            fetch(`/addToCart/${id}`, {
-              method: "GET",
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }).then(success => {
-              Swal.fire({
-                icon: "success",
-                title: "Product added to  cart.",
-                showConfirmButton: false
-              });
-              setTimeout(() => {
-                location.reload()
-              }, 2000);
-            })
-              .catch(error => {
-                Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: "Something went wrong!",
-
-                });
-                console.error('error occured while product adding to cart');
-              })
-          }
-          function addToWishlist(id) {
-            fetch(`/addToWishlist/${id}`, {
-              method: "PATCH",
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            })
-              .then(response => {
-                if (!response.ok) {
-                  throw new Error('Somthing wrong');
-                }
-                return response.json();
-              })
-              .then(data => {
-                Swal.fire({
-                  icon: data.icon,
-                  title: data.message, 
-                  showConfirmButton: false
-                });
-                setTimeout(() => {
-                  location.reload();
-                }, 2000);
-              })
-              .catch(error => {
-                  Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: error.message,
-                  showConfirmButton: false
-                });
-                setTimeout(() => {
-                  location.reload();
-                }, 2000);
-                console.error('Error occurred while adding product to wishlist:', error);
-              });
-          }
-        </script>
-        <%-include('../user/userLayout/userFooter') %>
+         </div>
+      </div>
+      <div class="border-top copyright">
+         <div class="row pt-4">
+            <div class="col-lg-6">
+               <p class="mb-2 text-center text-lg-start">
+                  Copyright &copy;
+                  <script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed
+                  with love by <a href="https://untree.co">Untree.co</a> Distributed By <a
+                     href="https://themewagon.com">ThemeWagon</a>
+                  <!-- License information: https://untree.co/license/ -->
+               </p>
+            </div>
+            <div class="col-lg-6 text-center text-lg-end">
+               <ul class="list-unstyled d-inline-flex ms-auto">
+                  <li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+                  <li><a href="#">Privacy Policy</a></li>
+               </ul>
+            </div>
+         </div>
+      </div>
+   </div>
+</footer>
+<script>
+   function addToCart(id) {
+     fetch(`/cart/${id}`, {
+       method: "PATCH",
+       headers: {
+         'Content-Type': 'application/json',
+         'Accept': 'application/json'
+       },
+     }).then(res => res.json())
+       .then(res => {        
+         if (res.status == 401) {
+           Swal.fire({
+             icon: "warning",
+             title: res.statusText,
+             text: 'Please sign in to add to cart.',
+             draggable: true,
+           });
+         } else {
+          document.getElementById('cartItemCount').innerHTML = res.totalItems
+           Swal.fire({
+             position: "top-end",
+             icon: res.icon,
+             title: res.message,
+             showConfirmButton: false,
+             draggable: true,
+             timer: 1700
+           });
+         }
+       })
+       .catch(error => {
+         Swal.fire({
+           position: "top-end",
+           icon: "error",
+           title: "Oops...",
+           text: "Something went wrong!",
+           timer: 1700,
+           draggable: true,
+   
+         });
+       })
+   }
+   function addToWishlist(id) {
+     fetch(`/wishlist/${id}`, {
+       method: "PATCH",
+       headers: {
+         'Content-Type': 'application/json',
+         'Accept': 'application/json'
+       },
+     }).then(res => res.json())
+       .then(res => {
+         if (res.status == 401) {
+           Swal.fire({
+             icon: "warning",
+             title: res.statusText,
+             text: 'Please sign in to add to the wishlist.',
+             draggable: true,
+           });
+         } else {
+           Swal.fire({  
+             position: "top-end",
+             icon: res.icon,
+             title: res.message,
+             showConfirmButton: false,
+             draggable: true,
+             timer: 1700
+           });
+         }
+       })
+       .catch(error => {
+         Swal.fire({
+           position: "top-end",
+           icon: "error",
+           title: "Oops...",
+           text: "Something went wrong!",
+           timer: 1700,
+           draggable: true,
+   
+         });
+       })
+   }
+</script>
+<%-include('./userLayout/userFooter') %>
