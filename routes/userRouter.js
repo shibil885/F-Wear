@@ -39,8 +39,8 @@ user_router.post('/changePassword', isUser, isBlocked, userController.changePass
 
 /*----CART----*/
 user_router.patch('/cart/:id', isUser, isBlocked, cartController.addToCart)
+user_router.delete('/cart/:productId', isUser, isBlocked, cartController.deleteCart);
 user_router.get('/cartPage', isUser, isBlocked, cartController.cartPage)
-user_router.delete('/deleteCart/:productId', isUser, isBlocked, cartController.deleteCart);
 user_router.post('/updateCart', isUser, isBlocked, cartController.updateCart)
 user_router.get('/checkoutPage', isUser, isBlocked, cartController.checkoutPage)
 //address

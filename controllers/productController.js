@@ -104,7 +104,6 @@ const addProduct = async (req, res) => {
 
     product.save()
       .then(() => {
-        console.log('New product:', product);
         res.redirect('/productList');
       })
       .catch(error => {
@@ -120,7 +119,6 @@ const unPublish = async (req, res) => {
   try {
     const id = req.query.id
     await Products.findByIdAndUpdate(id, { isPublish: false })
-    console.log('successfully unpublished a product', id);
     res.status(200).json({ success: true })
   } catch (error) {
     console.error('Error occcur while unpublishing a product', error)
@@ -132,7 +130,6 @@ const publish = async (req, res) => {
   try {
     const id = req.query.id
     await Products.findByIdAndUpdate(id, { isPublish: true })
-    console.log('successfully published a product', id);
     res.status(200).json({ success: true })
   } catch (error) {
     console.error('Error occure while publishing a product')
@@ -219,7 +216,6 @@ const productDetails = async (req, res) => {
 }
 const deleteImage = async (req, res) => {
   try {
-    console.log('body:----', req.body);
     const index = req.body.index;
     const img = req.body.img;
     const productId = req.body.productId;
@@ -231,7 +227,6 @@ const deleteImage = async (req, res) => {
     product.images.splice(index, 1);
     await product.save(); // Call save() function and await its completion
 
-    console.log('Product after modification:', product);
     res.status(200).json({ success: true, message: 'Image removed successfully' });
   } catch (error) {
     console.error();

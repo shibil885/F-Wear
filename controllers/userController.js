@@ -223,8 +223,6 @@ const editProfile = async (req, res) => {
         if (!updatedUser) {
             return res.status(404).json({ error: "User not found" });
         }
-
-        console.log('Updated user:', updatedUser);
         res.redirect('/userAccount')
     } catch (error) {
         console.error('Error updating user:', error);
