@@ -1,277 +1,278 @@
 <%-include('../admin/adminLayout/adminHeader') %>
-<div class="screen-overlay"></div>
-<aside class="navbar-aside" id="offcanvas_aside">
-  <div class="aside-top">
-    <a href="/adminPanel" class="brand-wrap">
-      <p style="font-size: 20px; font-weight: bold">.f-Wear Admin</p>
-    </a>
-    <div>
-      <button class="btn btn-icon btn-aside-minimize">
-        <i class="text-muted material-icons md-menu_open"></i>
-      </button>
-    </div>
-  </div>
-  <nav>
-    <ul class="menu-aside">
-      <li class="menu-item">
-        <a class="menu-link" href="/adminPanel">
-          <i class="icon material-icons md-home"></i>
-          <span class="text">Dashboard</span>
-        </a>
-      </li>
-      <li class="menu-item ">
-        <a class="menu-link" href="/users">
-          <i class="icon material-icons md-person"></i>
-          <span class="text">Users</span>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a class="menu-link" href="/product">
-          <i class="icon material-icons md-shopping_bag"></i>
-          <span class="text">Products</span>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a class="menu-link" href="/category">
-          <i class="icon material-icons md-store"></i>
-          <span class="text">Categories</span>
-        </a>
-      </li>
-      <li class="menu-item ">
-        <a class="menu-link" href="/brand">
-          <i class="icon material-icons md-verified"></i>
-          <span class="text">Brands</span>
-        </a>
-      </li>
-      <li class="menu-item ">
-        <a class="menu-link" href="/orderlist">
-          <i class="icon material-icons md-shopping_cart"></i>
-          <span class="text">Orders</span>
-        </a>
-      </li>
-      <li class="menu-item active">
-        <a class="menu-link" href="/couponList">
-          <i class="icon material-icons md-local_offer"></i>
-          <span class="text">Coupons</span>
-        </a>
-      </li>
-      <li class="menu-item has-submenu">
-        <a class="menu-link"> <i class="icon material-icons md-star"></i>
-          <span class="text">Best Selling</span>
-        </a>
-        <div class="submenu">
-          <a href="/bestproducts">Products</a>
-          <a href="/bestcategories">Categories</a>
-          <a href="/bestbrands">Brands</a>
-        </div>
-      </li>
-    </ul>
-  </nav>
-</aside>
-<main class="main-wrap">
-  <header class="main-header navbar">
-    <div class="col-search">
-    </div>
-    <div class="col-nav">
-      <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside">
-        <i class="material-icons md-apps"></i>
-      </button>
-      <ul class="nav">
-        <li class="nav-item">
-          <a class="nav-link btn-icon" href="#">
-            <i class="material-icons md-notifications animation-shake"></i>
-            <span class="badge rounded-pill">3</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link btn-icon darkmode" href="#">
-            <i class="material-icons md-nights_stay"></i>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
-        </li>
-        <li class="dropdown nav-item">
-          <a data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
-            aria-expanded="false"><i class="material-icons md-public"></i></a>
-        </li>
-        <li class="dropdown nav-item">
-            <a class="dropdown-item text-danger" href="/adminlogout"><i
-                class="material-icons md-exit_to_app"></i>Logout</a>
-        </li>
-      </ul>
-    </div>
-  </header>
-    <section class="content-main">
-      <div class="content-header">
-        <div>
-          <h2 class="content-title card-title">Coupon List </h2>
-        </div>
-        <div>
-          <a href="/addCoupon" class="btn btn-primary"><i class="material-icons md-plus"></i>Create new</a>
-        </div>
+   <div class="screen-overlay"></div>
+   <aside class="navbar-aside" id="offcanvas_aside">
+      <div class="aside-top">
+         <a href="/adminPanel" class="brand-wrap">
+            <p style="font-size: 20px; font-weight: bold">.f-Wear Admin</p>
+         </a>
+         <div>
+            <button class="btn btn-icon btn-aside-minimize">
+               <i class="text-muted material-icons md-menu_open"></i>
+            </button>
+         </div>
       </div>
-      <div class="card mb-4">
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Coupon Code</th>
-                  <th scope="col">Description</th>
-                  <th scope="col">%</th>
-                  <th scope="col">Up to</th>
-                  <th scope="col">Max amount</th>
-                  <th scope="col">Exp date</th>
-                  <th scope="col">Status</th>
-                  <th scope="col"> Action </th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (coupon.length> 0) { %>
-                  <% coupon.forEach(element=> { %>
-                    <tr>
-                      <td>
-                        <%= element.coupon_code %>
-                      </td>
-                      <td>
-                        <%= element.description %>
-                      </td>
-                      <td>
-                        <%= element.percentage %>
-                      </td>
-                      <td>
-                        <%= element.minimumAmount %>
-                      </td>
-                      <td>
-                        <%= element.maximumAmount %>
-                      </td>
-                      <td>
-                        <%= formatDate(element.expiryDate) %>
-                      </td>
-                      <% function formatDate(date) { const options={ year: 'numeric' , month: 'short' , day: 'numeric'
-                        }; return new Date(date).toLocaleDateString(undefined, options); } %>
-                        <td>
-                          <% if (element.isListed==true) { %>
-                            <span class="text-success">List</span>
-                            <% } else { %>
-                              <span class="text-danger">Unlist</span>
-                              <% } %>
-                        </td>
-                        <td>
-                          <% if (element.isListed) { %>
-                            <a class="badge rounded alert-danger"
-                              onclick="unlistCoupon('<%= element._id %>')">Unlist</a>
-                            <% } else { %>
-                              <a class="badge rounded alert-success" onclick="listCoupon('<%= element._id %>')">List</a>
-                              <% } %>
-                                <a href="/editCoupon/?couponId=<%= element._id %>" class="badge rounded alert-secondary"
-                                  onclick="editCoupon('<%= element._id %>')">Edit</a>
-                        </td>
-                    </tr>
-                    <% }) %>
-                      <% } else { %>
-                        <tr>
-                          <td colspan="8">No coupons available.</td>
-                        </tr>
-                        <% } %>
-              </tbody>
-            </table>
-          </div> <!-- table-responsive //end -->
-        </div> <!-- card-body end// -->
-      </div> <!-- card end// -->
-      <div class="pagination-area mt-30 mb-50">
-        <div class="d-flex justify-content-center">
-          <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-start">
-              <% for(let i=1; i <=totalPages; i++) { %>
-                <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-                  <a class="page-link" href="/couponList?page=<%= i %>">
-                    <%= i %>
+      <nav>
+         <ul class="menu-aside">
+            <li class="menu-item">
+               <a class="menu-link" href="/adminPanel">
+                  <i class="icon material-icons md-home"></i>
+                  <span class="text">Dashboard</span>
+               </a>
+            </li>
+            <li class="menu-item ">
+               <a class="menu-link" href="/users">
+                  <i class="icon material-icons md-person"></i>
+                  <span class="text">Users</span>
+               </a>
+            </li>
+            <li class="menu-item">
+               <a class="menu-link" href="/product">
+                  <i class="icon material-icons md-shopping_bag"></i>
+                  <span class="text">Products</span>
+               </a>
+            </li>
+            <li class="menu-item">
+               <a class="menu-link" href="/category">
+                  <i class="icon material-icons md-store"></i>
+                  <span class="text">Categories</span>
+               </a>
+            </li>
+            <li class="menu-item ">
+               <a class="menu-link" href="/brand">
+                  <i class="icon material-icons md-verified"></i>
+                  <span class="text">Brands</span>
+               </a>
+            </li>
+            <li class="menu-item ">
+               <a class="menu-link" href="/orderlist">
+                  <i class="icon material-icons md-shopping_cart"></i>
+                  <span class="text">Orders</span>
+               </a>
+            </li>
+            <li class="menu-item active">
+               <a class="menu-link" href="/coupon">
+                  <i class="icon material-icons md-local_offer"></i>
+                  <span class="text">Coupons</span>
+               </a>
+            </li>
+            <li class="menu-item has-submenu">
+               <a class="menu-link"> <i class="icon material-icons md-star"></i>
+                  <span class="text">Best Selling</span>
+               </a>
+               <div class="submenu">
+                  <a href="/bestproducts">Products</a>
+                  <a href="/bestcategories">Categories</a>
+                  <a href="/bestbrands">Brands</a>
+               </div>
+            </li>
+         </ul>
+      </nav>
+   </aside>
+   <main class="main-wrap">
+      <header class="main-header navbar">
+         <div class="col-search">
+         </div>
+         <div class="col-nav">
+            <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside">
+               <i class="material-icons md-apps"></i>
+            </button>
+            <ul class="nav">
+               <li class="nav-item">
+                  <a class="nav-link btn-icon" href="#">
+                     <i class="material-icons md-notifications animation-shake"></i>
+                     <span class="badge rounded-pill">3</span>
                   </a>
-                </li>
-                <% } %>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link btn-icon darkmode" href="#">
+                     <i class="material-icons md-nights_stay"></i>
+                  </a>
+               </li>
+               <li class="nav-item">
+                  <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+               </li>
+               <li class="dropdown nav-item">
+                  <a data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i
+                        class="material-icons md-public"></i></a>
+               </li>
+               <li class="dropdown nav-item">
+                  <a class="dropdown-item text-danger" href="/adminlogout"><i
+                        class="material-icons md-exit_to_app"></i>Logout</a>
+               </li>
             </ul>
-          </nav>
-        </div>
-      </div>
-    </section> <!-- content-main end// -->
-    <footer class="main-footer font-xs">
-      <div class="row pb-30 pt-15">
-        <div class="col-sm-6">
-          <script>
-            document.write(new Date().getFullYear())
-          </script> ©, Evara - HTML Ecommerce Template .
-        </div>
-        <div class="col-sm-6">
-          <div class="text-sm-end">
-            All rights reserved
-          </div>
-        </div>
-      </div>
-    </footer>
-  </main>
-  <script>
-    async function unlistCoupon(couponId) {
-      Swal.fire({
-        title: "Are you sure?",
-        icon: "warning",
-        showCancelButton: true,
-        cancelButtonColor: "#d33",
-        confirmButtonColor: "#00cc00",
-        confirmButtonText: "Yes",
-        cancelButtonText: "No",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          const response = await fetch('/unlistCoupon', {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ couponId })
-          })
-          const data = await response.json()
-          if (data.success) {
-                  Swal.fire({
-                  icon: "success",
-                  title: "Unlisted",
-                  showConfirmButton: false,
-                });
-                setTimeout(() => {
-                  location.reload()
-                }, 2000);
-          }
-        }
-      })
-    }
-    async function listCoupon(couponId) {
-      Swal.fire({
-        title: "Are you sure?",
-        icon: "warning",
-        showCancelButton: true,
-        cancelButtonColor: "#d33",
-        confirmButtonColor: "#00cc00",
-        confirmButtonText: "Yes",
-        cancelButtonText: "No",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          const response = await fetch('/listCoupon', {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ couponId })
-          })
-          const data = await response.json()
-          if (data.success) {
-                  Swal.fire({
-                  icon: "success",
-                  title: "Listed",
-                  showConfirmButton: false,
-                });
-                setTimeout(() => {
-                  location.reload()
-                }, 2000);
-          }
-        }
-      })
-    }
-  </script>
+         </div>
+      </header>
+      <section class="content-main">
+         <div class="content-header">
+            <div>
+               <h2 class="content-title card-title">Coupon List </h2>
+            </div>
+            <div>
+               <a href="/coupon/new" class="btn btn-primary"><i class="material-icons md-plus"></i>Create new</a>
+            </div>
+         </div>
+         <div class="card mb-4">
+            <div class="card-body">
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                     <thead>
+                        <tr>
+                           <th>Coupon Code</th>
+                           <th scope="col">Description</th>
+                           <th scope="col">%</th>
+                           <th scope="col">Up to</th>
+                           <th scope="col">Max amount</th>
+                           <th scope="col">Exp date</th>
+                           <th scope="col">Status</th>
+                           <th scope="col"> Action </th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <% if (coupon.length> 0) { %>
+                           <% coupon.forEach(element=> { %>
+                              <tr>
+                                 <td>
+                                    <%= element.coupon_code %>
+                                 </td>
+                                 <td>
+                                    <%= element.description %>
+                                 </td>
+                                 <td>
+                                    <%= element.percentage %>
+                                 </td>
+                                 <td>
+                                    <%= element.minimumAmount %>
+                                 </td>
+                                 <td>
+                                    <%= element.maximumAmount %>
+                                 </td>
+                                 <td>
+                                    <%= formatDate(element.expiryDate) %>
+                                 </td>
+                                 <% function formatDate(date) { const options={ year: 'numeric' , month: 'short' ,
+                                    day: 'numeric' }; return new Date(date).toLocaleDateString(undefined, options); } %>
+                                    <td>
+                                       <% if (element.isListed) { %>
+                                          <span class="text-success" id="status-<%= element._id %>">Listed</span>
+                                          <% } else { %>
+                                             <span class="text-danger" id="status-<%= element._id %>">Unlisted</span>
+                                             <% } %>
+                                    </td>
+                                    <td>
+                                       <a class="badge rounded-pill <%= element.isListed ? 'alert-danger' : 'alert-success' %>"
+                                          id="toggle-btn-<%= element._id %>"
+                                          onclick="toggleCouponStatus('<%= element.isListed %>', '<%= element._id %>')">
+                                          <%= element.isListed ? 'Unlist' : 'List' %>
+                                       </a>
+                                       <a href="/coupon/<%= element._id %>"
+                                          class="badge rounded alert-secondary">Edit</a>
+                                    </td>
+                              </tr>
+                              <% }) %>
+                                 <% } else { %>
+                                    <tr>
+                                       <td colspan="8">No coupons available.</td>
+                                    </tr>
+                                    <% } %>
+                     </tbody>
+                  </table>
+               </div>
+               <!-- table-responsive //end -->
+            </div>
+            <!-- card-body end// -->
+         </div>
+         <!-- card end// -->
+         <div class="pagination-area mt-30 mb-50">
+            <div class="d-flex justify-content-center">
+               <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-start">
+                     <% for(let i=1; i <=totalPages; i++) { %>
+                        <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+                           <a class="page-link" href="/coupon?page=<%= i %>">
+                              <%= i %>
+                           </a>
+                        </li>
+                        <% } %>
+                  </ul>
+               </nav>
+            </div>
+         </div>
+      </section>
+      <!-- content-main end// -->
+      <footer class="main-footer font-xs">
+         <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+               <script>
+                  document.write(new Date().getFullYear())
+               </script> ©, Evara - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+               <div class="text-sm-end">
+                  All rights reserved
+               </div>
+            </div>
+         </div>
+      </footer>
+   </main>
+   <script>
+      async function toggleCouponStatus(currentStatus, couponId) {
+         const isCurrentlyListed = currentStatus === 'true';
+         const newStatus = !isCurrentlyListed;
 
-  <%-include('../admin/adminLayout/adminFooter') %>
+         Swal.fire({
+            title: "Are you sure?",
+            text: isCurrentlyListed ? "You want to unlist this coupon?" : "You want to list this coupon?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes",
+         }).then(async (result) => {
+            if (!result.isConfirmed) return;
+
+            try {
+               const res = await fetch(`/coupon/${couponId}`, {
+                  method: 'PATCH',
+                  headers: {
+                     'Content-Type': 'application/json',
+                     'Accept': 'application/json'
+                  },
+                  body: JSON.stringify({ isListed: newStatus })
+               });
+
+               const data = await res.json();
+               if (!res.ok || !data.success) throw new Error("Update failed");
+
+               Swal.fire({
+                  icon: "success",
+                  title: newStatus ? "Listed!" : "Unlisted!",
+                  showConfirmButton: false,
+                  timer: 1000
+               });
+
+               const statusText = document.getElementById(`status-${couponId}`);
+               const toggleBtn = document.getElementById(`toggle-btn-${couponId}`);
+
+               if (statusText) {
+                  statusText.innerText = newStatus ? "Listed" : "Unlisted";
+                  statusText.className = newStatus ? "text-success" : "text-danger";
+               }
+
+               if (toggleBtn) {
+                  toggleBtn.innerText = newStatus ? "Unlist" : "List";
+                  toggleBtn.className = `badge rounded-pill ${newStatus ? "alert-danger" : "alert-success"}`;
+                  toggleBtn.setAttribute("onclick", `toggleCouponStatus('${newStatus}', '${couponId}')`);
+               }
+
+            } catch (error) {
+               console.error("Error:", error);
+               Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Something went wrong!"
+               });
+            }
+         });
+      }
+   </script>
+   <%-include('../admin/adminLayout/adminFooter') %>

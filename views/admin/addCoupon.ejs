@@ -57,7 +57,7 @@
           </a>
         </li>
         <li class="menu-item active">
-          <a class="menu-link" href="/couponList">
+          <a class="menu-link" href="/coupon">
             <i class="icon material-icons md-local_offer"></i>
             <span class="text">Coupons</span>
           </a>
@@ -124,7 +124,7 @@
                   <%= locals.alert %>
                 </div>
               <% } %>
-              <form action="/addCoupon" method="post" onsubmit="return validateForm()">
+              <form action="/coupon" method="post" onsubmit="return validateForm()">
                 <div class="mb-4">
                   <label for="coupon_code" class="form-label">Coupon code</label>
                   <input type="text" placeholder="Type here" name="coupon_code" class="form-control" id="coupon_code" onkeyup="validateCode()" />

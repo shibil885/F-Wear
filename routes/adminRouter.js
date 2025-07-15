@@ -37,18 +37,6 @@ admin_router.get('product/edit/:id', isAdmin, productController.editProductPage)
 admin_router.post('/product/edit/:id', isAdmin, productController.editProduct)
 
 
-
-
-//////////////orders\\\\\\\\\\\\\\\\
-admin_router.get('/orderlist', isAdmin, orderController.orderList)
-admin_router.get('/userOrderDetails/:id', isAdmin, orderController.userOrderDetails)
-admin_router.patch('/cancelOrderAdmin', isAdmin, orderController.cancelOrderAdmin)
-admin_router.patch('/confirmOrder', isAdmin, orderController.confirmOrder)
-admin_router.patch('/shippedOrder', isAdmin, orderController.shippedOrder)
-admin_router.patch('/deliveredOrder', isAdmin, orderController.deliveredOrder)
-admin_router.patch('/pendingOrder', isAdmin, orderController.pendingOrder)
-
-
 /*     -----CATEGORIES-----     */
 admin_router.get('/category', isAdmin, categoryController.categories)
 admin_router.post('/category', isAdmin, categoryController.addCategory)
@@ -66,14 +54,24 @@ admin_router.get('/brand/edit/:id', isAdmin, brandController.editBrandPage)
 admin_router.post('/brand/edit/:id', isAdmin, brandController.editBrand)
 
 
-//////////////Coupon\\\\\\\\\\\\\\\\
-admin_router.get('/couponList', isAdmin, couponController.couponList)
-admin_router.get('/addCoupon', isAdmin, couponController.addCouponPage)
-admin_router.post('/addCoupon', isAdmin, couponController.addCoupon)
-admin_router.get('/editCoupon', isAdmin, couponController.editCouponPage)
-admin_router.post('/editCoupon/:id', isAdmin, couponController.editCoupon)
-admin_router.patch('/listCoupon', isAdmin, couponController.listCoupon)
-admin_router.patch('/unlistCoupon', isAdmin, couponController.UnListCoupon)
+/*     -----COUPONS-----     */
+admin_router.get('/coupon', isAdmin, couponController.couponList);
+admin_router.get('/coupon/new', isAdmin, couponController.addCouponPage);
+admin_router.post('/coupon', isAdmin, couponController.addCoupon);
+admin_router.get('/coupon/:couponId', isAdmin, couponController.editCouponPage);
+admin_router.post('/coupon/:id', isAdmin, couponController.editCoupon);
+admin_router.patch('/coupon/:id', isAdmin, couponController.toggleCouponStatus);
+
+
+
+//////////////orders\\\\\\\\\\\\\\\\
+admin_router.get('/orderlist', isAdmin, orderController.orderList)
+admin_router.get('/userOrderDetails/:id', isAdmin, orderController.userOrderDetails)
+admin_router.patch('/cancelOrderAdmin', isAdmin, orderController.cancelOrderAdmin)
+admin_router.patch('/confirmOrder', isAdmin, orderController.confirmOrder)
+admin_router.patch('/shippedOrder', isAdmin, orderController.shippedOrder)
+admin_router.patch('/deliveredOrder', isAdmin, orderController.deliveredOrder)
+admin_router.patch('/pendingOrder', isAdmin, orderController.pendingOrder)
 
 
 //best

@@ -50,7 +50,7 @@
           </a>
         </li>
         <li class="menu-item ">
-          <a class="menu-link" href="/couponList">
+          <a class="menu-link" href="/coupon">
             <i class="icon material-icons md-local_offer"></i>
             <span class="text">Coupons</span>
           </a>
@@ -142,7 +142,7 @@
                           </td>
                           <td id="brand-action-<%= row._id %>">
                             <span role="button" class="badge badge-pill alert-<%= row.isList ? 'danger' : 'success' %>"
-                              onclick="toggleBrandList('<%= row.isList %>', '<%= row._id %>')">
+                              onclick="toggleBrandList('<%= !row.isList %>', '<%= row._id %>')">
                               <%= row.isList ? 'Unlist' : 'List' %>
                             </span>
                           </td>
@@ -189,9 +189,8 @@
       </div>
     </footer>
     <script>
-      async function toggleBrandList(currentStatus, brandId) {
-        const isList = !currentStatus;
-
+      async function toggleBrandList(currentStatus, brandId) {       
+        const isList = currentStatus == 'true';
         const result = await Swal.fire({
           title: "Are you sure?",
           text: isList ? "You want to list this brand?" : "You want to unlist this brand?",
@@ -222,7 +221,6 @@
             timer: 1500
           });
 
-          // Update status text
           const statusCell = document.getElementById(`brand-status-${brandId}`);
           if (statusCell) {
             statusCell.innerHTML = `<span class="${isList ? 'text-success' : 'text-danger'}">
@@ -230,14 +228,13 @@
         </span>`;
           }
 
-          // Update action button
           const actionCell = document.getElementById(`brand-action-${brandId}`);
           if (actionCell) {
             actionCell.innerHTML = `
-          <a href="#" class="badge badge-pill alert-${isList ? 'danger' : 'success'}"
+          <span role="button" class="badge badge-pill alert-${isList ? 'danger' : 'success'}"
              onclick="toggleBrandList(${isList}, '${brandId}')">
             ${isList ? 'Unlist' : 'List'}
-          </a>`;
+          </span>`;
           }
 
         } catch (error) {

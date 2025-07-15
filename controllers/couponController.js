@@ -26,46 +26,46 @@ const couponList = async (req, res) => {
     }
 };
 
-const addCouponPage = async(req,res)=>{
+const addCouponPage = async (req, res) => {
     try {
-      res.status(200).render('admin/addCoupon')  
+        res.status(200).render('admin/addCoupon')
     } catch (error) {
         console.error(error);
     }
 }
 
 
-const addCoupon = async(req,res)=>{
+const addCoupon = async (req, res) => {
     try {
-        const {coupon_code,description,percentage,min_amount,max_amount,expiry_date}=req.body
-        const existCoupon = await Coupon.findOne({coupon_code:coupon_code})
+        const { coupon_code, description, percentage, min_amount, max_amount, expiry_date } = req.body
+        const existCoupon = await Coupon.findOne({ coupon_code: coupon_code })
         console.log(req.body);
-        if(existCoupon){
-            return res.status(200).render('admin/addCoupon',{alert:'The Coupon already exists'})
+        if (existCoupon) {
+            return res.status(200).render('admin/addCoupon', { alert: 'The Coupon already exists' })
         }
-         const newCoupon = new Coupon({
-            coupon_code:coupon_code,
-            description:description,
-            percentage:percentage,
-            minimumAmount:min_amount,
-            maximumAmount:max_amount,
-            expiryDate:expiry_date
-         })
-         await newCoupon.save()
-         console.log('new coupon added:',newCoupon);
-         res.redirect('/couponList')
+        const newCoupon = new Coupon({
+            coupon_code: coupon_code,
+            description: description,
+            percentage: percentage,
+            minimumAmount: min_amount,
+            maximumAmount: max_amount,
+            expiryDate: expiry_date
+        })
+        await newCoupon.save()
+        console.log('new coupon added:', newCoupon);
+        res.redirect('/coupon')
     } catch (error) {
         console.error(error);
     }
 }
-const editCouponPage = async (req,res)=>{
+const editCouponPage = async (req, res) => {
     try {
-        const couponId  =req.query.couponId
+        const couponId = req.params.couponId
         const coupon = await Coupon.findById(couponId)
-        res.status(200).render('admin/editCoupon',{coupon})
+        res.status(200).render('admin/editCoupon', { coupon })
     } catch (error) {
         console.error(error);
-        res.status(500).json({error:'Internal server error'})
+        res.status(500).json({ error: 'Internal server error' })
     }
 }
 const editCoupon = async (req, res) => {
@@ -73,7 +73,7 @@ const editCoupon = async (req, res) => {
         const { coupon_code, description, percentage, min_amount, max_amount, expiry_date } = req.body;
         const couponId = req.params.id;
         const coupon = await Coupon.findById(couponId);
-        const existingCoupon = await Coupon.findOne({ 
+        const existingCoupon = await Coupon.findOne({
             coupon_code: coupon_code,
             description: description,
             percentage: percentage,
@@ -83,7 +83,7 @@ const editCoupon = async (req, res) => {
         });
 
         if (existingCoupon) {
-            return res.status(400).render('admin/editCoupon', { alert: 'A coupon with the same details already exists' ,coupon});
+            return res.status(400).render('admin/editCoupon', { alert: 'A coupon with the same details already exists', coupon });
         }
         coupon.coupon_code = coupon_code;
         coupon.description = description;
@@ -93,54 +93,71 @@ const editCoupon = async (req, res) => {
         coupon.expiryDate = expiry_date;
         await coupon.save();
 
-        res.redirect('/couponList');
-        
+        res.redirect('/coupon');
+
     } catch (error) {
         console.error(error);
         return res.status(500).send('Internal Server Error');
     }
 }
 
-const checkCoupon = async(req,res)=>{
+const checkCoupon = async (req, res) => {
     try {
         const couponId = req.body.couponId
-        const userCart = await Cart.findOne({userID:req.session.userID})
+        const userCart = await Cart.findOne({ userID: req.session.userID })
         const totalAmount = userCart.totalPrice + 50
         const selectedCoupon = await Coupon.findById(couponId)
-        const amountDividedBYPercentage = Math.ceil(totalAmount*selectedCoupon.percentage/100)
-        if(amountDividedBYPercentage > selectedCoupon.maximumAmount ){
+        const amountDividedBYPercentage = Math.ceil(totalAmount * selectedCoupon.percentage / 100)
+        if (amountDividedBYPercentage > selectedCoupon.maximumAmount) {
             const amountToPay = totalAmount - selectedCoupon.maximumAmount
-            res.json({totalAmount:amountToPay,couponId:couponId,discountAmount:selectedCoupon.maximumAmount,couponCode:selectedCoupon.coupon_code})   
-        }else{
-            const amountToPay = totalAmount-amountDividedBYPercentage
-            res.json({totalAmount:amountToPay,couponId:couponId,discountAmount:amountDividedBYPercentage,couponCode:selectedCoupon.coupon_code})
+            res.json({ totalAmount: amountToPay, couponId: couponId, discountAmount: selectedCoupon.maximumAmount, couponCode: selectedCoupon.coupon_code })
+        } else {
+            const amountToPay = totalAmount - amountDividedBYPercentage
+            res.json({ totalAmount: amountToPay, couponId: couponId, discountAmount: amountDividedBYPercentage, couponCode: selectedCoupon.coupon_code })
         }
     } catch (error) {
         console.error(error);
     }
 }
-const listCoupon = async(req,res)=>{
+const toggleCouponStatus = async (req, res) => {
     try {
-        const couponId = req.body.couponId
-        await Coupon.updateOne({_id:couponId},{
-            isListed:true
-        })
-        res.json({success:true})
+        const couponId = req.params.id;
+        const { isListed } = req.body;
+
+        if (!couponId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Coupon ID is required'
+            });
+        }
+
+        const updatedCoupon = await Coupon.findByIdAndUpdate(
+            couponId,
+            { isListed },
+            { new: true }
+        );
+
+        if (!updatedCoupon) {
+            return res.status(404).json({
+                success: false,
+                message: 'Coupon not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Coupon has been ${isListed ? 'listed' : 'unlisted'} successfully`,
+            coupon: updatedCoupon
+        });
+
     } catch (error) {
-        console.error(error);
+        console.error('Toggle coupon status failed:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
     }
-}
-const UnListCoupon = async(req,res)=>{
-    try {
-        const couponId = req.body.couponId
-        await Coupon.updateOne({_id:couponId},{
-            isListed:false
-        })
-        res.json({success:true})
-    } catch (error) {
-        console.error(error);
-    }
-}
+};
 module.exports = {
     couponList,
     addCouponPage,
@@ -148,6 +165,5 @@ module.exports = {
     editCouponPage,
     editCoupon,
     checkCoupon,
-    listCoupon,
-    UnListCoupon
+    toggleCouponStatus,
 }

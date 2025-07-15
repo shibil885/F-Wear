@@ -75,25 +75,39 @@ const editBrandPage = async (req, res) => {
 
 
 const editBrand = async (req, res) => {
-    const id = req.params.id
-    const brand = await Brands.findById(id)
-    const isExisting = brand.name
-    if (isExisting == req.body.brand) {
-        return res.status(200).render('admin/editBrand', { brand, alert: 'The brand is exists' })
-    } else {
-        await Brands.updateOne({ _id: id },
+    try {
+        const id = req.params.id;
+        const brand = await Brands.findById(id);
+        const newBrandName = req.body.brand;
+
+        const existingBrand = await Brands.findOne({ name: newBrandName });
+
+        if (existingBrand && existingBrand._id.toString() !== id) {
+            return res.status(200).render('admin/editBrand', {
+                brand,
+                alert: 'The brand already exists'
+            });
+        }
+
+        await Brands.updateOne(
+            { _id: id },
             {
                 $set: {
-                    name: req.body.brand,
+                    name: newBrandName,
                     isList: req.body.list,
                     description: req.body.description
                 }
             }
-        )
+        );
+
+        res.redirect('/brand');
+
+    } catch (error) {
+        console.error('Error editing brand:', error);
+        res.status(500).send('Internal Server Error');
     }
-    console.log('successfully edited brand')
-    res.redirect('/brand')
-}
+};
+
 module.exports = {
     brandList,
     addBrandPage,
