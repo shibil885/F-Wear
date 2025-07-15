@@ -60,7 +60,7 @@ const productList = async (req, res) => {
       }
     ]);
     const totalPages = Math.ceil(totalProductsCount / perPage);
-    res.render("admin/productList", {
+    res.render("admin/product", {
       product: products,
       totalPages: totalPages,
       currentPage: page,
@@ -70,16 +70,18 @@ const productList = async (req, res) => {
     console.log(err);
   }
 }
+
 const addProductPage = async (req, res) => {
   try {
     const category = await Category.find()
     const brand = await Brands.find()
-    res.status(200).render('admin/addProduct', { category,brand })
+    res.status(200).render('admin/addProduct', { category, brand })
   } catch (error) {
     console.error('error occur rendering addProductPage', error)
     res.status(500).json({ error: "Internal server error" })
   }
 }
+
 const addProduct = async (req, res) => {
   upload(req, res, function (err) {
     if (err instanceof multer.MulterError) {
@@ -87,7 +89,7 @@ const addProduct = async (req, res) => {
     } else if (err) {
       return res.status(500).json(err);
     }
-    const { product_title, description, price, category, size, stock,brand } = req.body;
+    const { product_title, description, price, category, size, stock, brand } = req.body;
 
     const images = req.files.map(file => file.filename);
 
@@ -104,7 +106,7 @@ const addProduct = async (req, res) => {
 
     product.save()
       .then(() => {
-        res.redirect('/productList');
+        res.redirect('/product');
       })
       .catch(error => {
         console.error('Error saving product:', error);
@@ -114,29 +116,36 @@ const addProduct = async (req, res) => {
 };
 
 
-
-const unPublish = async (req, res) => {
+const updatePublishStatus = async (req, res) => {
   try {
-    const id = req.query.id
-    await Products.findByIdAndUpdate(id, { isPublish: false })
-    res.status(200).json({ success: true })
-  } catch (error) {
-    console.error('Error occcur while unpublishing a product', error)
-    res.status(500).json({ error: 'Internal server error' })
-  }
+    const productId = req.params.id;
+    const { isPublish } = req.body;
 
-}
-const publish = async (req, res) => {
-  try {
-    const id = req.query.id
-    await Products.findByIdAndUpdate(id, { isPublish: true })
-    res.status(200).json({ success: true })
-  } catch (error) {
-    console.error('Error occure while publishing a product')
-    res.status(500).json({ error: 'Internal server error' })
-  }
+    if (typeof isPublish !== 'boolean') {
+      return res.status(400).json({ success: false, message: 'Invalid publish status' });
+    }
 
-}
+    const updatedProduct = await Products.findByIdAndUpdate(
+      productId,
+      { isPublish },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Product has been ${isPublish ? 'published' : 'unpublished'} successfully`,
+      updatedProduct,
+    });
+  } catch (error) {
+    console.error('Error updating publish status:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
 
 const editProductPage = async (req, res) => {
   try {
@@ -144,12 +153,13 @@ const editProductPage = async (req, res) => {
     const product = await Products.findById(id).populate('categoryId')
     const category = await Category.find()
     const brand = await Brands.find()
-    res.render('admin/editProduct', { product, category,brand })
+    res.render('admin/editProduct', { product, category, brand })
   } catch (error) {
     console.error('error occur while render editProduct page', error)
     res.status(500).json({ error: 'Internal server error' })
   }
 }
+
 const editProduct = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -175,7 +185,7 @@ const editProduct = async (req, res, next) => {
           res.json({ message: "Product not found", type: "danger" });
           return;
         }
-        res.redirect("/productlist");
+        res.redirect("/product");
       } else {
         const result = await Products.findByIdAndUpdate(id, {
           product_title: req.body.product_title,
@@ -189,32 +199,34 @@ const editProduct = async (req, res, next) => {
           res.json({ message: "Product not found", type: "danger" });
           return;
         }
-        res.redirect("/productlist");
+        res.redirect("/product");
       }
     });
   } catch (err) {
     next(err);
   }
 }
+
 const productDetails = async (req, res) => {
   try {
     const id = req.params.id
     const product = await Products.findById(id)
     const userData = req.session.user;
-      if (userData) {
-          const userCart = await Cart.findOne({ userID: req.session.userID });
-          const cartLength = userCart ? userCart.items.length : 0;
-          return res.render('user/productDetail', { product,cartLength,userData })
-      }else{
-          const userCart = await Cart.findOne({ userID: req.session.userID });
-          const cartLength = userCart ? userCart.items.length : 0;
-          console.log('product', product);
-          return res.render('user/productDetail', { product,cartLength,userData })   
-      }
+    if (userData) {
+      const userCart = await Cart.findOne({ userID: req.session.userID });
+      const cartLength = userCart ? userCart.items.length : 0;
+      return res.render('user/productDetail', { product, cartLength, userData })
+    } else {
+      const userCart = await Cart.findOne({ userID: req.session.userID });
+      const cartLength = userCart ? userCart.items.length : 0;
+      console.log('product', product);
+      return res.render('user/productDetail', { product, cartLength, userData })
+    }
   } catch (error) {
     console.error('error occured while render product details page ', error)
   }
 }
+
 const deleteImage = async (req, res) => {
   try {
     const index = req.body.index;
@@ -226,7 +238,7 @@ const deleteImage = async (req, res) => {
     }
 
     product.images.splice(index, 1);
-    await product.save(); // Call save() function and await its completion
+    await product.save();
 
     res.status(200).json({ success: true, message: 'Image removed successfully' });
   } catch (error) {
@@ -239,8 +251,7 @@ module.exports = {
   addProductPage,
   addProduct,
   upload,
-  unPublish,
-  publish,
+  updatePublishStatus,
   editProductPage,
   editProduct,
   productDetails,
