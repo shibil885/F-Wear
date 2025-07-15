@@ -57,15 +57,15 @@ admin_router.patch('/category/:id', isAdmin, categoryController.updateCategoryLi
 admin_router.get('/category/edit/:id', isAdmin, categoryController.editCategoryPage)
 admin_router.post('/category/edit/:id', isAdmin, categoryController.editCategory)
 
+/*     -----BRANDS-----     */
+admin_router.get('/brand', isAdmin, brandController.brandList)
+admin_router.post('/brand', isAdmin, brandController.addBrand)
+admin_router.get('/brand/new', isAdmin, brandController.addBrandPage)
+admin_router.patch('/brand/:id', isAdmin, brandController.updateBrandListStatus);
+admin_router.get('/brand/edit/:id', isAdmin, brandController.editBrandPage)
+admin_router.post('/brand/edit/:id', isAdmin, brandController.editBrand)
 
-//////////////Brand\\\\\\\\\\\\\\\\
-admin_router.get('/brandList', isAdmin, brandController.brandList)
-admin_router.get('/addBrands', isAdmin, brandController.addBrandPage)
-admin_router.post('/addBrand', isAdmin, brandController.addBrand)
-admin_router.patch('/unListBrand/:id', isAdmin, brandController.unListBrand)
-admin_router.patch('/listBrand/:id', isAdmin, brandController.listBrand)
-admin_router.get('/editBrand/:id', isAdmin, brandController.editBrandPage)
-admin_router.post('/editBrand', isAdmin, brandController.editBrand)
+
 //////////////Coupon\\\\\\\\\\\\\\\\
 admin_router.get('/couponList', isAdmin, couponController.couponList)
 admin_router.get('/addCoupon', isAdmin, couponController.addCouponPage)

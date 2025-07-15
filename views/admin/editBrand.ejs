@@ -70,7 +70,7 @@
         </a>
       </li>
       <li class="menu-item active">
-        <a class="menu-link" href="/brandList">
+        <a class="menu-link" href="/brand">
           <i class="icon material-icons md-verified"></i>
           <span class="text">Brands</span>
         </a>
@@ -137,7 +137,7 @@
     <section class="content-main">
         <div class="content-header div-center">
             <div class="col-md-6">
-                <form id="categoryForm" action="/editbrand?id=<%= brand._id %>" method="post">
+                <form id="categoryForm" action="/brand/edit/<%= brand._id %>" method="post">
                     <div class="mb-4">
                         <% if (locals.alert) { %>
                             <div class=" text-center text-danger" id="error">
