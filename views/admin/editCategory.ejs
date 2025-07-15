@@ -64,7 +64,7 @@
         </a>
       </li>
       <li class="menu-item active">
-        <a class="menu-link" href="/categories">
+        <a class="menu-link" href="/category">
           <i class="icon material-icons md-store"></i>
           <span class="text">Categories</span>
         </a>
@@ -137,7 +137,7 @@
     <section class="content-main">
         <div class="content-header div-center">
             <div class="col-md-6">
-                <form id="categoryForm" action="/editCategory?id=<%= category._id %>" method="post">
+                <form id="categoryForm" action="/category/edit/<%= category._id %>" method="post">
                     <div class="mb-4">
                         <% if (locals.alert) { %>
                             <div class=" text-center text-danger" id="error">

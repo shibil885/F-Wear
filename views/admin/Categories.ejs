@@ -1,289 +1,259 @@
 <%-include('../admin/adminLayout/adminHeader') %>
-<div class="screen-overlay"></div>
-<aside class="navbar-aside" id="offcanvas_aside">
-  <div class="aside-top">
-    <a href="/adminPanel" class="brand-wrap">
-      <p style="font-size: 20px; font-weight: bold">.f-Wear Admin</p>
-    </a>
-    <div>
-      <button class="btn btn-icon btn-aside-minimize">
-        <i class="text-muted material-icons md-menu_open"></i>
-      </button>
+  <div class="screen-overlay"></div>
+  <aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+      <a href="/adminPanel" class="brand-wrap">
+        <p style="font-size: 20px; font-weight: bold">.f-Wear Admin</p>
+      </a>
+      <div>
+        <button class="btn btn-icon btn-aside-minimize">
+          <i class="text-muted material-icons md-menu_open"></i>
+        </button>
+      </div>
     </div>
-  </div>
-  <nav>
-    <ul class="menu-aside">
-      <li class="menu-item">
-        <a class="menu-link" href="/adminPanel">
-          <i class="icon material-icons md-home"></i>
-          <span class="text">Dashboard</span>
-        </a>
-      </li>
-      <li class="menu-item ">
-        <a class="menu-link" href="/users">
-          <i class="icon material-icons md-person"></i>
-          <span class="text">Users</span>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a class="menu-link" href="/product">
-          <i class="icon material-icons md-shopping_bag"></i>
-          <span class="text">Products</span>
-        </a>
-      </li>
-      <li class="menu-item active">
-        <a class="menu-link" href="/categories">
-          <i class="icon material-icons md-store"></i>
-          <span class="text">Categories</span>
-        </a>
-      </li>
-      <li class="menu-item ">
-        <a class="menu-link" href="/brandList">
-          <i class="icon material-icons md-verified"></i>
-          <span class="text">Brands</span>
-        </a>
-      </li>
-      <li class="menu-item ">
-        <a class="menu-link" href="/orderlist">
-          <i class="icon material-icons md-shopping_cart"></i>
-          <span class="text">Orders</span>
-        </a>
-      </li>
-      <li class="menu-item ">
-        <a class="menu-link" href="/couponList">
-          <i class="icon material-icons md-local_offer"></i>
-          <span class="text">Coupons</span>
-        </a>
-      </li>
-      <li class="menu-item has-submenu">
-        <a class="menu-link"> <i class="icon material-icons md-star"></i>
-          <span class="text">Best Selling</span>
-        </a>
-        <div class="submenu">
-          <a href="/bestproducts">Products</a>
-          <a href="/bestcategories">Categories</a>
-          <a href="/bestbrands">Brands</a>
-        </div>
-      </li>
-    </ul>
-  </nav>
-</aside>
-<main class="main-wrap">
-  <header class="main-header navbar">
-    <div class="col-search">
-    </div>
-    <div class="col-nav">
-      <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside">
-        <i class="material-icons md-apps"></i>
-      </button>
-      <ul class="nav">
-        <li class="nav-item">
-          <a class="nav-link btn-icon" href="#">
-            <i class="material-icons md-notifications animation-shake"></i>
-            <span class="badge rounded-pill">3</span>
+    <nav>
+      <ul class="menu-aside">
+        <li class="menu-item">
+          <a class="menu-link" href="/adminPanel">
+            <i class="icon material-icons md-home"></i>
+            <span class="text">Dashboard</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link btn-icon darkmode" href="#">
-            <i class="material-icons md-nights_stay"></i>
+        <li class="menu-item ">
+          <a class="menu-link" href="/users">
+            <i class="icon material-icons md-person"></i>
+            <span class="text">Users</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+        <li class="menu-item">
+          <a class="menu-link" href="/product">
+            <i class="icon material-icons md-shopping_bag"></i>
+            <span class="text">Products</span>
+          </a>
         </li>
-        <li class="dropdown nav-item">
-          <a data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
-            aria-expanded="false"><i class="material-icons md-public"></i></a>
+        <li class="menu-item active">
+          <a class="menu-link" href="/category">
+            <i class="icon material-icons md-store"></i>
+            <span class="text">Categories</span>
+          </a>
         </li>
-        <li class="dropdown nav-item">
-            <a class="dropdown-item text-danger" href="/adminlogout"><i
-                class="material-icons md-exit_to_app"></i>Logout</a>
+        <li class="menu-item ">
+          <a class="menu-link" href="/brandList">
+            <i class="icon material-icons md-verified"></i>
+            <span class="text">Brands</span>
+          </a>
+        </li>
+        <li class="menu-item ">
+          <a class="menu-link" href="/orderlist">
+            <i class="icon material-icons md-shopping_cart"></i>
+            <span class="text">Orders</span>
+          </a>
+        </li>
+        <li class="menu-item ">
+          <a class="menu-link" href="/couponList">
+            <i class="icon material-icons md-local_offer"></i>
+            <span class="text">Coupons</span>
+          </a>
+        </li>
+        <li class="menu-item has-submenu">
+          <a class="menu-link"> <i class="icon material-icons md-star"></i>
+            <span class="text">Best Selling</span>
+          </a>
+          <div class="submenu">
+            <a href="/bestproducts">Products</a>
+            <a href="/bestcategories">Categories</a>
+            <a href="/bestbrands">Brands</a>
+          </div>
         </li>
       </ul>
-    </div>
-  </header>
-        <section class="content-main">
-            <div class="content-header">
-                <div>
-                    <h2 class="content-title card-title">Categories </h2>
-                </div>
-                <div>
-                    <input type="text" placeholder="Search Categories" class="form-control bg-white">
-                </div>
-                <a href="/addCategories"><button class="btn btn-primary btn-sm rounded me-3 mt-3">Add
-                        Categories</button></a>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div>
-                                <% if(categories && categories.length> 0) { %>
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Description</th>
-                                                <th>Status</th>
-                                                <th>Action</th>
-                                                <th>Edit</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% categories.forEach((row, index)=> { %>
-                                                <tr>
-                                                    <td>
-                                                        <%= row.category %>
-                                                    </td>
-                                                    <td>
-                                                        <%= row.description %>
-                                                    </td>
-                                                    <% if (row.isList==true) { %>
-                                                        <td class="text-success">List</td>
-                                                        <% } else { %>
-                                                            <td class="text-danger">Unlist</td>
-                                                            <% } %>
-
-                                                                <% if (row.isList==true) { %>
-                                                                    <td><a class="badge badge-pill alert-danger"
-                                                                            onclick="unListCategory('<%= row._id%>')">Unlist</a>
-                                                                    </td>
-                                                                    <% } else { %>
-                                                                        <td><a
-                                                                                class="badge badge-pill alert-success"
-                                                                           onclick="listCategory('<%=row._id%>')">List</a>
-                                                                        </td>
-                                                                        <% } %>
-                                                                            <td>
-                                                                                <div class="btn-group" role="group">
-                                                                                    <a class="badge rounded-pill alert-success"
-                                                                                        href="/editCategory/<%=row._id%>">
-                                                                                        <span
-                                                                                            class="material-symbols-outlined">
-                                                                                            edit
-                                                                                        </span>
-                                                                                    </a>
-                                                                                </div>
-                                                                            </td>
-                                                </tr>
-                                                <% }) %>
-                                        </tbody>
-                                    </table>
-                                    <% } else { %>
-                                        <p>No categories available.</p>
-                                        <% } %>
+    </nav>
+  </aside>
+  <main class="main-wrap">
+    <header class="main-header navbar">
+      <div class="col-search">
+      </div>
+      <div class="col-nav">
+        <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside">
+          <i class="material-icons md-apps"></i>
+        </button>
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link btn-icon" href="#">
+              <i class="material-icons md-notifications animation-shake"></i>
+              <span class="badge rounded-pill">3</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn-icon darkmode" href="#">
+              <i class="material-icons md-nights_stay"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+          </li>
+          <li class="dropdown nav-item">
+            <a data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i
+                class="material-icons md-public"></i></a>
+          </li>
+          <li class="dropdown nav-item">
+            <a class="dropdown-item text-danger" href="/adminlogout"><i
+                class="material-icons md-exit_to_app"></i>Logout</a>
+          </li>
+        </ul>
+      </div>
+    </header>
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Categories </h2>
+        </div>
+        <div>
+          <input type="text" placeholder="Search Categories" class="form-control bg-white">
+        </div>
+        <a href="/category/new"><button class="btn btn-primary btn-sm rounded me-3 mt-3">Add
+            Categories</button></a>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div>
+                <% if(categories && categories.length> 0) { %>
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                        <th>Edit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% categories.forEach((row, index)=> { %>
+                        <tr>
+                          <td>
+                            <%= row.category %>
+                          </td>
+                          <td>
+                            <%= row.description %>
+                          </td>
+                          <td id="status-<%= row._id %>">
+                            <span class="<%= row.isList ? 'text-success' : 'text-danger' %>">
+                              <%= row.isList ? 'List' : 'Unlist' %>
+                            </span>
+                          </td>
+                          <td id="action-<%= row._id %>">
+                            <a href="#" class="badge badge-pill alert-<%= row.isList ? 'danger' : 'success' %>"
+                              onclick="toggleCategoryList('<%= row.isList %>', '<%= row._id %>')">
+                              <%= row.isList ? 'Unlist' : 'List' %>
+                            </a>
+                          </td>
+                          <td>
+                            <div class="btn-group" role="group">
+                              <a class="badge rounded-pill alert-success" href="/category/edit/<%=row._id%>">
+                                <span class="material-symbols-outlined">
+                                  edit
+                                </span>
+                              </a>
                             </div>
-                        </div>
-
-                    </div> <!-- .col// -->
-                </div> <!-- .row // -->
-            </div> <!-- card body .// -->
-            </div> <!-- card .// -->
-        </section> <!-- content-main end// -->
-        <footer class="main-footer font-xs">
-            <div class="row pb-30 pt-15">
-                <div class="col-sm-6">
-                    <script>
-                        document.write(new Date().getFullYear())
-                    </script> ©, Evara - HTML Ecommerce Template .
-                </div>
-                <div class="col-sm-6">
-                    <div class="text-sm-end">
-                        All rights reserved
-                    </div>
-                </div>
+                          </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                  </table>
+                  <% } else { %>
+                    <p>No categories available.</p>
+                    <% } %>
+              </div>
             </div>
-        </footer>
-        <script>
-async function unListCategory(categoryId) {
-    const result = await Swal.fire({
-        title: "Are you sure?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes"
-    });
+          </div>
+          <!-- .col// -->
+        </div>
+        <!-- .row // -->
+      </div>
+      <!-- card body .// -->
+      </div> <!-- card .// -->
+    </section>
+    <!-- content-main end// -->
+    <footer class="main-footer font-xs">
+      <div class="row pb-30 pt-15">
+        <div class="col-sm-6">
+          <script>
+            document.write(new Date().getFullYear())
+          </script> ©, Evara - HTML Ecommerce Template .
+        </div>
+        <div class="col-sm-6">
+          <div class="text-sm-end">
+            All rights reserved
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script>
+      async function toggleCategoryList(currentStatus, categoryId) {
+        const isList = !currentStatus;
 
-    if (result.isConfirmed) {
+        const result = await Swal.fire({
+          title: "Are you sure?",
+          text: isList ? "You want to list this category?" : "You want to unlist this category?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: isList ? "List" : "Unlist"
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
-            const response = await fetch(`/unlistCategory/${categoryId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' }
-            });
+          const response = await fetch(`/category/${categoryId}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ isList })
+          });
 
-            if (response.ok) {
-                    Swal.fire({
-                    title: "Unlisted!",
-                    text: "the category has been unlisted.",
-                    icon: "success",
-                    showConfirmButton: false
-                });
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                throw new Error('Network response was not ok.');
-            }
+          if (!response.ok) throw new Error("Failed to update");
+
+          const data = await response.json();
+
+          await Swal.fire({
+            icon: "success",
+            title: data.message,
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+          // DOM Update
+          const statusCell = document.getElementById(`status-${categoryId}`);
+          const actionCell = document.getElementById(`action-${categoryId}`);
+
+          if (statusCell) {
+            statusCell.innerHTML = `
+          <span class="${isList ? 'text-success' : 'text-danger'}">
+            ${isList ? 'List' : 'Unlist'}
+          </span>`;
+          }
+
+          if (actionCell) {
+            actionCell.innerHTML = `
+          <a href="#" class="badge badge-pill alert-${isList ? 'danger' : 'success'}"
+             onclick="toggleCategoryList(${isList}, '${categoryId}')">
+            ${isList ? 'Unlist' : 'List'}
+          </a>`;
+          }
+
         } catch (error) {
-            console.error('Error:', error);
-            await Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Something went wrong!",
-                showConfirmButton: false
-            });
-            setTimeout(() => {
-                location.reload();
-            }, 2000);
+          console.error(error);
+          await Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!"
+          });
         }
-    }
-}
-async function listCategory(categoryId) {
-    const result = await Swal.fire({
-        title: "Are you sure?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes"
-    });
+      }
+    </script>
 
-    if (result.isConfirmed) {
-        try {
-            const response = await fetch(`/listCategory/${categoryId}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            if (response.ok) {
-                    Swal.fire({
-                    title: "listed!",
-                    text: "The category has been listed.",
-                    icon: "success",
-                    showConfirmButton: false
-                });
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                throw new Error('Network response was not ok.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            await Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Something went wrong!",
-                showConfirmButton: false
-            });
-            setTimeout(() => {
-                location.reload();
-            }, 2000);
-        }
-    }
-}
-
-
-        </script>
-        <%-include('../admin/adminLayout/adminFooter') %>
+    <%-include('../admin/adminLayout/adminFooter') %>

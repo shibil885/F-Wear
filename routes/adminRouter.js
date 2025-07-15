@@ -49,19 +49,15 @@ admin_router.patch('/deliveredOrder', isAdmin, orderController.deliveredOrder)
 admin_router.patch('/pendingOrder', isAdmin, orderController.pendingOrder)
 
 
+/*     -----CATEGORIES-----     */
+admin_router.get('/category', isAdmin, categoryController.categories)
+admin_router.post('/category', isAdmin, categoryController.addCategory)
+admin_router.get('/category/new', isAdmin, categoryController.addCategoriesPage)
+admin_router.patch('/category/:id', isAdmin, categoryController.updateCategoryListStatus);
+admin_router.get('/category/edit/:id', isAdmin, categoryController.editCategoryPage)
+admin_router.post('/category/edit/:id', isAdmin, categoryController.editCategory)
 
 
-
-
-
-//////////////Category\\\\\\\\\\\\\\\\
-admin_router.get('/Categories', isAdmin, categoryController.Categories)
-admin_router.get('/addCategories', isAdmin, categoryController.addCategoriesPage)
-admin_router.post('/addCategory', isAdmin, categoryController.addCategory)
-admin_router.get('/editCategory/:id', isAdmin, categoryController.editCategoryPage)
-admin_router.post('/editCategory', isAdmin, categoryController.editCategory)
-admin_router.patch('/unlistCategory/:id', isAdmin, categoryController.unlistCategory)
-admin_router.patch('/listCategory/:id', isAdmin, categoryController.listCategory)
 //////////////Brand\\\\\\\\\\\\\\\\
 admin_router.get('/brandList', isAdmin, brandController.brandList)
 admin_router.get('/addBrands', isAdmin, brandController.addBrandPage)

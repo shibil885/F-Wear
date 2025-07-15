@@ -1,6 +1,6 @@
 const Category = require('../models/categoriesModel')
 
-const Categories = async (req, res) => {
+const categories = async (req, res) => {
     const categories = await Category.find()
     res.render('admin/Categories', { categories })
     console.log('successfully get categories from db');
@@ -11,7 +11,7 @@ const addCategoriesPage = (req, res) => {
 const addCategory = async (req, res) => {
     isExisting = await Category.findOne({ category: req.body.category })
     if (isExisting) {
-        res.render('admin/addCategories',{message: 'The category is exists'})
+        res.render('admin/addCategories', { message: 'The category is exists' })
     } else {
         const newCategory = new Category({
             category: req.body.category,
@@ -19,7 +19,7 @@ const addCategory = async (req, res) => {
         })
         await newCategory.save()
         console.log('New category added', req.body);
-        res.redirect('/Categories')
+        res.redirect('/category')
     }
 
 }
@@ -30,7 +30,7 @@ const editCategoryPage = async (req, res) => {
 }
 const editCategory = async (req, res) => {
     try {
-        const id = req.query.id;
+        const id = req.params.id;
         const category = await Category.findById(id)
         const newCategoryName = req.body.category;
         const existingCategory = await Category.findOne({ category: newCategoryName });
@@ -48,45 +48,48 @@ const editCategory = async (req, res) => {
             }
         );
         console.log('Successfully edited category');
-        res.redirect('/Categories');
+        res.redirect('/category');
     } catch (error) {
         console.error('Error editing category:', error);
         res.status(500).send('Internal Server Error');
     }
 }
 
-const unlistCategory = async (req, res, next) => {
+const updateCategoryListStatus = async (req, res) => {
     try {
         const categoryId = req.params.id;
-        console.log(categoryId);
-        await Category.findByIdAndUpdate(categoryId, {
-            isList: false
+        const { isList } = req.body;
+
+        if (typeof isList !== 'boolean') {
+            return res.status(400).json({ success: false, message: 'Invalid list status' });
+        }
+
+        const updatedCategory = await Category.findByIdAndUpdate(
+            categoryId,
+            { isList },
+            { new: true }
+        );
+
+        if (!updatedCategory) {
+            return res.status(404).json({ success: false, message: 'Category not found' });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Category has been ${isList ? 'listed' : 'unlisted'} successfully`,
+            category: updatedCategory
         });
-        res.json({ success: true });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, error: 'Something went wrong on the server' });
+        console.error('Error updating category list status:', error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
-const listCategory = async (req, res, next) => {
-    try {
-        const categoryId = req.params.id;
-        console.log(categoryId);
-        await Category.findByIdAndUpdate(categoryId, {
-            isList: true
-        });
-        res.json({ success: true });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, error: 'Something went wrong on the server' });
-    }
-};
+
 module.exports = {
-    Categories,
+    categories,
     addCategoriesPage,
     addCategory,
     editCategoryPage,
     editCategory,
-    unlistCategory,
-    listCategory
+    updateCategoryListStatus
 }
