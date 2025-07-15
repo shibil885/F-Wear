@@ -92,64 +92,50 @@ const users = async (req, res, next) => {
     next(error)
   }
 }
-// const blockUser = async (req,res,next)=>{
-//     try {
-//         const id =req.query.id
-//         await User.findByIdAndUpdate(id,{isBlocked:true})
-//         req.session.isLogged = false
-//         req.session.user = null
-//         res.json({success:true})
-//         console.log('blocked successfully',id);
-//     } catch (error) {
-//         next(error)
-//     }
-// }   
-// const unBlockUser = async (req,res,next)=>{
-//     try {
-//         const id =req.query.id
-//         await User.findByIdAndUpdate(id,{isBlocked:false})
-//         req.session.isLogged = true
-//         req.session.user = req.session.userDetails.email
 
-//         res.json({success:true});
-//         console.log('Unblocked successfully',id);
-//     } catch (error) {
-//         next(error)
-//     }
-// }   
-
-
-//function to block and Unblock user
-async function blockOrUnblock(req, res, status) {
+const updateUser = async (req, res) => {
   try {
-    const id = req.query.id
-    await User.findByIdAndUpdate(id, { isBlocked: status })
-    res.status(200).json({ success: true })
-  } catch (error) {
-    console.error(error);
-  }
-}
+    const userId = req.params.id;
+    let { isBlock } = req.body;
 
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        icon: 'warning',
+        message: 'ID is required'
+      });
+    }
 
-const blockUser = async (req, res) => {
-  try {
-    req.session.isLogged = false
-    return blockOrUnblock(req, res, true)
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { isBlocked: isBlock },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        icon: 'error',
+        message: 'User not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      icon: 'success',
+      message: `User has been ${isBlock ? 'blocked' : 'unblocked'} successfully`,
+      user: updatedUser
+    });
 
   } catch (error) {
-    console.error(error);
+    console.error('Error updating user:', error);
+    res.status(500).json({
+      success: false,
+      icon: 'error',
+      message: 'Something went wrong. Please try again.'
+    });
   }
-}
-
-
-const unBlockUser = async (req, res) => {
-  try {
-    req.session.isLogged = true
-    return blockOrUnblock(req, res, false)
-  } catch (error) {
-    console.error(error);
-  }
-}
+};
 
 
 const fetchDashboard = async (req, res, next) => {
@@ -417,8 +403,7 @@ module.exports = {
   adminPanel,
   adminLogout,
   users,
-  blockUser,
-  unBlockUser,
+  updateUser,
   fetchDashboard,
   generateReport,
   // report,

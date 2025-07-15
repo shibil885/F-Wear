@@ -23,10 +23,10 @@ admin_router.get('/fetchdashboard',isAdmin,adminController.fetchDashboard)
 admin_router.get('/sales',isAdmin,adminController.sales)
 
 
-                    ////////////////user\\\\\\\\\\\\\\\\
+/*     ------USERS-----     */
 admin_router.get('/users',isAdmin,adminController.users)
-admin_router.get('/block',isAdmin,adminController.blockUser);
-admin_router.get('/unBlock',isAdmin,adminController.unBlockUser);
+admin_router.patch('/users/:id',isAdmin,adminController.updateUser);
+// admin_router.get('/unBlock',isAdmin,adminController.unBlockUser);
 
 
 
