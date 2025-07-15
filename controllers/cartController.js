@@ -21,11 +21,11 @@ const addToCart = async (req, res) => {
         const quantityToAdd = 1;
 
         const product = await Products.findById(productID);
+        let cart = await Cart.findOne({ userID: userId });
         if (!product || product.stock < quantityToAdd) {
-            return res.status(400).json({ message: "Product not available", icon: "warning" });
+            return res.status(400).json({ message: "Product not available", icon: "warning", totalStock: product.stock, totalItems: cart.item.length });
         }
 
-        let cart = await Cart.findOne({ userID: userId });
 
         if (!cart) {
             cart = new Cart({
@@ -53,14 +53,13 @@ const addToCart = async (req, res) => {
         }
 
         await Products.findByIdAndUpdate(productID, { $inc: { stock: -quantityToAdd } });
+        product.stock -= quantityToAdd;
         await cart.save();
-
-        const totalItems = cart.items.length;
-
+        
         res.json({
             message: "Product added to cart",
             icon: "success",
-            totalItems: totalItems
+            totalItems: cart.items.length, totalStock: product.stock
         });
     } catch (error) {
         console.error("Error in addToCart:", error);

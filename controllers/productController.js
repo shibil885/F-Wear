@@ -208,6 +208,7 @@ const productDetails = async (req, res) => {
       }else{
           const userCart = await Cart.findOne({ userID: req.session.userID });
           const cartLength = userCart ? userCart.items.length : 0;
+          console.log('product', product);
           return res.render('user/productDetail', { product,cartLength,userData })   
       }
   } catch (error) {
