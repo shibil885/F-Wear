@@ -37,7 +37,7 @@ user_router.post('/editProfile', isUser, isBlocked, userController.editProfile)
 user_router.get('/changePasswordPage', isUser, isBlocked, userController.changePasswordPage)
 user_router.post('/changePassword', isUser, isBlocked, userController.changePassword)
 
-/*----CART----*/
+/*    ----CART----    */
 user_router.patch('/cart/:id', isUser, isBlocked, cartController.addToCart)
 user_router.delete('/cart/:productId', isUser, isBlocked, cartController.deleteCart);
 user_router.get('/cartPage', isUser, isBlocked, cartController.cartPage)
@@ -65,15 +65,15 @@ user_router.get('/orderDetails/:id', isBlocked, orderController.orderDetails)
 user_router.patch('/cancelOrder', isUser, isBlocked, orderController.cancelOrder)
 user_router.patch('/returnOrder', isUser, isBlocked, orderController.returnOrder)
 user_router.get('/downloadInvoice/:id', isUser, isBlocked, orderController.downloadInvoice)
-//wallet
+/*   ----WALLET----    */
 user_router.get('/wallet', isUser, isBlocked, walletController.wallet)
 user_router.post('/addAmount', isUser, isBlocked, walletController.addAmount)
 //coupon
 user_router.patch('/checkCoupon', isUser, isBlocked, couponController.checkCoupon)
-//whishList
-user_router.get('/wishList', isUser, isBlocked, wishListController.favorite)
+/*    ----WHISHLIST----*/
+user_router.get('/wishlist', isUser, isBlocked, wishListController.favorite)
 user_router.patch('/wishlist/:id', isUser, isBlocked, wishListController.addToWishList)
-user_router.delete('/deleteWishList/:id', isUser, isBlocked, wishListController.deleteWishList)
+user_router.delete('/whishlist/:id', isUser, isBlocked, wishListController.deleteWishList)
 
 
 

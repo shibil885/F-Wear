@@ -10,8 +10,16 @@ const favorite = async (req, res) => {
     try {
         const userId = req.session.userID
         const userCart = await Cart.findOne({ userID: userId }).populate('items.product')
-        const userWishList = await Wishlist.findOne({ userID: userId }).populate('items.product')
-        console.log(userWishList);
+        const userWishList = await Wishlist.findOne({ userID: userId })
+            .populate({
+                path: 'items.product',
+                populate: {
+                    path: 'categoryId',
+                    model: 'Category'
+                }
+            });
+
+
         const cartLength = userCart ? userCart.items.length : 0;
         return res.render('user/wishList', { userWishList, cartLength, userCart });
     } catch (error) {
@@ -62,13 +70,13 @@ const deleteWishList = async (req, res) => {
     try {
         const userId = req.session.userID
         const wishListId = req.params.id
-        console.log(wishListId);
         const userWishList = await Wishlist.findOne({ userID: userId })
+        if (!userWishList) return res.status(404).json({ success: false, message: 'Item not found in list', icon: 'error' })
         userWishList.items = userWishList.items.filter((item) => {
             return item.product.toString() !== wishListId
         })
         await userWishList.save()
-        res.json({ success: true })
+        return res.status(200).json({ success: true, message: 'Item removed from list', icon: 'success', totalCount: userWishList.items.length })
     } catch (error) {
         console.error(error);
     }

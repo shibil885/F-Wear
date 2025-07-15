@@ -23,7 +23,7 @@ const addToCart = async (req, res) => {
         const product = await Products.findById(productID);
         let cart = await Cart.findOne({ userID: userId });
         if (!product || product.stock < quantityToAdd) {
-            return res.status(400).json({ message: "Product not available", icon: "warning", totalStock: product.stock, totalItems: cart.item.length });
+            return res.status(400).json({ successs: false, message: "Product not available", icon: "error", totalStock: product.stock, totalItems: cart.items.length });
         }
 
 
@@ -55,8 +55,9 @@ const addToCart = async (req, res) => {
         await Products.findByIdAndUpdate(productID, { $inc: { stock: -quantityToAdd } });
         product.stock -= quantityToAdd;
         await cart.save();
-        
-        res.json({
+
+        res.status(200).json({
+            successs: true,
             message: "Product added to cart",
             icon: "success",
             totalItems: cart.items.length, totalStock: product.stock
