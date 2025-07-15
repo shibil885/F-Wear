@@ -209,8 +209,10 @@ const editAddress = async (req, res) => {
 
 const checkOutAddress = async (req, res) => {
     try {
+        console.log('hit checkout address');
         const userId = req.session.userID;
         const userAddress = await Address.findOne({ userID: userId });
+        console.log('user adrees', userAddress);
         if (!userAddress) {
             const newAddress = new Address({
                 userID: userId,

@@ -45,13 +45,14 @@ user_router.post('/updateCart', isUser, isBlocked, cartController.updateCart)
 user_router.get('/checkoutPage', isUser, isBlocked, cartController.checkoutPage)
 
 /*    -----ADDRESS-----    */
-user_router.get('/address', isUser, isBlocked, addressController.address)
-user_router.get('/address/new', isUser, isBlocked, addressController.addAddressPage)
-user_router.post('/address', isUser, isBlocked, addressController.addAddress)
-user_router.get('/address/:id', isUser, isBlocked, addressController.editAddressPage)
-user_router.post('/address/:id', isUser, isBlocked, addressController.editAddress)
-user_router.delete('/address/:id', isUser, isBlocked, addressController.deleteAddress)
-user_router.post('/checkOutAddress/', isUser, isBlocked, addressController.checkOutAddress)
+user_router.get('/address', isUser, isBlocked, addressController.address);
+user_router.get('/address/new', isUser, isBlocked, addressController.addAddressPage);
+user_router.post('/address', isUser, isBlocked, addressController.addAddress);
+user_router.post('/address/checkout', isUser, isBlocked, addressController.checkOutAddress);
+user_router.get('/address/:id', isUser, isBlocked, addressController.editAddressPage);
+user_router.post('/address/:id', isUser, isBlocked, addressController.editAddress);
+user_router.delete('/address/:id', isUser, isBlocked, addressController.deleteAddress);
+
 //order
 user_router.post('/orderPlacing', isUser, isBlocked, orderController.orderPlacing)
 user_router.patch('/cashOnDelivery', isUser, isBlocked, orderController.cashOnDelivery)
