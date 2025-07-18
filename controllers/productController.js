@@ -1,10 +1,9 @@
-
 const Products = require('../models/productModel')
 const Category = require('../models/categoriesModel')
 const Brands = require('../models/brandModel')
 const Cart = require('../models/cartModel')
 const multer = require('multer')
-
+const { sendSuccess, sendError, MESSAGES, STATUS_CODES, COMMON_MESSAGES } = require('../util')
 
 
 
@@ -67,7 +66,7 @@ const productList = async (req, res) => {
       perPage: perPage,
     });
   } catch (err) {
-    console.log(err);
+    sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -77,17 +76,16 @@ const addProductPage = async (req, res) => {
     const brand = await Brands.find()
     res.status(200).render('admin/addProduct', { category, brand })
   } catch (error) {
-    console.error('error occur rendering addProductPage', error)
-    res.status(500).json({ error: "Internal server error" })
+    sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 }
 
 const addProduct = async (req, res) => {
   upload(req, res, function (err) {
     if (err instanceof multer.MulterError) {
-      return res.status(500).json(err);
+      return sendError(res, { message: err.message });
     } else if (err) {
-      return res.status(500).json(err);
+      return sendError(res, { message: err.message });
     }
     const { product_title, description, price, category, size, stock, brand } = req.body;
 
@@ -109,8 +107,7 @@ const addProduct = async (req, res) => {
         res.redirect('/product');
       })
       .catch(error => {
-        console.error('Error saving product:', error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
       });
   });
 };
@@ -122,7 +119,7 @@ const updatePublishStatus = async (req, res) => {
     const { isPublish } = req.body;
 
     if (typeof isPublish !== 'boolean') {
-      return res.status(400).json({ success: false, message: 'Invalid publish status' });
+      return sendError(res, { message: COMMON_MESSAGES.INVALID_ACTION, status: STATUS_CODES.BAD_REQUEST });
     }
 
     const updatedProduct = await Products.findByIdAndUpdate(
@@ -132,17 +129,15 @@ const updatePublishStatus = async (req, res) => {
     );
 
     if (!updatedProduct) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
+      return sendError(res, { message: COMMON_MESSAGES.PRODUCT_NOT_FOUND, status: STATUS_CODES.NOT_FOUND });
     }
 
-    res.status(200).json({
-      success: true,
+    sendSuccess(res, {
       message: `Product has been ${isPublish ? 'published' : 'unpublished'} successfully`,
-      updatedProduct,
+      data: { updatedProduct }
     });
   } catch (error) {
-    console.error('Error updating publish status:', error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -155,8 +150,7 @@ const editProductPage = async (req, res) => {
     const brand = await Brands.find()
     res.render('admin/editProduct', { product, category, brand })
   } catch (error) {
-    console.error('error occur while render editProduct page', error)
-    res.status(500).json({ error: 'Internal server error' })
+    sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -165,9 +159,9 @@ const editProduct = async (req, res, next) => {
     const id = req.params.id;
     upload(req, res, async function (err) {
       if (err instanceof multer.MulterError) {
-        return res.status(500).json(err);
+        return sendError(res, { message: err.message });
       } else if (err) {
-        return res.status(500).json(err);
+        return sendError(res, { message: err.message });
       }
       if (req.files && req.files.length > 0) {
         const images = req.files.map(file => file.filename);
@@ -182,8 +176,7 @@ const editProduct = async (req, res, next) => {
           images: images,
         }).exec();
         if (!result) {
-          res.json({ message: "Product not found", type: "danger" });
-          return;
+          return sendError(res, { message: COMMON_MESSAGES.PRODUCT_NOT_FOUND, status: STATUS_CODES.NOT_FOUND });
         }
         res.redirect("/product");
       } else {
@@ -196,14 +189,13 @@ const editProduct = async (req, res, next) => {
         }).exec();
 
         if (!result) {
-          res.json({ message: "Product not found", type: "danger" });
-          return;
+          return sendError(res, { message: COMMON_MESSAGES.PRODUCT_NOT_FOUND, status: STATUS_CODES.NOT_FOUND });
         }
         res.redirect("/product");
       }
     });
   } catch (err) {
-    next(err);
+    sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -219,11 +211,10 @@ const productDetails = async (req, res) => {
     } else {
       const userCart = await Cart.findOne({ userID: req.session.userID });
       const cartLength = userCart ? userCart.items.length : 0;
-      console.log('product', product);
       return res.render('user/productDetail', { product, cartLength, userData })
     }
   } catch (error) {
-    console.error('error occured while render product details page ', error)
+    sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -234,15 +225,15 @@ const deleteImage = async (req, res) => {
     const productId = req.body.productId;
     const product = await Products.findById(productId);
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      return sendError(res, { message: COMMON_MESSAGES.PRODUCT_NOT_FOUND, status: STATUS_CODES.NOT_FOUND });
     }
 
     product.images.splice(index, 1);
     await product.save();
 
-    res.status(200).json({ success: true, message: 'Image removed successfully' });
+    sendSuccess(res, { message: COMMON_MESSAGES.IMAGE_REMOVED });
   } catch (error) {
-    console.error();
+    sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -256,4 +247,5 @@ module.exports = {
   editProduct,
   productDetails,
   deleteImage,
+  upload,
 }

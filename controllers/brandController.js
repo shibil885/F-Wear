@@ -1,91 +1,108 @@
-const Brands = require('../models/brandModel')
-
+const Brands = require('../models/brandModel');
+const {
+    STATUS_CODES,
+    sendError,
+    sendSuccess,
+    MESSAGES,
+    COMMON_MESSAGES } = require('../util');
 
 const brandList = async (req, res) => {
     try {
-        const brands = await Brands.find()
-        if (brands) {
-            res.status(200).render('admin/brandList', { brands })
+        const brands = await Brands.find();
+        if (brands && brands.length) {
+            res.status(STATUS_CODES.OK).render('admin/brandList', { brands });
         } else {
-            res.status(200).render('admin/brandList', { message: 'cant get any brands' })
+            res.status(STATUS_CODES.OK).render('admin/brandList', { message: MESSAGES.brand.CANNOT_GET_BRANDS });
         }
     } catch (error) {
-        console.error(error);
-    }
-}
-const addBrandPage = (req, res) => {
-    try {
-        res.status(200).render('admin/addBrand')
-    } catch (error) {
-        res.status.json({ error: 'Internal sever error' })
-        console.error(error);
-    }
-}
-const addBrand = async (req, res) => {
-    isExisting = await Brands.findOne({ name: req.body.brand })
-    if (isExisting) {
-        res.render('admin/addBrand', { message: 'The Brand is exists' })
-    } else {
-        const newBrand = new Brands({
-            name: req.body.brand,
-            description: req.body.description
-        })
-        await newBrand.save()
-        res.redirect('/brand')
-    }
-
-}
-
-const updateBrandListStatus = async (req, res) => {
-    try {
-        const brandId = req.params.id;
-        const { isList } = req.body;
-
-        if (typeof isList !== 'boolean') {
-            return res.status(400).json({ success: false, message: 'Invalid list status' });
-        }
-
-        const updatedBrand = await Brands.findByIdAndUpdate(
-            brandId,
-            { isList },
-            { new: true }
-        );
-
-        if (!updatedBrand) {
-            return res.status(404).json({ success: false, message: 'Brand not found' });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: `Brand has been ${isList ? 'listed' : 'unlisted'} successfully`,
-            brand: updatedBrand
-        });
-    } catch (error) {
-        console.error('Error updating brand list status:', error);
-        res.status(500).json({ success: false, message: 'Something went wrong on the server' });
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
 
+const addBrandPage = (req, res) => {
+    try {
+        res.status(STATUS_CODES.OK).render('admin/addBrand');
+    } catch (error) {
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
+    }
+};
+
+const addBrand = async (req, res) => {
+    try {
+        const { brand, description } = req.body;
+        const isExisting = await Brands.findOne({ name: brand });
+
+        if (isExisting) {
+            return res.render('admin/addBrand', { message: MESSAGES.brand.BRAND_EXISTS });
+        }
+
+        const newBrand = new Brands({ name: brand, description });
+        await newBrand.save();
+
+        res.redirect('/brand');
+    } catch (error) {
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
+    }
+};
+
+const updateBrandListStatus = async (req, res) => {
+    try {
+        const { id: brandId } = req.params;
+        const { isList } = req.body;
+
+        if (typeof isList !== 'boolean') {
+            return sendError(res, {
+                message: MESSAGES.brand.INVALID_LIST_STATUS,
+                status: STATUS_CODES.BAD_REQUEST,
+            });
+        }
+
+        const updatedBrand = await Brands.findByIdAndUpdate(brandId, { isList }, { new: true });
+
+        if (!updatedBrand) {
+            return sendError(res, {
+                message: MESSAGES.brand.BRAND_NOT_FOUND,
+                status: STATUS_CODES.NOT_FOUND,
+            });
+        }
+
+        sendSuccess(res, {
+            message: isList ? MESSAGES.brand.BRAND_LISTED : MESSAGES.brand.BRAND_UNLISTED,
+            data: { brand: updatedBrand },
+        });
+    } catch (error) {
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
+    }
+};
 
 const editBrandPage = async (req, res) => {
-    const id = req.params.id
-    const brand = await Brands.findById(id)
-    res.render('admin/editBrand', { brand })
-}
+    try {
+        const brand = await Brands.findById(req.params.id);
+        if (!brand)
+            return sendError(res, {
+                message: MESSAGES.brand.BRAND_NOT_FOUND,
+                status: STATUS_CODES.BAD_REQUEST,
+                icon: 'warning'
+            })
 
+        res.render('admin/editBrand', { brand });
+    } catch (error) {
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
+    }
+};
 
 const editBrand = async (req, res) => {
     try {
-        const id = req.params.id;
-        const brand = await Brands.findById(id);
-        const newBrandName = req.body.brand;
+        const { id } = req.params;
+        const { brand: newBrandName, description, list } = req.body;
 
         const existingBrand = await Brands.findOne({ name: newBrandName });
 
         if (existingBrand && existingBrand._id.toString() !== id) {
-            return res.status(200).render('admin/editBrand', {
+            const brand = await Brands.findById(id);
+            return res.status(STATUS_CODES.OK).render('admin/editBrand', {
                 brand,
-                alert: 'The brand already exists'
+                alert: MESSAGES.brand.BRAND_EXISTS,
             });
         }
 
@@ -94,17 +111,15 @@ const editBrand = async (req, res) => {
             {
                 $set: {
                     name: newBrandName,
-                    isList: req.body.list,
-                    description: req.body.description
-                }
+                    description,
+                    isList: list,
+                },
             }
         );
 
         res.redirect('/brand');
-
     } catch (error) {
-        console.error('Error editing brand:', error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, { message: MESSAGES.brand.INTERNAL_SERVER_ERROR });
     }
 };
 
@@ -114,5 +129,5 @@ module.exports = {
     addBrand,
     updateBrandListStatus,
     editBrandPage,
-    editBrand
-}
+    editBrand,
+};

@@ -3,7 +3,13 @@ const Category = require('../models/categoriesModel')
 const Products = require('../models/productModel')
 const Orders = require('../models/orderModel')
 require('dotenv').config()
-
+const {
+  sendSuccess,
+  sendError,
+  MESSAGES,
+  COMMON_MESSAGES,
+  STATUS_CODES
+} = require('../util')
 
 async function chart() {
   try {
@@ -30,7 +36,7 @@ async function chart() {
 
     return ordersCount;
   } catch (error) {
-    console.log("An error occured in orders count function chart", error.message);
+    throw new Error(COMMON_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -45,7 +51,7 @@ const adminLogin = (req, res, next) => {
 const adminValidation = (req, res, next) => {
   try {
     if ((process.env.ADMIN_MAIL !== req.body.email) || (process.env.ADMIN_PASS !== req.body.password)) {
-      res.render('admin/adminLogin', { alert: 'email or password is invalid' })
+      res.render('admin/adminLogin', { alert: MESSAGES.auth.INVALID_CREDENTIALS })
     } else {
       req.session.admin = req.body.email
       req.session.isLoggedAdmin = true
@@ -99,11 +105,7 @@ const updateUser = async (req, res) => {
     let { isBlock } = req.body;
 
     if (!userId) {
-      return res.status(400).json({
-        success: false,
-        icon: 'warning',
-        message: 'ID is required'
-      });
+      return sendError(res, { message: COMMON_MESSAGES.ID_REQUIRED, status: STATUS_CODES.BAD_REQUEST, icon: 'warning' });
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -113,27 +115,16 @@ const updateUser = async (req, res) => {
     );
 
     if (!updatedUser) {
-      return res.status(404).json({
-        success: false,
-        icon: 'error',
-        message: 'User not found'
-      });
+      return sendError(res, { message: COMMON_MESSAGES.USER_NOT_FOUND, status: STATUS_CODES.NOT_FOUND });
     }
 
-    res.status(200).json({
-      success: true,
-      icon: 'success',
+    sendSuccess(res, {
       message: `User has been ${isBlock ? 'blocked' : 'unblocked'} successfully`,
-      user: updatedUser
+      data: { user: updatedUser }
     });
 
   } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({
-      success: false,
-      icon: 'error',
-      message: 'Something went wrong. Please try again.'
-    });
+    sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -146,11 +137,13 @@ const fetchDashboard = async (req, res, next) => {
     const ordersPie = await chart();
 
 
-    res.json({
-      users: users,
-      orders: orders,
-      products: products,
-      ordersPie: ordersPie,
+    sendSuccess(res, {
+      data: {
+        users,
+        orders,
+        products,
+        ordersPie
+      }
     });
   } catch (err) {
     next(err);
@@ -163,7 +156,7 @@ const generateReport = async (req, res) => {
     const orders = await Orders.find({
       date: { $gte: new Date(startDate), $lte: new Date(endDate) }
     }).populate('products.productId');
-    const reportData = orders.map((order, index) => {
+    const reportData = orders.map((order) => {
       let totalPrice = 0;
       order.products.forEach(product => {
         totalPrice += product.salesPrice * product.quantity;
@@ -187,10 +180,9 @@ const generateReport = async (req, res) => {
         paymentStatus: order.paymentStatus
       };
     });
-    res.status(200).json({ reportData });
+    res.status(STATUS_CODES.OK).json({ reportData });
   } catch (err) {
-    console.error('Error generating report:', err);
-    res.status(500).json({ error: 'Failed to generate report' });
+    sendError(res, { message: MESSAGES.user.REPORT_ERROR });
   }
 };
 
@@ -199,12 +191,12 @@ const generateReport = async (req, res) => {
 //   res.sendFile(filePath, { root: '.' }, (err) => {
 //     if (err) {
 //       console.error('Error sending file:', err);
-//       res.status(404).send('File not found');
+// res.status(STATUS_CODES.NOT_FOUND).send('File not found');
 //     }
 //   });
 // }
 
-const bestProducts = async (req, res) => {
+const bestProducts = async (req, res, next) => {
   try {
     const bestSellingProducts = await Orders.aggregate([
       { $unwind: '$products' },
@@ -234,13 +226,12 @@ const bestProducts = async (req, res) => {
       },
     ]);
 
-    console.log('bestSellingProducts:', bestSellingProducts);
-    res.status(200).render('admin/bestProducts', { bestSellingProducts })
+    res.status(STATUS_CODES.OK).render('admin/bestProducts', { bestSellingProducts })
   } catch (error) {
-    console.error(error);
+    next(error)
   }
 }
-const bestCategories = async (req, res) => {
+const bestCategories = async (req, res, next) => {
   try {
     const bestSellingCategories = await Orders.aggregate([
       { $unwind: '$products' },
@@ -280,7 +271,7 @@ const bestCategories = async (req, res) => {
     ]);
     res.render('admin/bestCategory', { bestSellingCategories });
   } catch (error) {
-    console.error(error);
+    next(error)
   }
 }
 const bestBrands = async (req, res) => {
@@ -351,7 +342,7 @@ const sales = async (req, res) => {
       startDate = new Date(endDate.getFullYear(), 0, 1);
       console.log(startDate);
     } else {
-      return res.status(400).json({ error: 'Invalid timeframe' });
+      return sendError(res, { message: MESSAGES.user.INVALID_TIMEFRAME, status: STATUS_CODES.BAD_REQUEST });
     }
 
     const orders = await Orders.find({
@@ -387,10 +378,12 @@ const sales = async (req, res) => {
     const labels = Object.keys(salesData).map(date => formatDate(new Date(date)));
     const values = Object.values(salesData);
 
-    res.json({ labels, values });
+    sendSuccess(res, {
+      data: { labels, values }
+    });
   } catch (error) {
     console.error('Error fetching sales:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 

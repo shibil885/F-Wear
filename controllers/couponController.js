@@ -1,5 +1,6 @@
 const Coupon = require('../models/couponModel')
 const Cart = require('../models/cartModel')
+const { sendSuccess, sendError, MESSAGES, STATUS_CODES, COMMON_MESSAGES } = require('../util')
 
 const couponList = async (req, res) => {
     try {
@@ -21,27 +22,24 @@ const couponList = async (req, res) => {
             perPage
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
 
 const addCouponPage = async (req, res) => {
     try {
-        res.status(200).render('admin/addCoupon')
+        res.status(STATUS_CODES.OK).render('admin/addCoupon')
     } catch (error) {
-        console.error(error);
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
-
 
 const addCoupon = async (req, res) => {
     try {
         const { coupon_code, description, percentage, min_amount, max_amount, expiry_date } = req.body
         const existCoupon = await Coupon.findOne({ coupon_code: coupon_code })
-        console.log(req.body);
         if (existCoupon) {
-            return res.status(200).render('admin/addCoupon', { alert: 'The Coupon already exists' })
+            return res.status(STATUS_CODES.OK).render('admin/addCoupon', { alert: MESSAGES.coupon.COUPON_EXISTS })
         }
         const newCoupon = new Coupon({
             coupon_code: coupon_code,
@@ -52,22 +50,22 @@ const addCoupon = async (req, res) => {
             expiryDate: expiry_date
         })
         await newCoupon.save()
-        console.log('new coupon added:', newCoupon);
         res.redirect('/coupon')
     } catch (error) {
-        console.error(error);
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
+
 const editCouponPage = async (req, res) => {
     try {
         const couponId = req.params.couponId
         const coupon = await Coupon.findById(couponId)
-        res.status(200).render('admin/editCoupon', { coupon })
+        res.status(STATUS_CODES.OK).render('admin/editCoupon', { coupon })
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' })
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
+
 const editCoupon = async (req, res) => {
     try {
         const { coupon_code, description, percentage, min_amount, max_amount, expiry_date } = req.body;
@@ -83,7 +81,7 @@ const editCoupon = async (req, res) => {
         });
 
         if (existingCoupon) {
-            return res.status(400).render('admin/editCoupon', { alert: 'A coupon with the same details already exists', coupon });
+            return res.status(STATUS_CODES.BAD_REQUEST).render('admin/editCoupon', { alert: MESSAGES.coupon.COUPON_DUPLICATE, coupon });
         }
         coupon.coupon_code = coupon_code;
         coupon.description = description;
@@ -96,8 +94,7 @@ const editCoupon = async (req, res) => {
         res.redirect('/coupon');
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).send('Internal Server Error');
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
 
@@ -110,25 +107,37 @@ const checkCoupon = async (req, res) => {
         const amountDividedBYPercentage = Math.ceil(totalAmount * selectedCoupon.percentage / 100)
         if (amountDividedBYPercentage > selectedCoupon.maximumAmount) {
             const amountToPay = totalAmount - selectedCoupon.maximumAmount
-            res.json({ totalAmount: amountToPay, couponId: couponId, discountAmount: selectedCoupon.maximumAmount, couponCode: selectedCoupon.coupon_code })
+            return sendSuccess(res, {
+                data: {
+                    totalAmount: amountToPay,
+                    couponId: couponId,
+                    discountAmount: selectedCoupon.maximumAmount,
+                    couponCode: selectedCoupon.coupon_code
+                }
+            });
         } else {
             const amountToPay = totalAmount - amountDividedBYPercentage
-            res.json({ totalAmount: amountToPay, couponId: couponId, discountAmount: amountDividedBYPercentage, couponCode: selectedCoupon.coupon_code })
+            return sendSuccess(res, {
+                data: {
+                    totalAmount: amountToPay,
+                    couponId: couponId,
+                    discountAmount: amountDividedBYPercentage,
+                    couponCode: selectedCoupon.coupon_code
+                }
+            });
         }
     } catch (error) {
-        console.error(error);
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
+
 const toggleCouponStatus = async (req, res) => {
     try {
         const couponId = req.params.id;
         const { isListed } = req.body;
 
         if (!couponId) {
-            return res.status(400).json({
-                success: false,
-                message: 'Coupon ID is required'
-            });
+            return sendError(res, { message: MESSAGES.coupon.COUPON_ID_REQUIRED, status: STATUS_CODES.BAD_REQUEST });
         }
 
         const updatedCoupon = await Coupon.findByIdAndUpdate(
@@ -138,26 +147,19 @@ const toggleCouponStatus = async (req, res) => {
         );
 
         if (!updatedCoupon) {
-            return res.status(404).json({
-                success: false,
-                message: 'Coupon not found'
-            });
+            return sendError(res, { message: MESSAGES.coupon.COUPON_NOT_FOUND, status: STATUS_CODES.NOT_FOUND });
         }
 
-        res.status(200).json({
-            success: true,
+        sendSuccess(res, {
             message: `Coupon has been ${isListed ? 'listed' : 'unlisted'} successfully`,
-            coupon: updatedCoupon
+            data: { coupon: updatedCoupon }
         });
 
     } catch (error) {
-        console.error('Toggle coupon status failed:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error'
-        });
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
+
 module.exports = {
     couponList,
     addCouponPage,

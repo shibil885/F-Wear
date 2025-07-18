@@ -1,29 +1,22 @@
-const Address = require('../models/addressModel')
-const Cart = require('../models/cartModel')
-
-
-const isDuplicateAddress = (details, body, excludeIndex = -1) => {
-    return details.some((address, idx) =>
-        idx !== excludeIndex &&
-        address.country === body.c_name &&
-        address.firstName === body.c_fname &&
-        address.lastName === body.c_lname &&
-        address.address === body.c_address &&
-        address.state === body.c_state &&
-        address.pincode == body.c_pincode &&
-        address.phone == body.c_phone
-    );
-};
-
-
+const Address = require('../models/addressModel');
+const Cart = require('../models/cartModel');
+const {
+    STATUS_CODES,
+    MESSAGES,
+    sendError,
+    isDuplicateAddress,
+    sendSuccess,
+    COMMON_MESSAGES
+} = require('../util/index');
 
 const addAddressPage = async (req, res) => {
     try {
         const userCart = await Cart.findOne({ userID: req.session.userID })
         const cartLength = userCart ? userCart.items.length : 0;
-        res.status(200).render('user/addAddress', { cartLength })
+        res.status(STATUS_CODES.OK).render('user/addAddress', { cartLength })
     } catch (error) {
-        console.error(error);
+
+        sendError(res, STATUS_CODES.INTERNAL_ERROR, COMMON_MESSAGES.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -42,9 +35,8 @@ const addAddress = async (req, res) => {
         } = req.body;
 
         if (!c_name || !c_fname || !c_lname || !c_address || !c_state || !c_pincode || !c_phone) {
-            return res.status(400).render('user/addAddress', {
-                alert: 'All fields are required',
-                cartLength: userCart.items.length,
+            return sendError(res, STATUS_CODES.BAD_REQUEST, MESSAGES.address.REQUIRED_FIELDS, 'user/addAddress', {
+                cartLength: userCart ? userCart.items.length : 0,
                 formData: req.body
             });
         }
@@ -76,14 +68,10 @@ const addAddress = async (req, res) => {
         const isDuplicate = isDuplicateAddress(userAddress.details, req.body);
 
         if (isDuplicate) {
-            const cartLength = userCart ? userCart.items.length : 0;
-
-            return res.render('user/addAddress', {
-                alert: 'Address already exists',
-                cartLength,
+            return sendError(res, STATUS_CODES.OK, MESSAGES.address.ADDRESS_EXISTS, 'user/addAddress', {
+                cartLength: userCart ? userCart.items.length : 0,
                 formData: req.body
             });
-
         }
 
         userAddress.details.push({
@@ -100,9 +88,8 @@ const addAddress = async (req, res) => {
         return res.redirect('/address');
 
     } catch (error) {
-        console.error('Error while adding address:', error);
-        return res.status(500).render('errorPage', {
-            message: 'Something went wrong while saving address. Please try again.'
+        return sendError(res, STATUS_CODES.INTERNAL_ERROR, MESSAGES.address.ADDRESS_SAVE_ERROR, 'errorPage', {
+            message: MESSAGES.address.ADDRESS_SAVE_ERROR
         });
     }
 };
@@ -112,9 +99,9 @@ const address = async (req, res) => {
         const userAddress = await Address.findOne({ userID: req.session.userID })
         const userCart = await Cart.findOne({ userID: req.session.userID })
         const cartLength = userCart ? userCart.items.length : 0;
-        res.status(200).render('user/address', { userAddress, cartLength })
+        res.status(STATUS_CODES.OK).render('user/address', { userAddress, cartLength })
     } catch (error) {
-        console.error(error);
+        sendError(res, STATUS_CODES.INTERNAL_ERROR, COMMON_MESSAGES.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -128,32 +115,34 @@ const deleteAddress = async (req, res) => {
         if (userAddress) {
             userAddress.details = userAddress.details.filter(address => address._id.toString() !== addressId.toString());
             await userAddress.save();
-            return res.status(200).json({ success: true, icon: 'success', message: 'Your address has been deleted.', totalAddress: userAddress.details.length });
+            return sendSuccess(res, STATUS_CODES.OK, MESSAGES.address.ADDRESS_DELETED, {
+                icon: 'success',
+                totalAddress: userAddress.details.length
+            });
         } else {
-            return res.status(404).json({ success: false, icon: 'warning', error: "Selected address not found" });
+            return sendError(res, STATUS_CODES.NOT_FOUND, MESSAGES.address.ADDRESS_NOT_FOUND, null, { icon: 'warning' });
         }
 
     } catch (error) {
-        console.error("Error deleting address:", error);
-        res.status(500).json({ error: "Internal server error" });
+        sendError(res, STATUS_CODES.INTERNAL_ERROR, COMMON_MESSAGES.INTERNAL_SERVER_ERROR);
     }
 };
+
 const editAddressPage = async (req, res) => {
     try {
         const addressId = req.params.id
         const userId = req.session.userID
         const userAddress = await Address.findOne({ userID: userId, 'details._id': addressId })
-        const addressForEdit = userAddress.details.find((details) => details._id.toString() === addressId.toString())
+        const addressForEdit = userAddress?.details.find((details) => details._id.toString() === addressId.toString())
         if (userAddress) {
             const userCart = await Cart.findOne({ userID: userId })
             const cartLength = userCart ? userCart.items.length : 0;
-            res.status(200).render('user/editAddress', { addressForEdit, cartLength })
+            res.status(STATUS_CODES.OK).render('user/editAddress', { addressForEdit, cartLength })
         } else {
-            res.json({ error: "Can't find address" })
+            sendError(res, STATUS_CODES.NOT_FOUND, MESSAGES.address.CANT_FIND_ADDRESS);
         }
     } catch (error) {
-        res.json({ error: 'Internal server error' })
-        console.error(error);
+        sendError(res, STATUS_CODES.INTERNAL_ERROR, COMMON_MESSAGES.INTERNAL_SERVER_ERROR);
     }
 }
 
@@ -178,14 +167,12 @@ const editAddress = async (req, res) => {
             const userCart = await Cart.findOne({ userID: userId });
             const cartLength = userCart ? userCart.items.length : 0;
             const addressForEdit = userAddress.details[existingIndex];
-            return res.render('user/editAddress', {
-                alert: 'Address already exists',
+            return sendError(res, STATUS_CODES.OK, MESSAGES.address.ADDRESS_EXISTS, 'user/editAddress', {
                 addressForEdit,
                 cartLength
             });
         }
 
-        // Update the existing address
         userAddress.details[existingIndex] = {
             ...userAddress.details[existingIndex]._doc,
             country: req.body.c_name,
@@ -201,18 +188,14 @@ const editAddress = async (req, res) => {
         res.redirect('/address');
 
     } catch (error) {
-        console.error('Error editing address:', error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, STATUS_CODES.INTERNAL_ERROR, COMMON_MESSAGES.INTERNAL_SERVER_ERROR);
     }
 };
 
-
 const checkOutAddress = async (req, res) => {
     try {
-        console.log('hit checkout address');
         const userId = req.session.userID;
         const userAddress = await Address.findOne({ userID: userId });
-        console.log('user adrees', userAddress);
         if (!userAddress) {
             const newAddress = new Address({
                 userID: userId,
@@ -239,11 +222,13 @@ const checkOutAddress = async (req, res) => {
                 phone: req.body.c_phone
             });
             await userAddress.save();
+            res.redirect('/checkoutPage');
         }
     } catch (error) {
-        console.error(error);
+        sendError(res, STATUS_CODES.INTERNAL_ERROR, COMMON_MESSAGES.INTERNAL_SERVER_ERROR);
     }
 }
+
 module.exports = {
     addAddress,
     addAddressPage,

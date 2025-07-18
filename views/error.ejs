@@ -1,47 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            text-align: center;
-        }
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #dc3545;
-        }
-        p {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-        pre {
-            background-color: #eee;
-            padding: 20px;
-            border-radius: 5px;
-            overflow-x: auto;
-            width: 80%;
-            margin: auto;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title || '404 Not Found' %></title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+      font-size: 6rem;
+      color: #dc3545;
+      margin-bottom: 0;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-top: 5px;
+      animation: slideUp 1s ease-out;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 25px;
+      text-decoration: none;
+      color: white;
+      background-color: #007bff;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    a:hover {
+      background-color: #0056b3;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>404</h1>
-        <h1>Not found</h1>
-    </div>
+  <div class="container">
+    <h1>404</h1>
+    <h2><%= message || 'Page Not Found' %></h2>
+    <p>The requested URL <strong><%= url %></strong> was not found on this server.</p>
+    <a href="/">⬅ Go back to Home</a>
+  </div>
 </body>
 </html>

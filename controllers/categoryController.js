@@ -1,33 +1,51 @@
 const Category = require('../models/categoriesModel')
+const { sendSuccess, sendError, MESSAGES, STATUS_CODES, COMMON_MESSAGES } = require('../util')
 
 const categories = async (req, res) => {
-    const categories = await Category.find()
-    res.render('admin/Categories', { categories })
-    console.log('successfully get categories from db');
-}
-const addCategoriesPage = (req, res) => {
-    res.render('admin/addCategories')
-}
-const addCategory = async (req, res) => {
-    isExisting = await Category.findOne({ category: req.body.category })
-    if (isExisting) {
-        res.render('admin/addCategories', { message: 'The category is exists' })
-    } else {
-        const newCategory = new Category({
-            category: req.body.category,
-            description: req.body.description
-        })
-        await newCategory.save()
-        console.log('New category added', req.body);
-        res.redirect('/category')
+    try {
+        const categories = await Category.find()
+        res.render('admin/Categories', { categories })
+    } catch (error) {
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
+}
 
+const addCategoriesPage = (req, res) => {
+    try {
+        res.render('admin/addCategories')
+    } catch (error) {
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
+    }
 }
+
+const addCategory = async (req, res) => {
+    try {
+        const isExisting = await Category.findOne({ category: req.body.category })
+        if (isExisting) {
+            return res.render('admin/addCategories', { message: MESSAGES.category.CATEGORY_EXISTS })
+        } else {
+            const newCategory = new Category({
+                category: req.body.category,
+                description: req.body.description
+            })
+            await newCategory.save()
+            res.redirect('/category')
+        }
+    } catch (error) {
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
+    }
+}
+
 const editCategoryPage = async (req, res) => {
-    const id = req.params.id
-    const category = await Category.findById(id)
-    res.render('admin/editCategory', { category })
+    try {
+        const id = req.params.id
+        const category = await Category.findById(id)
+        res.render('admin/editCategory', { category })
+    } catch (error) {
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
+    }
 }
+
 const editCategory = async (req, res) => {
     try {
         const id = req.params.id;
@@ -35,7 +53,7 @@ const editCategory = async (req, res) => {
         const newCategoryName = req.body.category;
         const existingCategory = await Category.findOne({ category: newCategoryName });
         if (existingCategory && existingCategory._id.toString() !== id) {
-            return res.status(200).render('admin/editCategory', { category, alert: 'The category already exists' });
+            return res.status(STATUS_CODES.OK).render('admin/editCategory', { category, alert: MESSAGES.category.CATEGORY_EXISTS });
         }
         await Category.updateOne(
             { _id: id },
@@ -47,11 +65,9 @@ const editCategory = async (req, res) => {
                 }
             }
         );
-        console.log('Successfully edited category');
         res.redirect('/category');
     } catch (error) {
-        console.error('Error editing category:', error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
 
@@ -61,7 +77,7 @@ const updateCategoryListStatus = async (req, res) => {
         const { isList } = req.body;
 
         if (typeof isList !== 'boolean') {
-            return res.status(400).json({ success: false, message: 'Invalid list status' });
+            return sendError(res, { message: MESSAGES.category.INVALID_LIST_STATUS, status: STATUS_CODES.BAD_REQUEST });
         }
 
         const updatedCategory = await Category.findByIdAndUpdate(
@@ -71,17 +87,15 @@ const updateCategoryListStatus = async (req, res) => {
         );
 
         if (!updatedCategory) {
-            return res.status(404).json({ success: false, message: 'Category not found' });
+            return sendError(res, { message: MESSAGES.category.CATEGORY_NOT_FOUND, status: STATUS_CODES.NOT_FOUND });
         }
 
-        res.status(200).json({
-            success: true,
+        sendSuccess(res, {
             message: `Category has been ${isList ? 'listed' : 'unlisted'} successfully`,
-            category: updatedCategory
+            data: { category: updatedCategory }
         });
     } catch (error) {
-        console.error('Error updating category list status:', error);
-        res.status(500).json({ success: false, message: 'Internal Server Error' });
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
 

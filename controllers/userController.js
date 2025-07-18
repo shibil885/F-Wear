@@ -8,10 +8,8 @@ const Order = require('../models/orderModel')
 const Wallet = require('../models/walletModel')
 const Cart = require('../models/cartModel')
 const Wishlist = require('../models/wishlistModel')
+const { sendSuccess, sendError, MESSAGES, STATUS_CODES, COMMON_MESSAGES } = require('../util')
 
-
-
-//rendering home page
 const homePage = async (req, res) => {
     try {
         const userData = req.session.user;
@@ -23,8 +21,7 @@ const homePage = async (req, res) => {
             res.render('user/home', { userData: null, cartLength: 0 });
         }
     } catch (error) {
-        console.error('Error occurred while rendering home page', error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
 const about = async (req, res) => {
@@ -34,14 +31,13 @@ const about = async (req, res) => {
             const userCart = await Cart.findOne({ userID: req.session.userID });
             const cartLength = userCart ? userCart.items.length : 0;
             res.render('user/about', { userData, cartLength });
-        }else{
+        } else {
             const userCart = await Cart.findOne({ userID: req.session.userID });
             const cartLength = userCart ? userCart.items.length : 0;
             res.render('user/about', { userData, cartLength });
         }
     } catch (error) {
-        console.error('Error occurred while rendering home page', error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
 const services = async (req, res) => {
@@ -51,23 +47,20 @@ const services = async (req, res) => {
             const userCart = await Cart.findOne({ userID: req.session.userID });
             const cartLength = userCart ? userCart.items.length : 0;
             res.render('user/services', { userData, cartLength });
-        }else{
+        } else {
             const userCart = await Cart.findOne({ userID: req.session.userID });
             const cartLength = userCart ? userCart.items.length : 0;
             res.render('user/services', { userData, cartLength });
         }
     } catch (error) {
-        console.error('Error occurred while rendering home page', error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
 
-//rendering Login page
 const userLoginPage = (req, res) => {
     res.render('user/userLogin')
 }
 
-//user login
 const login = async (req, res) => {
     try {
         const userData = await User.findOne({ email: req.body.email });
@@ -88,10 +81,8 @@ const login = async (req, res) => {
         }
     } catch (error) {
         res.status(500).send('Internal server error');
-        console.error(error);
     }
 }
-//rendering signup page
 const userSignup = ((req, res) => {
     try {
         res.render('user/userSignup')
@@ -105,7 +96,7 @@ const userValidation = async (req, res) => {
     try {
         const response = await OTP.find({ email: req.session.userDetails.email }).sort({ createdAt: -1 }).limit(1);
         if (response.length === 0 || response[0]?.otp !== req.body.otp) {
-            return res.render('user/otpGetPage', { otpAlert: 'invalid otp' });
+            return res.render('user/otpGetPage', { otpAlert: MESSAGES.auth.INVALID_OTP });
         } else {
             const hashedPassword = await bcrypt.hash(req.session.userDetails.password, saltRound);
 
@@ -116,31 +107,32 @@ const userValidation = async (req, res) => {
                 password: hashedPassword
             });
             await user.save();
-            
-            const userData = await User.findOne({email:req.session.userDetails.email})
+
+            const userData = await User.findOne({ email: req.session.userDetails.email })
             const wallet = new Wallet({
-                userId:userData._id,
-                balance:0
+                userId: userData._id,
+                balance: 0
             })
             await wallet.save()
             const cart = new Cart({
-                userID:userData._id,
-                items:[],
-                totalPrice:0
+                userID: userData._id,
+                items: [],
+                totalPrice: 0
             })
             await cart.save()
             const wishList = new Wishlist({
-                userID:userData._id,
-                items:[]
+                userID: userData._id,
+                items: []
             })
             await wishList.save()
             return res.redirect('/userLogin');
         }
     } catch (error) {
         console.error('Erorr occur while save user to db', error.message);
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
-const userLogout = async (req, res,next) => {
+const userLogout = async (req, res, next) => {
     try {
         req.session.user = null
         req.session.isLogged = false
@@ -153,50 +145,50 @@ const userLogout = async (req, res,next) => {
 
 const shop = async (req, res, next) => {
     try {
-      const ProductData = await Product.aggregate([
-        {
-          $lookup: {
-            from: 'categories',
-            localField: 'categoryId',
-            foreignField: '_id',
-            as: 'category'
-          }
-        },
-        {
-          $lookup: {
-            from: 'brands',
-            localField: 'brandId',
-            foreignField: '_id',
-            as: 'brand'
-          }
-        },
-        {
-          $match: {
-            $and: [
-              { 'category.isList': true },
-              { 'brand.isList': true }, 
-              { isPublish: true }
-            ]
-          }
+        const ProductData = await Product.aggregate([
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: 'categoryId',
+                    foreignField: '_id',
+                    as: 'category'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'brands',
+                    localField: 'brandId',
+                    foreignField: '_id',
+                    as: 'brand'
+                }
+            },
+            {
+                $match: {
+                    $and: [
+                        { 'category.isList': true },
+                        { 'brand.isList': true },
+                        { isPublish: true }
+                    ]
+                }
+            }
+        ]);
+
+        const userData = req.session.user;
+        if (userData) {
+            const userCart = await Cart.findOne({ userID: req.session.userID });
+            const cartLength = userCart ? userCart.items.length : 0;
+            res.render('user/shop', { userData, cartLength, ProductData });
+        } else {
+            const userCart = await Cart.findOne({ userID: req.session.userID });
+            const cartLength = userCart ? userCart.items.length : 0;
+            res.render('user/shop', { userData, cartLength, ProductData });
         }
-      ]);
-  
-      const userData = req.session.user;
-      if (userData) {
-          const userCart = await Cart.findOne({ userID: req.session.userID });
-          const cartLength = userCart ? userCart.items.length : 0;
-          res.render('user/shop', { userData, cartLength,ProductData });
-      }else{
-          const userCart = await Cart.findOne({ userID: req.session.userID });
-          const cartLength = userCart ? userCart.items.length : 0;
-          res.render('user/shop', { userData, cartLength,ProductData });    
-      }
     } catch (error) {
-      next(error);
-      console.error(error);
+        next(error);
+        console.error(error);
     }
-  };
-  
+};
+
 const userAccount = async (req, res) => {
     try {
         const id = req.session.userID
@@ -205,10 +197,9 @@ const userAccount = async (req, res) => {
         const userOrder = await Order.find({ userId: id })
         const userCart = await Cart.findOne({ userID: id })
         const cartLength = userCart ? userCart.items.length : 0;
-        res.status(200).render('user/userAccount', { userData, userAddress, userOrder,cartLength })
+        res.status(200).render('user/userAccount', { userData, userAddress, userOrder, cartLength })
     } catch (error) {
-        res.status(500).json({ error: 'Internal server error' });
-        console.error(error);
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
 const editProfile = async (req, res) => {
@@ -221,12 +212,11 @@ const editProfile = async (req, res) => {
         });
 
         if (!updatedUser) {
-            return res.status(404).json({ error: "User not found" });
+            return sendError(res, { message: COMMON_MESSAGES.USER_NOT_FOUND, status: STATUS_CODES.NOT_FOUND });
         }
         res.redirect('/userAccount')
     } catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).json({ error: "Internal Server Error" });
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
 
@@ -234,7 +224,7 @@ const changePasswordPage = async (req, res) => {
     try {
         const userCart = await Cart.findOne({ userID: req.session.userID })
         const cartLength = userCart ? userCart.items.length : 0;
-        res.status(200).render('user/changePassword',{cartLength})
+        res.status(200).render('user/changePassword', { cartLength })
     } catch (error) {
         console.error(error);
     }
@@ -243,34 +233,33 @@ const changePassword = async (req, res) => {
     try {
         const id = req.session.userID
         const userData = await User.findById(id)
-        if(userData){
-            const passwordMatch = await bcrypt.compare(req.body.currentPassword,userData.password)
-            if(passwordMatch){
+        if (userData) {
+            const passwordMatch = await bcrypt.compare(req.body.currentPassword, userData.password)
+            if (passwordMatch) {
                 const hashedPassword = await bcrypt.hash(req.body.password, saltRound);
-                const changed = await User.findByIdAndUpdate(id, {
+                await User.findByIdAndUpdate(id, {
                     password: hashedPassword
                 })
                 res.redirect('/userAccount')
-            }else{
-                res.status(200).render('user/changePassword',{alert:"Current password does'nt match"})
+            } else {
+                res.status(STATUS_CODES.OK).render('user/changePassword', { alert: MESSAGES.auth.PASSWORD_MISMATCH })
             }
-        }else{
-           res.json({response:false,error:'somthing went wrong'})
+        } else {
+            sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
         }
     } catch (error) {
-        console.error(error);
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
-const favorite = async (req,res)=>{
+const favorite = async (req, res) => {
     try {
         const userId = req.session.userID
         const userCart = await Cart.findOne({ userID: userId }).populate('items.product')
-        const userWhishList = await Whishlist.findOne({ userID: userId }).populate('items.product')
+        const userWhishList = await Wishlist.findOne({ userID: userId }).populate('items.product')
         const cartLength = userCart ? userCart.items.length : 0;
-        return res.render('user/whishList', { userWhishList, cartLength,userCart });
+        return res.render('user/whishList', { userWhishList, cartLength, userCart });
     } catch (error) {
-        console.error('Error fetching userCart:', error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
 module.exports = {

@@ -12,44 +12,49 @@ const port = process.env.PORT
 
 
 //setting view engine
-app.set('view engine','ejs')
+app.set('view engine', 'ejs')
 
 
 //nocache
 app.use(nocache())
 
 //parsing data
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 //setting paths 
-app.use('/assets',express.static('public/assets'));
+app.use('/assets', express.static('public/assets'));
 app.use(express.static('upload'))
 
 
 // creating session
 app.use(session({
-    secret:process.env.SECRET_KEY,
-    resave:false,
-    saveUninitialized:false
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: false
 }))
 
 
 //to handle route
-app.use('/',userRouter)
-app.use('/',adminRouter)
-app.get('*',(req,res)=>[
-    res.render('error')
-])
+app.use('/', userRouter)
+app.use('/', adminRouter)
+app.use((req, res, next) => {
+    res.status(404).render('error', {
+        title: 'Page Not Found',
+        message: 'The page you are looking for does not exist.',
+        url: req.originalUrl,
+    });
+});
+
 
 //connecting data base
- mongoose.connect(process.env.MONGODB)
- const db = mongoose.connection
+mongoose.connect(process.env.MONGODB)
+const db = mongoose.connection
 db
-    .on("error",(error)=>{
+    .on("error", (error) => {
         console.log(error);
     })
-    .once('open',()=>{
+    .once('open', () => {
         console.log('Mongodb server is connected');
     })
 // app.use((error,req,res,next)=>{
@@ -59,6 +64,6 @@ db
 //     res.render('error')
 // })
 
-app.listen(port,()=>{
+app.listen(port, () => {
     console.log(`server on http://localhost:${port}`);
 })

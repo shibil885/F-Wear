@@ -1,10 +1,7 @@
 const Cart = require('../models/cartModel')
 const Wishlist = require('../models/wishlistModel')
 const Products = require('../models/productModel')
-
-
-
-
+const { sendSuccess, sendError, MESSAGES, STATUS_CODES, COMMON_MESSAGES } = require('../util')
 
 const favorite = async (req, res) => {
     try {
@@ -18,27 +15,23 @@ const favorite = async (req, res) => {
                     model: 'Category'
                 }
             });
-
-
         const cartLength = userCart ? userCart.items.length : 0;
         return res.render('user/wishList', { userWishList, cartLength, userCart });
     } catch (error) {
-        console.error('Error fetching userCart:', error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
+
 const addToWishList = async (req, res) => {
     try {
         const userId = req.session.userID;
         const productID = req.params.id;
 
-        // Validate product existence
         const productExists = await Products.exists({ _id: productID });
         if (!productExists) {
-            return res.status(404).json({ message: 'Product not found', icon: 'error' });
+            return sendError(res, { message: MESSAGES.wishlist.PRODUCT_NOT_FOUND, status: STATUS_CODES.NOT_FOUND });
         }
 
-        // Find or create wishlist
         let wishlist = await Wishlist.findOne({ userID: userId });
         if (!wishlist) {
             wishlist = new Wishlist({
@@ -46,41 +39,40 @@ const addToWishList = async (req, res) => {
                 items: [{ product: productID }]
             });
             await wishlist.save();
-            return res.json({ message: 'Product added to wishlist', icon: 'success' });
+            return sendSuccess(res, { message: MESSAGES.wishlist.PRODUCT_ADDED });
         }
 
-        // Check if product is already in wishlist
         const isAlreadyAdded = wishlist.items.some(item => item.product.toString() === productID);
         if (isAlreadyAdded) {
-            return res.json({ message: 'Product already in wishlist', icon: 'warning' });
+            return sendSuccess(res, { message: MESSAGES.wishlist.PRODUCT_ALREADY_IN_WISHLIST, icon: 'warning' });
         }
 
         // Add product and save
         wishlist.items.push({ product: productID });
         await wishlist.save();
-        return res.json({ message: 'Product added to wishlist', icon: 'success' });
+        return sendSuccess(res, { message: MESSAGES.wishlist.PRODUCT_ADDED });
 
     } catch (error) {
-        return res.status(500).json({ message: 'Internal server error', icon: 'error' });
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
-
 
 const deleteWishList = async (req, res) => {
     try {
         const userId = req.session.userID
         const wishListId = req.params.id
         const userWishList = await Wishlist.findOne({ userID: userId })
-        if (!userWishList) return res.status(404).json({ success: false, message: 'Item not found in list', icon: 'error' })
+        if (!userWishList) return sendError(res, { message: MESSAGES.wishlist.ITEM_NOT_FOUND, status: STATUS_CODES.NOT_FOUND });
         userWishList.items = userWishList.items.filter((item) => {
             return item.product.toString() !== wishListId
         })
         await userWishList.save()
-        return res.status(200).json({ success: true, message: 'Item removed from list', icon: 'success', totalCount: userWishList.items.length })
+        return sendSuccess(res, { message: MESSAGES.wishlist.ITEM_REMOVED, data: { totalCount: userWishList.items.length } });
     } catch (error) {
-        console.error(error);
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
+
 module.exports = {
     favorite,
     addToWishList,

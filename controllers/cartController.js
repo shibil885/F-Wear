@@ -2,18 +2,19 @@ const Cart = require('../models/cartModel')
 const Products = require('../models/productModel')
 const Address = require('../models/addressModel')
 const Coupon = require('../models/couponModel')
+const { sendSuccess, sendError, MESSAGES, STATUS_CODES, COMMON_MESSAGES } = require('../util')
 
 const cartPage = async (req, res) => {
     try {
         const userId = req.session.userID
         const userCart = await Cart.findOne({ userID: userId }).populate('items.product')
         const cartLength = userCart ? userCart.items.length : 0;
-        return res.render('user/userCartPage', { userCart, cartLength });
+        return res.status(STATUS_CODES.OK).render('user/userCartPage', { userCart, cartLength });
     } catch (error) {
-        console.error('Error fetching userCart:', error);
-        res.status(500).send('Internal Server Error');
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
+
 const addToCart = async (req, res) => {
     try {
         const userId = req.session.userID;
@@ -23,9 +24,13 @@ const addToCart = async (req, res) => {
         const product = await Products.findById(productID);
         let cart = await Cart.findOne({ userID: userId });
         if (!product || product.stock < quantityToAdd) {
-            return res.status(400).json({ successs: false, message: "Product not available", icon: "error", totalStock: product.stock, totalItems: cart.items.length });
+            return sendError(res, {
+                message: MESSAGES.cart.PRODUCT_NOT_AVAILABLE,
+                status: STATUS_CODES.BAD_REQUEST,
+                icon: "error",
+                data: { totalStock: product ? product.stock : 0, totalItems: cart ? cart.items.length : 0 }
+            });
         }
-
 
         if (!cart) {
             cart = new Cart({
@@ -56,19 +61,15 @@ const addToCart = async (req, res) => {
         product.stock -= quantityToAdd;
         await cart.save();
 
-        res.status(200).json({
-            successs: true,
-            message: "Product added to cart",
+        sendSuccess(res, {
+            message: MESSAGES.cart.PRODUCT_ADDED,
             icon: "success",
-            totalItems: cart.items.length, totalStock: product.stock
+            data: { totalItems: cart.items.length, totalStock: product.stock }
         });
     } catch (error) {
-        console.error("Error in addToCart:", error);
-        res.status(500).json({ message: "Internal server error", icon: "error" });
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
-
-
 
 const deleteCart = async (req, res) => {
     try {
@@ -77,31 +78,31 @@ const deleteCart = async (req, res) => {
 
         const userCart = await Cart.findOne({ userID: userId });
         if (!userCart) {
-            return res.status(404).json({ success: false, message: 'User cart not found', icon: 'warning' });
+            return sendError(res, { message: MESSAGES.cart.USER_CART_NOT_FOUND, status: STATUS_CODES.NOT_FOUND, icon: 'warning' });
         }
 
         const productInCart = userCart.items.find(item => item.product.toString() === productId);
         if (!productInCart) {
-            return res.status(404).json({ success: false, message: 'Product not found in cart', icon: 'warning' });
+            return sendError(res, { message: MESSAGES.cart.PRODUCT_NOT_IN_CART, status: STATUS_CODES.NOT_FOUND, icon: 'warning' });
         }
 
-        // Remove product from cart
         userCart.items = userCart.items.filter(item => item.product.toString() !== productId);
         userCart.totalPrice = userCart.items.reduce((total, item) => total + item.price * item.quantity, 0);
         await userCart.save();
 
-        // Restore product stock
         await Products.findByIdAndUpdate(productId, {
             $inc: { stock: productInCart.quantity }
         });
 
-        res.json({ success: true, newTotalPrice: userCart.totalPrice, icon: 'success', messge: 'Product has been removed from cart.', totalItems: userCart.items.length });
+        sendSuccess(res, {
+            message: MESSAGES.cart.PRODUCT_REMOVED,
+            icon: 'success',
+            data: { newTotalPrice: userCart.totalPrice, totalItems: userCart.items.length }
+        });
     } catch (error) {
-        console.error('Error deleting product from cart:', error);
-        res.status(500).json({ success: false, message: 'Internal server error', icon: 'error' });
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
-
 
 const updateCart = async (req, res, next) => {
     try {
@@ -135,16 +136,11 @@ const updateCart = async (req, res, next) => {
                             { new: true })
                         await userCart.save();
 
-                        return res.json({
-                            success: true,
-                            cartItem,
-                            totalPrice: userCart.totalPrice,
+                        return sendSuccess(res, {
+                            data: { cartItem, totalPrice: userCart.totalPrice }
                         });
                     } else {
-                        return res.json({
-                            success: false,
-                            message: "Maximum quantity reached for this product",
-                        });
+                        return sendError(res, { message: MESSAGES.cart.MAX_QUANTITY_REACHED, status: STATUS_CODES.OK });
                     }
                 } else if (action === "decrement" && cartItem.quantity > 1) {
                     cartItem.quantity -= 1;
@@ -159,30 +155,23 @@ const updateCart = async (req, res, next) => {
                         { new: true })
                     await userCart.save();
 
-                    return res.json({
-                        success: true,
-                        cartItem,
-                        totalPrice: userCart.totalPrice,
+                    return sendSuccess(res, {
+                        data: { cartItem, totalPrice: userCart.totalPrice }
                     });
                 } else {
-                    return res.json({
-                        success: false,
-                        message: "Invalid action or quantity",
-                    });
+                    return sendError(res, { message: COMMON_MESSAGES.INVALID_ACTION, status: STATUS_CODES.OK });
                 }
             } else {
-                return res.json({
-                    success: false,
-                    message: "Product not found in the cart",
-                });
+                return sendError(res, { message: MESSAGES.cart.PRODUCT_NOT_FOUND, status: STATUS_CODES.OK });
             }
         } else {
-            return res.json({ success: false, message: "User cart not found" });
+            return sendError(res, { message: MESSAGES.cart.USER_CART_NOT_FOUND, status: STATUS_CODES.OK });
         }
     } catch (err) {
-        next(err);
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
+
 const checkoutPage = async (req, res) => {
     try {
         const userId = req.session.userID;
@@ -198,10 +187,9 @@ const checkoutPage = async (req, res) => {
                 coupon.expiryDate >= currentDate
             );
         });
-        res.status(200).render('user/checkoutPage', { userAddress, userCart, user: req.session.user, grandTotal, couponToUser });
+        res.status(STATUS_CODES.OK).render('user/checkoutPage', { userAddress, userCart, user: req.session.user, grandTotal, couponToUser });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
 
