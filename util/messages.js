@@ -91,6 +91,7 @@ const MESSAGES = {
         ADDRESS_SAVE_ERROR: 'Something went wrong while saving address. Please try again.',
         ADDRESS_EDIT_ERROR: 'Error editing address',
         CANT_FIND_ADDRESS: "Can't find address",
+        ADDRESS_ADDED: 'Address added successfully',
     },
 };
 

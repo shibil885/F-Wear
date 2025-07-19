@@ -63,9 +63,9 @@
           <li>
             <a class="nav-link" href="/cartPage" style="position: relative;">
               <img src="/assets/images/cart.svg">
-                <span class="badge" id="cartItemsCount">
-                  <%= cartLength %>
-                </span>
+              <span class="badge" id="cartItemsCount">
+                <%= cartLength %>
+              </span>
             </a>
           </li>
           <li>
@@ -167,8 +167,7 @@
         <div class="col-md-6">
           <div class="row mb-5">
             <div class="col-md-6">
-              <button class="btn btn-outline-dark btn-sm btn-dark text-light"><a href="/shop"
-                  class="btn btn-dark">Continue Shopping</a></button>
+              <a href="/shop" class="btn btn-outline-dark btn-sm btn-dark text-light p-2">Continue Shopping</a>
             </div>
           </div>
         </div>
@@ -200,8 +199,7 @@
                     <button class="btn btn-dark btn-lg py-3 btn-dark" disabled><a href="/checkoutPage"
                         class="text-light btn btn-black">Proceed To Checkout</a></button>
                     <% } else { %>
-                      <button class="btn btn-dark btn-lg py-3 btn-dark"><a href="/checkoutPage"
-                          class="text-light btn btn-black">Proceed To Checkout</a></button>
+                      <a href="/checkoutPage" class="btn btn-dark btn-lg py-3 btn-dark">Proceed To Checkout</a>
                       <% } %>
                 </div>
               </div>
@@ -286,19 +284,19 @@
           const data = await res.json();
 
           if (res.ok && data.success) {
-             await Swal.fire({
+            await Swal.fire({
               title: "Deleted!",
               icon: data.icon,
               text: data.message,
-              showConfirmButton: false, 
+              showConfirmButton: false,
               timer: 1500
             });
 
             // Remove item from DOM
             document.getElementById(`cart-item-${productId}`)?.remove();
             document.getElementById('cartItemsCount').innerHTML = data.totalItems;
-            if (!data.totalItems) document.getElementById('table-body').innerHTML =`<tr><td colspan="6" class="text-center">Your cart is empty</td></tr>`;
-            
+            if (!data.totalItems) document.getElementById('table-body').innerHTML = `<tr><td colspan="6" class="text-center">Your cart is empty</td></tr>`;
+
             // Update cart total if element exists
             const totalElement = document.querySelector('.cart__total span');
             if (totalElement && data.newTotalPrice !== undefined) {

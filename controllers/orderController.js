@@ -34,7 +34,8 @@ const razorPay = async (req, res) => {
         const response = await razorpay.orders.create(paymentData);
         res.json(response);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to create Razorpay order' });
+        console.log('error in razorpay pathc', error);
+        res.status(STATUS_CODES.INTERNAL_ERROR).json({ error: 'Failed to create Razorpay order' });
     }
 };
 
@@ -43,19 +44,40 @@ const orderPlacing = async (req, res) => {
     try {
         const userId = req.session.userID;
         const selectedaddress = req.body.selectedAddress;
-        const couponId = req.body.couponId
+        const couponId = req.body.couponId;
+        console.log('req.body', req.body);
+        if (!userId || !selectedaddress) {
+            return sendError(res, { message: COMMON_MESSAGES.SOMETHING_WENT_WRONG, status: STATUS_CODES.BAD_REQUEST });
+        }
+
         const userAddress = await Address.findOne({ userID: userId });
-        const userCart = await Cart.findOne({ userID: userId }).populate('items.product')
-        let totalAmount = userCart.totalPrice + 50
+        console.log('userAddress:', userAddress);
+        if (!userAddress || !userAddress.details || userAddress.details.length === 0) {
+            return sendError(res, { message: "No address found for user", status: STATUS_CODES.BAD_REQUEST });
+        }
+
+        const userCart = await Cart.findOne({ userID: userId }).populate('items.product');
+        if (!userCart || !userCart.items || userCart.items.length === 0) {
+            return sendError(res, { message: "Cart is empty", status: STATUS_CODES.BAD_REQUEST });
+        }
+
+        let totalAmount = userCart.totalPrice + 50;
         const { items } = userCart;
         const selectedAddress = userAddress.details.find((address) => address._id.toString() === selectedaddress);
+        if (!selectedAddress) {
+            return sendError(res, { message: "Selected address not found", status: STATUS_CODES.BAD_REQUEST });
+        }
+
         if (couponId) {
-            const selectedCoupon = await Coupon.findById(couponId)
-            const amountDividedBYPercentage = Math.ceil(totalAmount * selectedCoupon.percentage / 100)
+            const selectedCoupon = await Coupon.findById(couponId);
+            if (!selectedCoupon) {
+                return sendError(res, { message: "Coupon not found", status: STATUS_CODES.BAD_REQUEST });
+            }
+            const amountDividedBYPercentage = Math.ceil(totalAmount * selectedCoupon.percentage / 100);
             if (amountDividedBYPercentage > selectedCoupon.maximumAmount) {
-                totalAmount = totalAmount - selectedCoupon.maximumAmount
+                totalAmount = totalAmount - selectedCoupon.maximumAmount;
             } else {
-                totalAmount = amountDividedBYPercentage
+                totalAmount = amountDividedBYPercentage;
             }
             const newOrder = new Order({
                 userId: userId,
@@ -83,16 +105,9 @@ const orderPlacing = async (req, res) => {
             );
             await Coupon.updateOne({ _id: couponId }, {
                 $push: { userID: req.session.userID }
-            })
+            });
+            return sendSuccess(res, { message: "Order placed successfully", data: { orderId: newOrder._id } });
         } else {
-            const userId = req.session.userID;
-            const selectedaddress = req.body.selectedAddress;
-            const couponId = req.body.couponId
-            const userAddress = await Address.findOne({ userID: userId });
-            const userCart = await Cart.findOne({ userID: userId }).populate('items.product')
-            let totalAmount = userCart.totalPrice + 50
-            const { items } = userCart;
-            const selectedAddress = userAddress.details.find((address) => address._id.toString() === selectedaddress);
             const newOrder = new Order({
                 userId: userId,
                 totalPrice: totalAmount,
@@ -117,10 +132,11 @@ const orderPlacing = async (req, res) => {
                 { userID: userId },
                 { $set: { items: [], totalPrice: 0 } }
             );
+            return sendSuccess(res, { message: "Order placed successfully", data: { orderId: newOrder._id } });
         }
-
     } catch (error) {
-        res.status(500).send('Internal Server Error');
+        console.log('order place err:', error);
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
 const orderInWallet = async (req, res) => {

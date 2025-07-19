@@ -110,17 +110,25 @@ const deleteAddress = async (req, res) => {
         const userId = req.session.userID;
         const addressId = req.params.id;
 
-        const userAddress = await Address.findOne({ userID: userId });
+        const userAddress = await Address.findOne({
+            userID: userId
+        });
 
         if (userAddress) {
             userAddress.details = userAddress.details.filter(address => address._id.toString() !== addressId.toString());
             await userAddress.save();
-            return sendSuccess(res, STATUS_CODES.OK, MESSAGES.address.ADDRESS_DELETED, {
+            return sendSuccess(res, {
+                message: MESSAGES.address.ADDRESS_DELETED,
+                data: {
+                    totalAddress: userAddress.details.length
+                },
                 icon: 'success',
-                totalAddress: userAddress.details.length
-            });
+                status: STATUS_CODES.OK
+            })
         } else {
-            return sendError(res, STATUS_CODES.NOT_FOUND, MESSAGES.address.ADDRESS_NOT_FOUND, null, { icon: 'warning' });
+            return sendError(res, STATUS_CODES.NOT_FOUND, MESSAGES.address.ADDRESS_NOT_FOUND, null, {
+                icon: 'warning'
+            });
         }
 
     } catch (error) {
@@ -196,36 +204,37 @@ const checkOutAddress = async (req, res) => {
     try {
         const userId = req.session.userID;
         const userAddress = await Address.findOne({ userID: userId });
+
+        const addressData = {
+            country: req.body.c_name,
+            firstName: req.body.c_fname,
+            lastName: req.body.c_lname,
+            address: req.body.c_address,
+            state: req.body.c_state,
+            pincode: req.body.c_pincode,
+            phone: req.body.c_phone
+        };
+
         if (!userAddress) {
             const newAddress = new Address({
                 userID: userId,
-                details: [{
-                    country: req.body.c_name,
-                    firstName: req.body.c_fname,
-                    lastName: req.body.c_lname,
-                    address: req.body.c_address,
-                    state: req.body.c_state,
-                    pincode: req.body.c_pincode,
-                    phone: req.body.c_phone
-                }]
+                details: [addressData]
             });
             await newAddress.save();
-            res.redirect('/checkoutPage');
-        } else {
-            userAddress.details.push({
-                country: req.body.c_name,
-                firstName: req.body.c_fname,
-                lastName: req.body.c_lname,
-                address: req.body.c_address,
-                state: req.body.c_state,
-                pincode: req.body.c_pincode,
-                phone: req.body.c_phone
+            return sendSuccess(res, {
+                message: MESSAGES.address.ADDRESS_ADDED,
+                data: { address: addressData, addressId: newAddress.details[0]._id }
             });
+        } else {
+            userAddress.details.push(addressData);
             await userAddress.save();
-            res.redirect('/checkoutPage');
+            return sendSuccess(res, {
+                message: MESSAGES.address.ADDRESS_ADDED,
+                data: { address: addressData, addressId: userAddress.details[0]._id }
+            });
         }
     } catch (error) {
-        sendError(res, STATUS_CODES.INTERNAL_ERROR, COMMON_MESSAGES.INTERNAL_SERVER_ERROR);
+        sendError(res, { message: COMMON_MESSAGES.INTERNAL_SERVER_ERROR });
     }
 }
 

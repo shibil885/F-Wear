@@ -178,7 +178,7 @@
                 });
 
                 const data = await response.json();
-
+                console.log('data', data);
                 await Swal.fire({
                     position: "top-end",
                     icon: data.icon || (data.success ? 'success' : 'warning'),
