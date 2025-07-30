@@ -1,342 +1,328 @@
 <%-include('../user/userLayout/userHeader.ejs') %>
-
-    <style>
-        .wallet-container {
-    margin-top: 20px;
-}
-
-.wallet-card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-}
-
-.wallet-info {
-    margin-bottom: 20px;
-}
-
-.wallet-info .label {
-    font-weight: bold;
-    color: #333;
-}
-
-.list-group {
-    list-style: none;
-    padding-left: 0;
-}
-
-.list-group-item {
-    border-color: rgba(0, 0, 0, 0.125);
-}
-
-.list-group-item:last-child {
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-}
-
-.list-group-item p {
-    margin-bottom: 0;
-}
-
-.badge {
-    font-size: 14px;
-}
-
-.badge.bg-success {
-    background-color: #28a745;
-}
-
-.badge.bg-danger {
-    background-color: #dc3545;
-}
-
-.text-muted {
-    color: #6c757d;
-}
-
-        .form-control:invalid {
-            border-color: #dc3545;
-        }
-
-        .form-control:invalid+.btn-primary {
-            border-color: #dc3545;
-        }
-
-        .form-control:invalid+.btn-primary:focus {
-            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
-        }
-
-        .invalid-feedback {
-            color: #dc3545;
-            display: none;
-        }
-
-        .form-control:invalid+.btn-primary+.invalid-feedback {
-            display: block;
-        }
-
-        .wallet-container {
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-
-        .wallet-card {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .wallet-info {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        .wallet-info p {
-            margin: 5px 0;
-        }
-
-        .wallet-info .label {
-            font-weight: bold;
-        }
-
-        .badge {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background-color: red;
-            color: white;
-            border-radius: 50%;
-            padding: 3px 6px;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-        }
-    </style>
-
-    <nav class="custom-navbar navbar navbar-expand-md navbar-dark pb-3" aria-label="Furni navigation bar"
-        style="height:71px;">
-        <div class="container">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsFurni"
-                aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarsFurni">
-                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/shop">Shop</a>
-                    </li>
-                    <li><a class="nav-link" href="about.html">About us</a></li>
-                    <li><a class="nav-link" href="services.html">Services</a></li>
-                </ul>
-                <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
-                    <li>
-                        <a class="nav-link" href="/cartPage" style="position: relative;">
-                            <img src="/assets/images/cart.svg">
-                            <% if (cartLength !==null || undefined) { %>
-                                <span class="badge">
-                                    <%= cartLength %>
-                                </span>
-                                <% } else { %>
-                                    <span class="badge">0</span>
-                                    <% } %>
+<style>
+   .wallet-container {
+   margin-top: 20px;
+   }
+   .wallet-card {
+   background-color: #fff;
+   border-radius: 10px;
+   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+   padding: 20px;
+   }
+   .wallet-info {
+   margin-bottom: 20px;
+   }
+   .wallet-info .label {
+   font-weight: bold;
+   color: #333;
+   }
+   .list-group {
+   list-style: none;
+   padding-left: 0;
+   }
+   .list-group-item {
+   border-color: rgba(0, 0, 0, 0.125);
+   }
+   .list-group-item:last-child {
+   border-bottom-right-radius: 10px;
+   border-bottom-left-radius: 10px;
+   }
+   .list-group-item p {
+   margin-bottom: 0;
+   }
+   .badge {
+   font-size: 14px;
+   }
+   .badge.bg-success {
+   background-color: #28a745;
+   }
+   .badge.bg-danger {
+   background-color: #dc3545;
+   }
+   .text-muted {
+   color: #6c757d;
+   }
+   .form-control:invalid {
+   border-color: #dc3545;
+   }
+   .form-control:invalid+.btn-primary {
+   border-color: #dc3545;
+   }
+   .form-control:invalid+.btn-primary:focus {
+   box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+   }
+   .invalid-feedback {
+   color: #dc3545;
+   display: none;
+   }
+   .form-control:invalid+.btn-primary+.invalid-feedback {
+   display: block;
+   }
+   .wallet-container {
+   padding: 20px;
+   background-color: #f8f9fa;
+   }
+   .wallet-card {
+   background-color: #fff;
+   border-radius: 10px;
+   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+   padding: 20px;
+   margin-bottom: 20px;
+   }
+   .wallet-info {
+   font-size: 18px;
+   margin-bottom: 10px;
+   }
+   .wallet-info p {
+   margin: 5px 0;
+   }
+   .wallet-info .label {
+   font-weight: bold;
+   }
+   .badge {
+   position: absolute;
+   top: 4px;
+   right: 4px;
+   background-color: red;
+   color: white;
+   border-radius: 50%;
+   padding: 3px 6px;
+   font-size: 12px;
+   font-weight: bold;
+   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+   }
+</style>
+<nav class="custom-navbar navbar navbar-expand-md navbar-dark pb-3" aria-label="Furni navigation bar"
+   style="height:71px;">
+   <div class="container">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsFurni"
+         aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarsFurni">
+         <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+            <li class="nav-item">
+               <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="/shop">Shop</a>
+            </li>
+            <li><a class="nav-link" href="about.html">About us</a></li>
+            <li><a class="nav-link" href="services.html">Services</a></li>
+         </ul>
+         <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+            <li>
+               <a class="nav-link" href="/cartPage" style="position: relative;">
+               <img src="/assets/images/cart.svg">
+               <% if (cartLength !==null || undefined) { %>
+               <span class="badge">
+               <%= cartLength %>
+               </span>
+               <% } else { %>
+               <span class="badge">0</span>
+               <% } %>
+               </a>
+            </li>
+            <li>
+               <a class="nav-link" href="/wishList" style="position: relative;">
+               <span class="material-symbols-outlined me-2" style="color: white;">
+               favorite
+               </span>
+               </a>
+            </li>
+         </ul>
+      </div>
+   </div>
+</nav>
+<aside class="navbar-aside" id="offcanvas_aside">
+   <div class="aside-top" style="background-color: #3c5d50;">
+      <a href="/" class="brand-wrap text-light text-decoration-none">
+         <h2 style="font-size: 20px; font-weight: bold"><span class="text-warning">.f</span>-Wear</h2>
+      </a>
+      <div>
+         <button class="btn btn-icon btn-aside-minimize">
+         <i class="text-muted material-icons md-menu_open"></i>
+         </button>
+      </div>
+   </div>
+   <nav>
+      <ul class="menu-aside">
+         <li class="menu-item">
+            <a class="menu-link" href="/userAccount"> <i class="icon material-icons md-person"></i>
+            <span class="text">Info</span>
+            </a>
+         </li>
+         <li class="menu-item ">
+            <a class="menu-link" href="/orders"> <i class="icon material-icons md-shopping_cart"></i>
+            <span class="text">Orders</span>
+            </a>
+         </li>
+         <li class="menu-item">
+            <a class="menu-link" href="/address"> <i class="icon material-icons md-contact_mail"></i>
+            <span class="text">Address</span>
+            </a>
+         </li>
+         <li class="menu-item active">
+            <a class="menu-link" href="/wallet"> <i class="icon material-icons md-account_balance_wallet"></i>
+            <span class="text">Wallet</span>
+            </a>
+         </li>
+         <li class="menu-item">
+            <a class="menu-link" href="/changePasswordPage"> <i class="icon material-icons md-vpn_key"></i>
+            <span class="text">Change password</span>
+            </a>
+         </li>
+         <li class="menu-item ">
+            <a class="nav-link d-flex text-danger ms-2" href="/userLogout">
+            <span class="material-symbols-outlined">
+            logout
+            </span>
+            </a>
+         </li>
+      </ul>
+   </nav>
+</aside>
+<main class="main-wrap">
+   <section class="content-main">
+      <div class="content-header">
+         <div>
+            <h2 class="content-title card-title">Wallet</h2>
+         </div>
+         <form id="walletForm">
+            <div class="d-flex align-items-center">
+               <input type="text" class="form-control mr-2 me-1" id="amountInput" placeholder="Enter amount">
+               <button id="addButton" class="btn btn-primary" type="button" onclick="addAmount()">Add</button>
+            </div>
+            <small class="text-danger ms-3" id="error"></small>
+         </form>
+      </div>
+      <div class="wallet-container mt-4">
+         <div class="wallet-card p-4">
+            <div class="wallet-info">
+               <p class="label">Name:</p>
+               <p>
+                  <%= wallet.userId.username %>
+               </p>
+            </div>
+            <div class="wallet-info">
+               <p class="label">Balance:</p>
+               <p><b>&#8377;</b>
+                  <%= wallet.balance %>
+               </p>
+            </div>
+            <div class="wallet-info">
+               <h3 class="mb-3">Transaction History:</h3>
+               <ul class="list-group">
+                  <% transactions.forEach(transaction=> { %>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                     <div>
+                        <span class="text-muted">
+                        <%= new Date(transaction.createdAt).toLocaleDateString() %>
+                        </span>
+                        <p>
+                           <%= transaction.description %>
+                        </p>
+                     </div>
+                     <% if (transaction.type==="credit" ) { %>
+                     <span class="badge bg-success">+<%= transaction.amount %></span>
+                     <% } else { %>
+                     <span class="badge bg-danger">-<%= transaction.amount %></span>
+                     <% } %>
+                  </li>
+                  <% }) %>
+               </ul>
+               <nav aria-label="Page navigation example" class="mt-3">
+                  <ul class="pagination justify-content-center">
+                     <% if (currentPage> 1) { %>
+                     <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=5">Previous</a>
+                     </li>
+                     <% } %>
+                     <% for (let i=1; i <=totalPages; i++) { %>
+                     <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>&limit=5">
+                        <%= i %>
                         </a>
-                    </li>
-                    <li>
-						<a class="nav-link" href="/wishList" style="position: relative;">
-							<span class="material-symbols-outlined me-2" style="color: white;">
-								favorite
-							</span>
-						</a>
-					</li>
-                </ul>
+                     </li>
+                     <% } %>
+                     <% if (currentPage < totalPages) { %>
+                     <li class="page-item">
+                        <a class="page-link"
+                           href="?page=<%= currentPage + 1 %>&limit=5">Next</a>
+                     </li>
+                     <% } %>
+                  </ul>
+               </nav>
             </div>
-        </div>
-    </nav>
-    <aside class="navbar-aside" id="offcanvas_aside">
-        <div class="aside-top" style="background-color: #3c5d50;">
-          <a href="/" class="brand-wrap text-light text-decoration-none">
-            <h2 style="font-size: 20px; font-weight: bold"><span class="text-warning">.f</span>-Wear</h2>
-          </a>
-          <div>
-            <button class="btn btn-icon btn-aside-minimize">
-              <i class="text-muted material-icons md-menu_open"></i>
-            </button>
-          </div>
-        </div>
-        <nav>
-          <ul class="menu-aside">
-            <li class="menu-item">
-                <a class="menu-link" href="/userAccount"> <i class="icon material-icons md-person"></i>
-                    <span class="text">Info</span>
-                </a>
-            </li>
-            <li class="menu-item ">
-                <a class="menu-link" href="/orders"> <i class="icon material-icons md-shopping_cart"></i>
-                    <span class="text">Orders</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a class="menu-link" href="/address"> <i class="icon material-icons md-contact_mail"></i>
-                    <span class="text">Address</span>
-                </a>
-            </li>
-            <li class="menu-item active">
-                <a class="menu-link" href="/wallet"> <i class="icon material-icons md-account_balance_wallet"></i>
-                    <span class="text">Wallet</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a class="menu-link" href="/changePasswordPage"> <i class="icon material-icons md-vpn_key"></i>
-                    <span class="text">Change password</span>
-                </a>
-            </li>
-            <li class="menu-item ">
-                <a class="nav-link d-flex text-danger ms-2" href="/userLogout">
-                    <span class="material-symbols-outlined">
-                        logout
-                    </span>
-                </a>
-            </li>
-          </ul>
-        </nav>
-    </aside>
-
-    <main class="main-wrap">
-        <section class="content-main">
-            <div class="content-header">
-                <div>
-                    <h2 class="content-title card-title">Wallet</h2>
-                </div>
-                <form id="walletForm">
-                    <div class="d-flex align-items-center">
-                        <input type="text" class="form-control mr-2 me-1" id="amountInput" placeholder="Enter amount">
-                        <button id="addButton" class="btn btn-primary" type="button" onclick="addAmount()">Add</button>
-                    </div>
-                    <small class="text-danger ms-3" id="error"></small>
-                </form>
-            </div>
-            <div class="wallet-container mt-4">
-                <div class="wallet-card p-4">
-                    <div class="wallet-info">
-                        <p class="label">Name:</p>
-                        <p><%= wallet.userId.username %></p>
-                    </div>
-                    <div class="wallet-info">
-                        <p class="label">Balance:</p>
-                        <p><b>&#8377;</b> <%= wallet.balance %> </p>
-                    </div>
-                    <div class="wallet-info">
-                        <h3 class="mb-3">Transaction History:</h3>
-                        <ul class="list-group">
-                            <% wallet.history.reverse().forEach(transaction => { %>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="text-muted"><%= transaction.createdAt.toLocaleDateString() %></span>
-                                        <p><%= transaction.description %></p>
-                                    </div>
-                                    <% if (transaction.type === "credit") { %>
-                                        <span class="badge bg-success">
-                                            +<%= transaction.amount %>
-                                        </span>
-                                    <% } else { %>
-                                        <span class="badge bg-danger">
-                                            -<%= transaction.amount %>
-                                        </span>
-                                    <% } %>
-                                </li>
-                            <% }) %>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-        </section>
-        <footer class="main-footer font-xs">
-            <div class="row">
-                <div class="col-sm-6">
-                    <script>
-                        document.write(new Date().getFullYear())
-                    </script> ©, Evara - HTML Ecommerce Template .
-                </div>
-                <div class="col-sm-6">
-                    <div class="text-sm-end">
-                        All rights reserved
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </main>
-    <script>
-        function addAmount() {
-            const amountInput = document.getElementById('amountInput');
-            const amount = amountInput.value.trim(); 
-            const amountRegex = /^\d*\.?\d+$/;
-
-            if (amount === '' || !amountRegex.test(amount)) {
-                document.getElementById('error').innerText = 'Enter a valid number';
-                return; 
-            }
-
-            document.getElementById('error').innerText = '';
-            initiateRazorpayPayment(amount);
-        }
-
-        function initiateRazorpayPayment(amount) {
-            const user = {
-                name: "<%= user.username %>",
-                email: "<%= user.email %>",
-                phone: "<%= user.phone %>"
-            };
-
-            var options = {
-                key: "rzp_test_ihsNz6lracNIu3",
-                amount: parseFloat(amount) * 100,
-                currency: 'INR',
-                name: 'f-wear',
-                description: 'Adding amount to wallet',
-                image: 'https://example.com/logo.png',
-                handler: function (response) {
-                    console.log(`Response: ${JSON.stringify(response)}`);
-                    fetch('/addAmount', {
-                        method: "POST",
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ amount }),
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            Swal.fire({
-                                title: "Amount added",
-                                icon: "success",
-                                showConfirmButton: false
-                            });
-                            setTimeout(() => {
-                                window.location.href = '/wallet'
-                            }, 2000);
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-
-                        });
-                },
-
-                prefill: {
-                    name: user.name,
-                    email: user.email,
-                    contact: user.phone
-                },
-                theme: {
-                    color: '#3399cc'
-                }
-            };
-
-            var rzp = new Razorpay(options);
-            rzp.open();
-        }
-    </script>
-    <%- include('../user/userLayout/userFooter') %>
+         </div>
+      </div>
+   </section>
+</main>
+<script>
+   function addAmount() {
+       const amountInput = document.getElementById('amountInput');
+       const amount = amountInput.value.trim();
+       const amountRegex = /^\d*\.?\d+$/;
+   
+       if (amount === '' || !amountRegex.test(amount)) {
+           document.getElementById('error').innerText = 'Enter a valid number';
+           return;
+       }
+   
+       document.getElementById('error').innerText = '';
+       initiateRazorpayPayment(amount);
+   }
+   
+   function initiateRazorpayPayment(amount) {
+       const user = {
+           name: "<%= user.username %>",
+           email: "<%= user.email %>",
+           phone: "<%= user.phone %>"
+       };
+   
+       var options = {
+           key: "rzp_test_ihsNz6lracNIu3",
+           amount: parseFloat(amount) * 100,
+           currency: 'INR',
+           name: 'f-wear',
+           description: 'Adding amount to wallet',
+           image: 'https://example.com/logo.png',
+           handler: function (response) {
+               console.log(`Response: ${JSON.stringify(response)}`);
+               fetch('/addAmount', {
+                   method: "POST",
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify({ amount }),
+               })
+                   .then(response => response.json())
+                   .then(data => {
+                       Swal.fire({
+                           title: "Amount added",
+                           icon: "success",
+                           showConfirmButton: false
+                       });
+                       setTimeout(() => {
+                           window.location.href = '/wallet'
+                       }, 2000);
+                   })
+                   .catch(error => {
+                       console.error('Error:', error);
+   
+                   });
+           },
+   
+           prefill: {
+               name: user.name,
+               email: user.email,
+               contact: user.phone
+           },
+           theme: {
+               color: '#3399cc'
+           }
+       };
+   
+       var rzp = new Razorpay(options);
+       rzp.open();
+   }
+</script>
+<%- include('../user/userLayout/userFooter') %>
